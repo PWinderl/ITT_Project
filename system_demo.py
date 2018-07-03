@@ -9,15 +9,13 @@ class MusicPlayer:
         pygame.init()
         self.play_music_demo()
 
+    # Demo plays a sample song
     def play_music_demo(self):
-
         pygame.mixer.music.load("Sample.mp3")
         pygame.mixer.music.play()
         time.sleep(2)
         pygame.mixer.music.stop()
-
-        while True:  # Main Loop
-
+        while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pass
@@ -50,7 +48,7 @@ class SetupWidget(QtWidgets.QWidget):
     def connect_wiimote(self, event):
         bluetooth_con = SetupBluetooth()
 
-
+# To connect to Wiimotes
 class SetupBluetooth:
     def __init__(self):
         mp = MusicPlayer()

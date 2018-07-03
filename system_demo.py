@@ -4,6 +4,7 @@ import pygame, sys, time
 from pygame.locals import *
 
 
+# https://stackoverflow.com/questions/34668981/pygame-unable-to-open-mp3-file
 class MusicPlayer:
     def __init__(self):
         pygame.init()

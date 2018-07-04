@@ -121,7 +121,8 @@ class SetupWidget(QtWidgets.QWidget):
 
     def start_game(self, event):
         # TODO: Replace with start of the game
-        self.hs = highscore.Highscore(44)
+        # 44 = Dummy-Score
+        self.hs = highscore.Highscore(1)
         # self.hs.show()
 
     def change_player(self, event):

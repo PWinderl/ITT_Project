@@ -32,6 +32,8 @@ class SetupWidget(QtWidgets.QWidget):
         self.bt_start = QtWidgets.QPushButton(parent=self)
         self.bt_change_player = QtWidgets.QPushButton(parent=self)
         self.player_selection = QtWidgets.QLabel(parent=self)
+        self.inst_player_one = QtWidgets.QLabel(parent=self)
+        self.inst_player_two = QtWidgets.QLabel(parent=self)
         self.init_ui(address_one, address_two)
 
     def init_ui(self, address_one, address_two):
@@ -49,6 +51,27 @@ class SetupWidget(QtWidgets.QWidget):
 
         self.player_selection.setText('Player 1 is currently Wiimote: ' + str(address_one))
         layout.addWidget(self.player_selection, 0, 2)
+
+        self.inst_player_one.setText('Player 1' + "\n" +
+                                    'As the notes comes down you have to play violin as shown below and' + "\n" +
+                                     'push the correct button according to the lines.' + "\n" +
+                                     'Each correct played note gets you points.' + "\n" +
+                                     'During the game there will appear mini games where you have to paint' + "\n" +
+                                     'the gesture displayed as fast as possible to gain extra points' + "\n" +
+                                     'To paint a gesture hold down the "B"-Button on the back of your device' + "\n" +
+                                     'and point with your Wiimote.')
+        layout.addWidget(self.inst_player_one, 1, 0)
+
+        self.inst_player_two.setText('Player 2' + "\n" +
+                                     'Your task is to compose the notes Player 1 has to play' + "\n" +
+                                     'To do so you have to push different Buttons:' + "\n" +
+                                     '- A for the first column' + "\n" +
+                                     '- B for the second column' + "\n" +
+                                     '- 1 for the third column' + "\n" +
+                                     '- 2 for the fourth column' + "\n" +
+                                     'When mini games starts and you are able to draw faster than your opponent' + "\n" +
+                                     'points from his score will be substracted')
+        layout.addWidget(self.inst_player_two, 1, 1)
 
         self.setLayout(layout)
         self.show()

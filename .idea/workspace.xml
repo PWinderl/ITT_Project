@@ -28,8 +28,35 @@
       <file leaf-file-name="gesture_recognizer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4321">
-              <caret column="27" selection-start-column="27" selection-end-column="42" />
+            <state relative-caret-position="252">
+              <caret line="238" column="32" lean-forward="true" selection-start-line="238" selection-start-column="32" selection-end-line="238" selection-end-column="32" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="system_demo.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/system_demo.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="400">
+              <caret line="65" column="37" selection-start-line="65" selection-start-column="37" selection-end-line="65" selection-end-column="37" />
+              <folding>
+                <element signature="e#22#64#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wiimote.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wiimote.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2761">
+              <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
+              <folding>
+                <element signature="e#1601#1617#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -39,18 +66,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-164">
               <caret line="25" column="30" selection-start-line="25" selection-start-column="23" selection-end-line="25" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="system_demo.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/system_demo.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="62" column="93" selection-start-line="62" selection-start-column="93" selection-end-line="62" selection-end-column="93" />
-              <folding>
-                <element signature="e#22#64#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -72,6 +87,9 @@
       <find>wm</find>
       <find>BluetoothError</find>
       <find>layout</find>
+      <find>on_click</find>
+      <find>register_click_callback</find>
+      <find>__on_move__</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -180,6 +198,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4185">
           <caret line="279" column="44" selection-start-line="279" selection-start-column="44" selection-end-line="280" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -214,6 +235,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4185">
           <caret line="279" column="44" selection-start-line="279" selection-start-column="44" selection-end-line="280" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -256,7 +280,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wiimote.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
+        <state relative-caret-position="-2761">
           <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
           <folding>
             <element signature="e#1601#1617#0" expanded="true" />
@@ -266,15 +290,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4321">
-          <caret column="27" selection-start-column="27" selection-end-column="42" />
+        <state relative-caret-position="252">
+          <caret line="238" column="32" lean-forward="true" selection-start-line="238" selection-start-column="32" selection-end-line="238" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/system_demo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="62" column="93" selection-start-line="62" selection-start-column="93" selection-end-line="62" selection-end-column="93" />
+        <state relative-caret-position="400">
+          <caret line="65" column="37" selection-start-line="65" selection-start-column="37" selection-end-line="65" selection-end-column="37" />
           <folding>
             <element signature="e#22#64#0" expanded="true" />
           </folding>

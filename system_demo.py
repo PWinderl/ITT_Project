@@ -25,24 +25,42 @@ class MusicPlayer:
 
 
 class SetupWidget(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, address_one, address_two):
         super(SetupWidget, self).__init__()
+        self.player_one = address_one
+        self.player_two = address_two
         self.bt_start = QtWidgets.QPushButton(parent=self)
-        self.init_ui()
+        self.bt_change_player = QtWidgets.QPushButton(parent=self)
+        self.player_selection = QtWidgets.QLabel(parent=self)
+        self.init_ui(address_one, address_two)
 
-    def init_ui(self):
+    def init_ui(self, address_one, address_two):
         self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Wiimote Hero')
         layout = QtWidgets.QGridLayout(self)
 
-        self.bt_start.setText("Start Game")
+        self.bt_start.setText('Start Game')
         self.bt_start.clicked.connect(self.start_game)
         layout.addWidget(self.bt_start, 0, 0)
 
+        self.bt_change_player.setText('Change Player')
+        self.bt_change_player.clicked.connect(self.change_player)
+        layout.addWidget(self.bt_change_player, 0, 1)
+
+        self.player_selection.setText('Player 1 is currently Wiimote: ' + str(address_one))
+        layout.addWidget(self.player_selection, 0, 2)
+
+        self.setLayout(layout)
         self.show()
 
     def start_game(self, event):
-        bluetooth_con = SetupBluetooth()
+        pass
+
+    def change_player(self, event):
+        old_player_one = self.player_one
+        self.player_one = self.player_two
+        self.player_two = old_player_one
+        self.player_selection.setText('Player 1 is currently Wiimote: ' + str(self.player_one))
 
 
 # To connect to Wiimotes
@@ -52,21 +70,19 @@ class SetupBluetooth:
             self.wm_one = wiimote.connect(address_one)
             self.wm_two = wiimote.connect(address_two)
         except BluetoothError:
-            print("no valid bluetooth address")
+            print("No valid bluetooth addresses.")
             sys.exit()
             return
 
 
-        mp = MusicPlayer()
-
-
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    main_window = SetupWidget()
+    main_window = SetupWidget('SysArgv1', 'SysArgv2')
     if len(sys.argv) == 2:
         connect_wiimotes = SetupBluetooth(sys.argv[1], sys.argv[2])
     else:
-        pass
+        print('Please enter two valid bluetooth addresses.')
+        # sys.exit()
 
     sys.exit(app.exec_())
 

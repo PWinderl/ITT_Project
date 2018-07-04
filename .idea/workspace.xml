@@ -28,8 +28,8 @@
       <file leaf-file-name="gesture_recognizer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" selection-start-line="5" selection-end-line="5" selection-end-column="9" />
+            <state relative-caret-position="-4321">
+              <caret column="27" selection-start-column="27" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -46,10 +46,10 @@
       <file leaf-file-name="system_demo.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/system_demo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+            <state relative-caret-position="386">
+              <caret line="62" column="93" selection-start-line="62" selection-start-column="93" selection-end-line="62" selection-end-column="93" />
               <folding>
-                <element signature="e#22#49#0" expanded="true" />
+                <element signature="e#22#64#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -71,6 +71,7 @@
       <find>BluetoothInput</find>
       <find>wm</find>
       <find>BluetoothError</find>
+      <find>layout</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -194,7 +195,7 @@
         <state relative-caret-position="45">
           <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
           <folding>
-            <element signature="e#22#49#0" expanded="true" />
+            <element signature="e#22#64#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -228,7 +229,7 @@
         <state relative-caret-position="210">
           <caret line="16" column="33" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
           <folding>
-            <element signature="e#22#49#0" expanded="true" />
+            <element signature="e#22#64#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -250,13 +251,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" selection-start-line="5" selection-end-line="5" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../MedieninformatikStudium/Master/ITT/Wiimote/wiimote.py-master/wiimote_demo.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -270,12 +264,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4321">
+          <caret column="27" selection-start-column="27" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/system_demo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+        <state relative-caret-position="386">
+          <caret line="62" column="93" selection-start-line="62" selection-start-column="93" selection-end-line="62" selection-end-column="93" />
           <folding>
-            <element signature="e#22#49#0" expanded="true" />
+            <element signature="e#22#64#0" expanded="true" />
           </folding>
         </state>
       </provider>

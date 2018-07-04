@@ -1,0 +1,30 @@
+Wiimote Hero
+
+Bestandteile:
+
+- Startbildschirm
+	- Verbindung zweier Wiimotes
+	- Entscheiden welche Wiimote "Vorspielt" und welche "Nachspielt"
+	- Start-Button zum Starten des Spiels
+	- (Gifs welche die Activity-Bewegungen vorzeigen)
+- Game-Bildschirm
+	- Von oben nach unten
+	- Vier "Noten"-Reihen
+	- Jede Reihe wird von einem Button repräsentiert
+	- Player 1 spielt Song vor, Player 2 spielt Zeitversetzt nach
+	- Punktezähler
+- Minigame-Bildschirm
+	- Anzeige einer Geste, welche beide Spieler möglichst schnell nachmalen müssen
+	- Punkte für beide Spieler oder bei Gewinnen von Spieler 1 werden werden Spieler 2 Punkte abgezogen
+- Highscore-Bildschirm
+	- Signatur zeichnen
+	- Highscore anzeigen für aktuelle Session
+
+- Interaction techniques:
+	- Gesture Recognition für Minigames
+		- Random angezeigte Gesten während des Spiels
+		- müssen möglichst schnell nachgezeichnet werden
+	- Activity Recognition (wie Geige spielen) zum Nachspielen der Noten
+		- Vorspielen der Noten durch Button Klicks
+		- Beim Nachspielen muss erst die Activity ausgeführt werden (z.B. Geige Spielen) und anschließend noch die richtigen Buttons für die richtigen Noten gedrückt werden.
+	- Pointing Technique zum Speichern der Highscores und Zeichnen der Unterschriften

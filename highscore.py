@@ -13,12 +13,15 @@ class Highscore(QtWidgets.QWidget):
     def init_ui(self, score):
         self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Highscores')
+        layout = QtWidgets.QGridLayout(self)
+        layout.addWidget(self.highscore_table, 1, 1)
         if score > self.highscores[-1]:
             actual_hs_list = self.set_highscores(score)
             self.draw_highscores(actual_hs_list)
         else:
             self.draw_highscores(self.highscores)
 
+        self.setLayout(layout)
         self.show()
 
     # Appends new score to highscore list

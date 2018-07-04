@@ -28,8 +28,8 @@
       <file leaf-file-name="gesture_recognizer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="238" column="32" lean-forward="true" selection-start-line="238" selection-start-column="32" selection-end-line="238" selection-end-column="32" />
+            <state relative-caret-position="-79">
+              <caret line="372" column="18" selection-start-line="372" selection-start-column="8" selection-end-line="372" selection-end-column="18" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -40,8 +40,8 @@
       <file leaf-file-name="system_demo.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/system_demo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="65" column="37" selection-start-line="65" selection-start-column="37" selection-end-line="65" selection-end-column="37" />
+            <state relative-caret-position="25">
+              <caret line="30" column="41" selection-start-line="30" selection-start-column="41" selection-end-line="30" selection-end-column="41" />
               <folding>
                 <element signature="e#22#64#0" expanded="true" />
               </folding>
@@ -64,8 +64,8 @@
       <file leaf-file-name="pointing_technique.py" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/Dropbox/ITT Gruppe/05/pointing_technique.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-164">
-              <caret line="25" column="30" selection-start-line="25" selection-start-column="23" selection-end-line="25" selection-end-column="30" />
+            <state relative-caret-position="276">
+              <caret line="83" column="19" selection-start-line="83" selection-start-column="8" selection-end-line="83" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -90,6 +90,8 @@
       <find>on_click</find>
       <find>register_click_callback</find>
       <find>__on_move__</find>
+      <find>drawCircles</find>
+      <find>paintEvent</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -104,9 +106,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="126" />
+    <option name="x" value="321" />
     <option name="y" value="22" />
-    <option name="width" value="1154" />
+    <option name="width" value="959" />
     <option name="height" value="710" />
   </component>
   <component name="ProjectView">
@@ -158,10 +160,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="126" y="22" width="1154" height="710" extended-state="0" />
+    <frame x="580" y="22" width="700" height="710" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18799648" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.18799648" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
@@ -268,15 +270,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Dropbox/ITT Gruppe/05/pointing_technique.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-164">
-          <caret line="25" column="30" selection-start-line="25" selection-start-column="23" selection-end-line="25" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../MedieninformatikStudium/Master/ITT/Wiimote/wiimote.py-master/wiimote_demo.py">
       <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/Dropbox/ITT Gruppe/05/pointing_technique.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="83" column="19" selection-start-line="83" selection-start-column="8" selection-end-line="83" selection-end-column="19" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wiimote.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -290,8 +292,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="238" column="32" lean-forward="true" selection-start-line="238" selection-start-column="32" selection-end-line="238" selection-end-column="32" />
+        <state relative-caret-position="-79">
+          <caret line="372" column="18" selection-start-line="372" selection-start-column="8" selection-end-line="372" selection-end-column="18" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
@@ -300,8 +302,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/system_demo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="65" column="37" selection-start-line="65" selection-start-column="37" selection-end-line="65" selection-end-column="37" />
+        <state relative-caret-position="25">
+          <caret line="30" column="41" selection-start-line="30" selection-start-column="41" selection-end-line="30" selection-end-column="41" />
           <folding>
             <element signature="e#22#64#0" expanded="true" />
           </folding>

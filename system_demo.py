@@ -24,9 +24,48 @@ class MusicPlayer:
                     pygame.quit()
 
 
+class Highscore(QtWidgets.QWidget):
+    def __init__(self, score):
+        super(Highscore, self).__init__()
+        self.highscore_table = QtWidgets.QTableWidget(parent=self)
+        self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
+        self.init_ui(score)
+
+    def init_ui(self, score):
+        self.setGeometry(0, 0, 1000, 600)
+        self.setWindowTitle('Highscores')
+        self.set_highscores(score)
+        self.draw_highscores()
+
+        self.show()
+
+    def set_highscores(self, score):
+        print(self.highscores)
+        self.highscores.sort()
+        print(self.highscores)
+        if self.highscores[-1] < score:
+            del self.highscores[-1]
+            print(self.highscores)
+            self.highscores.append(score)
+            print(self.highscores)
+        else:
+            pass
+        self.highscores.sort()
+
+    def draw_highscores(self):
+        self.highscore_table.setRowCount(10)
+        self.highscore_table.setColumnCount(1)
+        self.highscores.sort(reverse=True)
+        print(self.highscores)
+        for item in self.highscores:
+            new_entry = QtWidgets.QTableWidgetItem(str(item))
+            self.highscore_table.setItem(0, item-1, new_entry)
+
+
 class SetupWidget(QtWidgets.QWidget):
     def __init__(self, address_one, address_two):
         super(SetupWidget, self).__init__()
+        self.hs = None
         self.player_one = address_one
         self.player_two = address_two
         self.bt_start = QtWidgets.QPushButton(parent=self)
@@ -34,9 +73,9 @@ class SetupWidget(QtWidgets.QWidget):
         self.player_selection = QtWidgets.QLabel(parent=self)
         self.inst_player_one = QtWidgets.QLabel(parent=self)
         self.inst_player_two = QtWidgets.QLabel(parent=self)
-        self.init_ui(address_one, address_two)
+        self.init_ui(address_one)
 
-    def init_ui(self, address_one, address_two):
+    def init_ui(self, address_one):
         self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Wiimote Hero')
         layout = QtWidgets.QGridLayout(self)
@@ -77,7 +116,8 @@ class SetupWidget(QtWidgets.QWidget):
         self.show()
 
     def start_game(self, event):
-        pass
+        self.hs = Highscore(44)
+        self.hs.show()
 
     def change_player(self, event):
         old_player_one = self.player_one

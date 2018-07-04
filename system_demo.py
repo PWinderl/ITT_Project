@@ -24,6 +24,7 @@ class MusicPlayer:
                     pygame.quit()
 
 
+# To call when Game is over
 class Highscore(QtWidgets.QWidget):
     def __init__(self, score):
         super(Highscore, self).__init__()
@@ -39,6 +40,7 @@ class Highscore(QtWidgets.QWidget):
 
         self.show()
 
+    # Appends new score to highscore list
     def set_highscores(self, score):
         print(self.highscores)
         self.highscores.sort()
@@ -52,6 +54,7 @@ class Highscore(QtWidgets.QWidget):
             pass
         self.highscores.sort()
 
+    # Draws Table with highscores
     def draw_highscores(self):
         self.highscore_table.setRowCount(10)
         self.highscore_table.setColumnCount(1)
@@ -116,6 +119,7 @@ class SetupWidget(QtWidgets.QWidget):
         self.show()
 
     def start_game(self, event):
+        # TODO: Replace with start of the game
         self.hs = Highscore(44)
         self.hs.show()
 

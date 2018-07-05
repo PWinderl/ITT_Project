@@ -123,7 +123,8 @@ class SetupWidget(QtWidgets.QWidget):
     def start_game(self, event):
         # TODO: Replace with start of the game
         # 44 = Dummy-Score
-        self.hs = highscore.Highscore(1)
+        # self.hs = highscore.Highscore(44)
+        self.hs = highscore.HighscoreHandler(44)
         # self.hs.show()
 
     def change_player(self, event):
@@ -134,15 +135,15 @@ class SetupWidget(QtWidgets.QWidget):
 
 
 # To connect to Wiimotes
-class SetupBluetooth:
-    def __init__(self, address_one, address_two):
-        try:
-            self.wm_one = wiimote.connect(address_one)
-            self.wm_two = wiimote.connect(address_two)
-        except BluetoothError:
-            print("No valid bluetooth addresses.")
-            sys.exit()
-            return
+# class SetupBluetooth:
+#     def __init__(self, address_one, address_two):
+#         try:
+#             self.wm_one = wiimote.connect(address_one)
+#             self.wm_two = wiimote.connect(address_two)
+#         except BluetoothError:
+#             print("No valid bluetooth addresses.")
+#             sys.exit()
+#             return
 
 
 def main():

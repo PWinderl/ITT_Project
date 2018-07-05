@@ -1,4 +1,4 @@
-import wiimote
+# import wiimote
 import sys
 from transform import Transform
 

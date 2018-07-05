@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets
 import pygame, sys, time
 from pygame.locals import *
 import highscore
+import bluetooth_input
 # import wiimote
 
 
@@ -148,7 +149,9 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     main_window = SetupWidget('SysArgv1', 'SysArgv2')
     if len(sys.argv) == 2:
-        connect_wiimotes = SetupBluetooth(sys.argv[1], sys.argv[2])
+        wm_one = bluetooth_input.SetupBluetooth(sys.argv[1])
+        wm_two = bluetooth_input.SetupBluetooth(sys.argv[2])
+        # connect_wiimotes = SetupBluetooth(sys.argv[1], sys.argv[2])
     else:
         print('Please enter two valid bluetooth addresses.')
         # sys.exit()

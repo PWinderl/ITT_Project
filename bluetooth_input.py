@@ -1,4 +1,4 @@
-# import wiimote
+import wiimote
 import sys
 from transform import Transform
 
@@ -6,9 +6,10 @@ from transform import Transform
 # To connect to Wiimotes
 class SetupBluetooth:
     def __init__(self, bluetooth_adress):
+        print('BT Adress: ', bluetooth_adress)
         try:
-            self.wm = wiimote.connect(bluetooth_adress)
-        except BluetoothError:
+            self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+        except:
             print("No valid bluetooth addresses.")
             sys.exit()
             return
@@ -27,6 +28,7 @@ class SetupBluetooth:
     def __on_press__(self, obj):
         if obj is not None and len(obj) > 0:
             if obj[0][0] == 'B':
+                print('B-Button')
                 if obj[0][1] is True:
                     self.wm.ir.register_callback(self.__on_move__)
                     if self.click_callback is not None:
@@ -36,13 +38,21 @@ class SetupBluetooth:
                     if self.click_callback is not None:
                         self.click_callback()
             if obj[0][0] == 'Left':
-                self.click_callback()
+                print('Left')
+                if self.click_callback is not None:
+                    self.click_callback()
             if obj[0][0] == 'Up':
-                self.click_callback()
+                print('Up')
+                if self.click_callback is not None:
+                    self.click_callback()
             if obj[0][0] == 'Right':
-                self.click_callback()
+                print('Right')
+                if self.click_callback is not None:
+                    self.click_callback()
             if obj[0][0] == 'Down':
-                self.click_callback()
+                print('Down')
+                if self.click_callback is not None:
+                    self.click_callback()
 
     def __on_move__(self, data):
         # Only accepts data that has all 4 leds

@@ -4,7 +4,7 @@ import pygame, sys, time
 from pygame.locals import *
 import highscore
 import bluetooth_input
-# import wiimote
+import wiimote
 
 
 # https://stackoverflow.com/questions/34668981/pygame-unable-to-open-mp3-file
@@ -26,47 +26,6 @@ class MusicPlayer:
                     pygame.quit()
 
 
-# To call when Game is over
-# class Highscore(QtWidgets.QWidget):
-#     def __init__(self, score):
-#         super(Highscore, self).__init__()
-#         self.highscore_table = QtWidgets.QTableWidget(parent=self)
-#         self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
-#         self.init_ui(score)
-#
-#     def init_ui(self, score):
-#         self.setGeometry(0, 0, 1000, 600)
-#         self.setWindowTitle('Highscores')
-#         self.set_highscores(score)
-#         self.draw_highscores()
-#
-#         self.show()
-#
-#     # Appends new score to highscore list
-#     def set_highscores(self, score):
-#         print(self.highscores)
-#         self.highscores.sort()
-#         print(self.highscores)
-#         if self.highscores[-1] < score:
-#             del self.highscores[-1]
-#             print(self.highscores)
-#             self.highscores.append(score)
-#             print(self.highscores)
-#         else:
-#             pass
-#         self.highscores.sort()
-#
-#     # Draws Table with highscores
-#     def draw_highscores(self):
-#         self.highscore_table.setRowCount(10)
-#         self.highscore_table.setColumnCount(1)
-#         self.highscores.sort(reverse=True)
-#         print(self.highscores)
-#         for item in self.highscores:
-#             new_entry = QtWidgets.QTableWidgetItem(str(item))
-#             self.highscore_table.setItem(0, item-1, new_entry)
-
-
 class SetupWidget(QtWidgets.QWidget):
     def __init__(self, address_one, address_two):
         super(SetupWidget, self).__init__()
@@ -78,6 +37,7 @@ class SetupWidget(QtWidgets.QWidget):
         self.player_selection = QtWidgets.QLabel(parent=self)
         self.inst_player_one = QtWidgets.QLabel(parent=self)
         self.inst_player_two = QtWidgets.QLabel(parent=self)
+        self.hs_callback = None
         self.init_ui(address_one)
 
     def init_ui(self, address_one):
@@ -120,12 +80,17 @@ class SetupWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         self.show()
 
+    def register_hs_callback(self, callback):
+        self.hs_callback = callback
+
     def start_game(self, event):
         # TODO: Replace with start of the game
         # 44 = Dummy-Score
         # self.hs = highscore.Highscore(44)
-        self.hs = highscore.HighscoreHandler(44)
+        # self.hs = highscore.HighscoreHandler(44)
         # self.hs.show()
+        # self.hs_callback()
+        pass
 
     def change_player(self, event):
         old_player_one = self.player_one
@@ -151,11 +116,17 @@ def main():
     main_window = SetupWidget('SysArgv1', 'SysArgv2')
     if len(sys.argv) == 2:
         wm_one = bluetooth_input.SetupBluetooth(sys.argv[1])
-        wm_two = bluetooth_input.SetupBluetooth(sys.argv[2])
-        # connect_wiimotes = SetupBluetooth(sys.argv[1], sys.argv[2])
+        # wm_two = bluetooth_input.SetupBluetooth(sys.argv[2])
     else:
         print('Please enter two valid bluetooth addresses.')
         # sys.exit()
+
+    hs = highscore.HighscoreHandler(44)
+    # hs(44)
+    # main_window.register_hs_callback(hs(44))
+    # have to call on_click on an object of highscore
+
+    wm_one.register_click_callback(hs.dw.on_click())
 
     sys.exit(app.exec_())
 

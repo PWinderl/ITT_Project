@@ -98,11 +98,15 @@ class DrawWidget(QtWidgets.QWidget):
         qp.drawPath(self.path)
         qp.end()
 
+    def d_pad_pushed(self):
+        print('D_Pad_Pushed____')
+
     # callback function for the button press and release event
     # Toggle funcitonality by
     # https://stackoverflow.com/questions/8381735/how-to-toggle-a-value-in-python
     # Pyqtsignal emitting
     def on_click(self):
+        print('In onClick____')
         self.recognize_flag ^= True
         self.click_flag ^= True
         if not self.click_flag:

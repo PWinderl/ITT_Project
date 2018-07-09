@@ -126,7 +126,7 @@ def main():
     # main_window.register_hs_callback(hs(44))
     # have to call on_click on an object of highscore
 
-    wm_one.register_click_callback(hs.dw.on_click())
+    wm_one.register_click_callback(hs.dw.on_click)
 
     sys.exit(app.exec_())
 

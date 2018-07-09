@@ -1,3 +1,7 @@
+import math
+import os
+
+
 class Recognizer():
     """
     Implementation of the $1 recognition algorithm.
@@ -22,7 +26,7 @@ class Recognizer():
     def set_callback(self, callback):
         self.callback = callback
 
-    def recognize(self, points, recognize_flag=False, t_name="undefined"):
+    def recognize(self, points, recognize_flag=False, p_name="None", t_name="undefined"):
         if len(points) > 1:
             points = self.resample(points)
             points = self.rotate_to_zero(points)
@@ -40,16 +44,16 @@ class Recognizer():
                     templates.append(
                         {"name": name, "points": eval(parts[1])})
             # TODO: use this for read-in templates
-            """
             if not recognize_flag:
                 with open("strokes.map", "a") as f:
                     f.write(t_name + ":" + str(points))
                     f.write("\n")
-            """
             if recognize_flag and templates is not None and len(templates) > 0:
                 result = self.compare(points, templates, 100)
                 if result[0] is not None and self.callback is not None:
-                    self.callback(result[0]["name"], result[1])
+                    self.callback(result[0]["name"], result[1], p_name)
+                else:
+                    self.callback("None", 0, p_name)
 
     # Takes the points of the unistroke as input.
     # Calculates the distance distance between two points.

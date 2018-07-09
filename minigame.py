@@ -8,7 +8,7 @@ class DrawWidget(QtWidgets.QWidget):
     # pyqtsignal for the recognition at the end of each drawing interaction
     finished_unistroke = QtCore.pyqtSignal(object, bool, str)
 
-    def __init__(self, x, y, width, height):
+    def __init__(self, name, x, y, width, height):
         super(DrawWidget, self).__init__()
         self.width = width
         self.height = height
@@ -17,22 +17,16 @@ class DrawWidget(QtWidgets.QWidget):
         self.click_flag = False
         self.positions = []
         self.path = QtGui.QPainterPath()
-        self.init_ui(x, y, width, height)
-        self.flag = False
-        self.t_name = ""
+        self.init_ui(name, x, y, width, height)
+        self.name = name
 
-    def init_ui(self, x, y, width, height):
-        self.setWindowTitle("DrawingBoard")
+    def init_ui(self, name, x, y, width, height):
+        self.setWindowTitle("DrawingBoard of " + name)
         self.setGeometry(x, y, width, height)
         self.setAutoFillBackground(True)
         self.show()
-
-    def set_name(self, flag, name):
         self.setStyleSheet("background-color:white;")
-        self.path = QtGui.QPainterPath()
         self.update()
-        self.flag = flag
-        self.t_name = name
 
     def set_cursor(self, x, y):
         QtGui.QCursor.setPos(self.mapToGlobal(QtCore.QPoint(x, y)))
@@ -52,7 +46,7 @@ class DrawWidget(QtWidgets.QWidget):
         self.click_flag ^= True
         if not self.click_flag:
             self.finished_unistroke.emit(
-                self.positions, self.flag, self.t_name)
+                self.positions, True, self.name)
 
     # on move callback for position update of wiimote
     def on_move(self, x, y):
@@ -93,8 +87,10 @@ class DrawWidget(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, event):
         self.recognize_flag = False
-        self.finished_unistroke.emit(self.positions, self.flag, self.t_name)
+        self.finished_unistroke.emit(self.positions, True, self.name)
         self.positions = []
+
+# TODO: Templates
 
 
 class TemplateWidget(QtWidgets.QWidget):
@@ -129,13 +125,22 @@ class MiniGame():
     def __init__(self, resolution, size):
         app = QtWidgets.QApplication(sys.argv)
         rec = Recognizer()
-        player = DrawWidget(
-            0, resolution[1] / 2 - size[1] / 2, size[0], size[1])
-        conductor = DrawWidget(
-            resolution[0] - size[0], resolution[1] / 2 - size[1] / 2, size[0], size[1])
+        player = DrawWidget("player",
+                            0, resolution[1] / 2 - size[1] / 2, size[0], size[1])
+        player.finished_unistroke.connect(rec.recognize)
+        rec.set_callback(self.on_result)
+        conductor = DrawWidget("conductor",
+                               resolution[0] - size[0], resolution[1] / 2 - size[1] / 2, size[0], size[1])
+        conductor.finished_unistroke.connect(rec.recognize)
+        rec.set_callback(self.on_result)
         template = TemplateWidget(
             resolution[0] / 2 - size[0] / 2, resolution[1] / 2 - size[1] / 2, size[0], size[1])
         sys.exit(app.exec_())
+
+    def on_result(self, template, score, name):
+        print(name)
+        print(score)
+        print(template)
 
 
 # 1920/975 my resolution

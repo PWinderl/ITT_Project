@@ -16,7 +16,7 @@ class GameController():
 
     def __init__(self, width, height):
         self.width, self.height = width, height
-        self.surface = pygame.display.set_mode((width, height))
+        self.surface = pygame.display.set_mode((width, height), pygame.NOFRAME)
         self.circles = []
         self.init_ui()
 

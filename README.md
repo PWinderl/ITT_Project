@@ -18,7 +18,6 @@ Auflösung: xdpyinfo | grep dimensions
 - Sprites für Game
 - 2 Wiimote handling
 - Button Input
-- Activity Recognition
 - Sounds einbinden (4 Töne)
 - Menüscreen
 - Bis auf game.py alles in einem großen Widget anzeigen

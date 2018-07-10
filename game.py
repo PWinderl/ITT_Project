@@ -54,6 +54,7 @@ class GameController():
         action_line = -1
         rects = []
         clock = pygame.time.Clock()
+        white = (255, 255, 255)
         while 1:
             for event in pygame.event.get():
                 if event.type == NOTE_INCOMING:
@@ -71,7 +72,7 @@ class GameController():
                     action_line = event.dict["line"]
                 if event.type == HIT:
                     for circle in self.circles:
-                        self.change_ellipse_color(circle, (255, 255, 255))
+                        self.change_ellipse_color(circle, white)
                     pygame.time.set_timer(HIT, 0)
                 if event.type == pygame.QUIT:
                     sys.exit()
@@ -84,7 +85,7 @@ class GameController():
                     self.remove_rect(rect)
                     rect = rect.move(0, 1)
                     rect = pygame.draw.rect(
-                        self.surface, (255, 255, 255), rect)
+                        self.surface, white, rect)
                     if item["screen"] == 1 and action_flag:
                         action_flag = False
                         if item["line"] == action_line:

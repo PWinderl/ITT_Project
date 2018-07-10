@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 from recognizer import Recognizer
+from random import randint
 
 
 class DrawWidget(QtWidgets.QWidget):
@@ -90,8 +91,6 @@ class DrawWidget(QtWidgets.QWidget):
         self.finished_unistroke.emit(self.positions, True, self.name)
         self.positions = []
 
-# TODO: Templates
-
 
 class TemplateWidget(QtWidgets.QWidget):
 
@@ -101,6 +100,9 @@ class TemplateWidget(QtWidgets.QWidget):
         self.height = height
         self.init_ui(x, y, width, height)
         self.path = QtGui.QPainterPath()
+        template = self.get_random_template().split(":")
+        self.t_name = template[0]
+        self.draw(eval(template[1]))
 
     def init_ui(self, x, y, width, height):
         self.setWindowTitle("Template")
@@ -108,9 +110,14 @@ class TemplateWidget(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
         self.show()
 
-    # TODO: add points to path
-    # pay attention to start point
+    # TODO: points need to be a accurate in the center
     def draw(self, points):
+        center = (200, 200)
+        self.path.moveTo(points[0][0] + center[0],
+                         points[0][1] + center[0])
+        for point in points[1:]:
+            self.path.lineTo(point[0] + center[0],
+                             point[1] + center[0])
         self.update()
 
     def paintEvent(self, event):
@@ -119,18 +126,32 @@ class TemplateWidget(QtWidgets.QWidget):
         qp.drawPath(self.path)
         qp.end()
 
+    def get_random_template(self):
+        lines = []
+        with open("strokes.map", "r") as strokes:
+            lines = strokes.readlines()
+        if len(lines) > 0:
+            return lines[randint(0, len(lines) - 1)]
+        return None
+
 
 class MiniGame():
 
-    def __init__(self, resolution, size):
+    def __init__(self, resolution, size, b_player=None, b_conductor=None):
         app = QtWidgets.QApplication(sys.argv)
         rec = Recognizer()
         player = DrawWidget("player",
                             0, resolution[1] / 2 - size[1] / 2, size[0], size[1])
+        # connect to input of player wiimote
+        # player.on_click.connect()
+        # player.on_move.connect()
         player.finished_unistroke.connect(rec.recognize)
         rec.set_callback(self.on_result)
         conductor = DrawWidget("conductor",
                                resolution[0] - size[0], resolution[1] / 2 - size[1] / 2, size[0], size[1])
+        # connect to input of conductor wiimote
+        # conductor.on_click.connect()
+        # conductor.on_move.connect()
         conductor.finished_unistroke.connect(rec.recognize)
         rec.set_callback(self.on_result)
         template = TemplateWidget(

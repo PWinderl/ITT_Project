@@ -6,29 +6,38 @@ import sys
 class Highscore(QtWidgets.QWidget):
     print('In Highscore_________')
 
-    def __init__(self):
-        self.score = 44
+    def __init__(self, score):
+        self.new_score = score
         super(Highscore, self).__init__()
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
         self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
-        self.init_ui(self.score)
+        self.init_ui(score)
 
     def init_ui(self, score):
         self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Highscores')
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
-        if score > self.highscores[-1]:
+        # if score > self.highscores[-1]:
+        #     actual_hs_list = self.set_highscores()
+        #     self.draw_highscores(actual_hs_list)
+        # else:
+        #     self.draw_highscores(self.highscores)
+        self.setLayout(layout)
+        self.show()
+
+    def highscore_chart(self):
+        print('Highscore_chart: ', self.new_score)
+        new_list = sorted(self.highscores, reverse=True)
+        print('Sortiert im Chart: ', new_list)
+        if self.new_score > new_list[-1]:
             actual_hs_list = self.set_highscores()
             self.draw_highscores(actual_hs_list)
         else:
             self.draw_highscores(self.highscores)
-        self.setLayout(layout)
-        self.show()
 
     # Appends new score to highscore list
     def set_highscores(self):
-        print('In set_highscores________')
         new_list = sorted(self.highscores, reverse=True)
         if new_list[-1] < self.score:
             del new_list[-1]
@@ -45,7 +54,7 @@ class Highscore(QtWidgets.QWidget):
         i = 0
         for item in new_list:
             new_entry = QtWidgets.QTableWidgetItem(str(item))
-            self.highscore_table.setItem(0, i, new_entry)
+            self.highscore_table.setItem(i, 1, new_entry)
             i += 1
         self.highscores = new_list
         print(self.highscores)
@@ -89,7 +98,6 @@ class DrawWidget(QtWidgets.QWidget):
         print('In save_highscore_______')
         if self.save_callback is not None:
             self.save_callback()
-        # Highscore(self.actual_score)
 
     def set_name(self, flag, name):
         self.setStyleSheet("background-color:white;")
@@ -149,6 +157,6 @@ class DrawWidget(QtWidgets.QWidget):
 class HighscoreHandler():
     def __init__(self, score):
         super(HighscoreHandler, self).__init__()
-        self.hs = Highscore()
+        self.hs = Highscore(43)
         self.dw = DrawWidget(score)
-        self.dw.set_callback(self.hs.set_highscores)
+        self.dw.set_callback(self.hs.highscore_chart)

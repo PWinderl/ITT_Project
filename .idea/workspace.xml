@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="66f292ab-8f01-4d77-b902-dda35d7f1d39" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/highscore.py" beforeDir="false" afterPath="$PROJECT_DIR$/highscore.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="gesture_recognizer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="30" column="20" selection-start-line="30" selection-start-column="8" selection-end-line="30" selection-end-column="20" />
+            <state relative-caret-position="4032">
+              <caret line="386" column="35" selection-start-line="386" selection-start-column="17" selection-end-line="386" selection-end-column="35" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -52,8 +53,8 @@
       <file leaf-file-name="highscore.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/highscore.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
-              <caret line="29" column="32" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
+            <state relative-caret-position="321">
+              <caret line="67" column="45" lean-forward="true" selection-start-line="67" selection-start-column="45" selection-end-line="67" selection-end-column="45" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -72,10 +73,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ir</find>
-      <find>BluetoothInput</find>
-      <find>lookup_name</find>
-      <find>dw</find>
       <find>highscore</find>
       <find>SetupWidget</find>
       <find>DrawWidget</find>
@@ -88,7 +85,6 @@
       <find>recognize_flag</find>
       <find>register_hs_callback</find>
       <find>register_click_callback</find>
-      <find>mouseReleaseEvent</find>
       <find>paintEvent</find>
       <find>wm</find>
       <find>on_click</find>
@@ -102,6 +98,11 @@
       <find>save_callback</find>
       <find>set_highscores</find>
       <find>Highscore</find>
+      <find>recognize</find>
+      <find>mouseReleaseEvent</find>
+      <find>finished_unistroke</find>
+      <find>img</find>
+      <find>highscore_table</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -118,9 +119,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="262" />
+    <option name="x" value="440" />
     <option name="y" value="22" />
-    <option name="width" value="1018" />
+    <option name="width" value="840" />
     <option name="height" value="710" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -129,6 +130,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -140,7 +142,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -229,10 +230,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="262" y="22" width="1018" height="710" extended-state="0" />
-    <editor active="true" />
+    <frame x="440" y="22" width="840" height="710" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17352057" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.17352057" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
@@ -661,16 +661,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="30" column="20" selection-start-line="30" selection-start-column="8" selection-end-line="30" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bluetooth_input.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="645">
@@ -691,10 +681,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4032">
+          <caret line="386" column="35" selection-start-line="386" selection-start-column="17" selection-end-line="386" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/highscore.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="29" column="32" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
+        <state relative-caret-position="321">
+          <caret line="67" column="45" lean-forward="true" selection-start-line="67" selection-start-column="45" selection-end-line="67" selection-end-column="45" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>

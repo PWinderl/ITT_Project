@@ -5,15 +5,20 @@ import sys
 # To call when Game is over
 class Highscore(QtWidgets.QWidget):
     print('In Highscore_________')
+    imagePath = "out.jpg"
 
     def __init__(self, score):
-        self.new_score = score
         super(Highscore, self).__init__()
+        self.new_score = score
+        self.img = QtGui.QPixmap(self.imagePath)
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
+        self.header = self.highscore_table.verticalHeader()
+        self.highscore_table.resize(100, 100)
         self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
-        self.init_ui(score)
+        # self.icon_size = QtWidgets.QTableWidget.QSize(100, 100)
+        self.init_ui()
 
-    def init_ui(self, score):
+    def init_ui(self):
         self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Highscores')
         layout = QtWidgets.QGridLayout(self)
@@ -39,9 +44,9 @@ class Highscore(QtWidgets.QWidget):
     # Appends new score to highscore list
     def set_highscores(self):
         new_list = sorted(self.highscores, reverse=True)
-        if new_list[-1] < self.score:
+        if new_list[-1] < self.new_score:
             del new_list[-1]
-            new_list.append(self.score)
+            new_list.append(self.new_score)
         else:
             pass
         return new_list
@@ -56,6 +61,17 @@ class Highscore(QtWidgets.QWidget):
             new_entry = QtWidgets.QTableWidgetItem(str(item))
             self.highscore_table.setItem(i, 1, new_entry)
             i += 1
+
+        icon = QtGui.QIcon(QtGui.QPixmap("out.jpg"))
+        item = QtWidgets.QTableWidgetItem(icon, "")
+        self.highscore_table.setItem(2, 0, item)
+        self.highscore_table.resize(600, 600)
+        # self.header.se
+
+        # self.highscore_table.setIconSize(icon_size)
+
+        # imgTW = QtWidgets.QTableWidgetItem(QtGui.QPixmap(self.img))
+        # self.highscore_table.setItem(2, 0, imgTW)
         self.highscores = new_list
         print(self.highscores)
 
@@ -96,8 +112,11 @@ class DrawWidget(QtWidgets.QWidget):
 
     def save_highscore(self):
         print('In save_highscore_______')
+        signature = QtWidgets.QWidget.grab(self)
+        signature.save("out.jpg")
         if self.save_callback is not None:
             self.save_callback()
+        self.close()
 
     def set_name(self, flag, name):
         self.setStyleSheet("background-color:white;")
@@ -110,6 +129,8 @@ class DrawWidget(QtWidgets.QWidget):
         QtGui.QCursor.setPos(self.mapToGlobal(QtCore.QPoint(x, y)))
 
     def paintEvent(self, event):
+        # img = QtGui.QImage(200, 200, QtGui.QImage.Format_ARGB32)
+
         qp = QtGui.QPainter()
         qp.begin(self)
         qp.drawPath(self.path)

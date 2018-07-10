@@ -22,6 +22,9 @@ Auflösung: xdpyinfo | grep dimensions
 - Sounds einbinden (4 Töne)
 - Menüscreen
 - Bis auf game.py alles in einem großen Widget anzeigen
+- Activity Recognizing
+    - entweder FFT oder moving average (FFT wäre besser)
+    - unbedingt mit SVM implementieren!
 
 
 ## Offene Themen:

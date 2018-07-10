@@ -6,11 +6,12 @@ import sys
 class Highscore(QtWidgets.QWidget):
     print('In Highscore_________')
 
-    def __init__(self, score):
+    def __init__(self):
+        self.score = 44
         super(Highscore, self).__init__()
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
         self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
-        self.init_ui(score)
+        self.init_ui(self.score)
 
     def init_ui(self, score):
         self.setGeometry(0, 0, 1000, 600)
@@ -18,7 +19,7 @@ class Highscore(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
         if score > self.highscores[-1]:
-            actual_hs_list = self.set_highscores(score)
+            actual_hs_list = self.set_highscores()
             self.draw_highscores(actual_hs_list)
         else:
             self.draw_highscores(self.highscores)
@@ -26,12 +27,12 @@ class Highscore(QtWidgets.QWidget):
         self.show()
 
     # Appends new score to highscore list
-    def set_highscores(self, score):
+    def set_highscores(self):
         print('In set_highscores________')
         new_list = sorted(self.highscores, reverse=True)
-        if new_list[-1] < score:
+        if new_list[-1] < self.score:
             del new_list[-1]
-            new_list.append(score)
+            new_list.append(self.score)
         else:
             pass
         return new_list
@@ -148,6 +149,6 @@ class DrawWidget(QtWidgets.QWidget):
 class HighscoreHandler():
     def __init__(self, score):
         super(HighscoreHandler, self).__init__()
-        self.hs = Highscore(score)
+        self.hs = Highscore()
         self.dw = DrawWidget(score)
-        self.dw.set_callback(self.hs.set_highscores(score))
+        self.dw.set_callback(self.hs.set_highscores)

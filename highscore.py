@@ -21,7 +21,6 @@ class Highscore(QtWidgets.QWidget):
             self.draw_highscores(actual_hs_list)
         else:
             self.draw_highscores(self.highscores)
-
         self.setLayout(layout)
         self.show()
 
@@ -39,7 +38,7 @@ class Highscore(QtWidgets.QWidget):
     def draw_highscores(self, actual_list):
         new_list = sorted(actual_list, reverse=True)
         self.highscore_table.setRowCount(10)
-        self.highscore_table.setColumnCount(1)
+        self.highscore_table.setColumnCount(2)
         i = 0
         for item in new_list:
             new_entry = QtWidgets.QTableWidgetItem(str(item))

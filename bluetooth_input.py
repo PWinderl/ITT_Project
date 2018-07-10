@@ -9,8 +9,8 @@ class SetupBluetooth:
     def __init__(self, bluetooth_adress):
         print('BT Adress: ', bluetooth_adress)
         try:
-            #self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
-            self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
+            self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+            # self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
         except:
             print("No valid bluetooth addresses.")
             sys.exit()
@@ -23,12 +23,16 @@ class SetupBluetooth:
 
         self.move_callback = None
         self.click_callback = None
+        self.confirm_callback = None
 
     def register_move_callback(self, callback):
         self.move_callback = callback
 
     def register_click_callback(self, callback):
         self.click_callback = callback
+
+    def register_confirm_callback(self, callback):
+        self.confirm_callback = callback
 
     # Registers button pushes
     def __on_press__(self, obj):
@@ -44,6 +48,11 @@ class SetupBluetooth:
                     self.wm.ir.unregister_callback(self.__on_move__)
                     if self.click_callback is not None:
                         self.click_callback()
+            if obj[0][0] == 'A':
+                print('A-Button')
+                if self.confirm_callback is not None:
+                    self.confirm_callback()
+
             if obj[0][0] == 'Left':
                 print('Left')
                 if self.click_callback is not None:
@@ -93,7 +102,7 @@ class SetupBluetooth:
         #    print("Geige")
         #else:
         #    print("keine Geige")
-        print(self._acc_vals)
+        # print(self._acc_vals)
 
     def set_update_rate(self):
         self.wm.accelerometer.register_callback(self.update_accel)

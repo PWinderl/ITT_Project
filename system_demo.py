@@ -122,11 +122,10 @@ def main():
         # sys.exit()
 
     hs = highscore.HighscoreHandler(44)
-    # hs(44)
-    # main_window.register_hs_callback(hs(44))
-    # have to call on_click on an object of highscore
 
+    wm_one.register_move_callback(hs.dw.set_cursor)
     wm_one.register_click_callback(hs.dw.on_click)
+    wm_one.register_confirm_callback(hs.dw.save_highscore)
 
     sys.exit(app.exec_())
 

@@ -4,6 +4,8 @@ import sys
 
 # To call when Game is over
 class Highscore(QtWidgets.QWidget):
+    print('In Highscore_________')
+
     def __init__(self, score):
         super(Highscore, self).__init__()
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
@@ -16,7 +18,6 @@ class Highscore(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
         if score > self.highscores[-1]:
-            # self.dw = DrawWidget()
             actual_hs_list = self.set_highscores(score)
             self.draw_highscores(actual_hs_list)
         else:
@@ -26,6 +27,7 @@ class Highscore(QtWidgets.QWidget):
 
     # Appends new score to highscore list
     def set_highscores(self, score):
+        print('In set_highscores________')
         new_list = sorted(self.highscores, reverse=True)
         if new_list[-1] < score:
             del new_list[-1]
@@ -68,6 +70,7 @@ class DrawWidget(QtWidgets.QWidget):
         self.init_ui()
         self.flag = False
         self.t_name = ""
+        self.save_callback = None
 
     def init_ui(self):
         self.setWindowTitle("Signature")
@@ -78,8 +81,14 @@ class DrawWidget(QtWidgets.QWidget):
         self.bt_save.clicked.connect(self.save_highscore)
         self.show()
 
+    def set_callback(self, callback):
+        self.save_callback = callback
+
     def save_highscore(self):
-        Highscore(self.actual_score)
+        print('In save_highscore_______')
+        if self.save_callback is not None:
+            self.save_callback()
+        # Highscore(self.actual_score)
 
     def set_name(self, flag, name):
         self.setStyleSheet("background-color:white;")
@@ -139,4 +148,6 @@ class DrawWidget(QtWidgets.QWidget):
 class HighscoreHandler():
     def __init__(self, score):
         super(HighscoreHandler, self).__init__()
+        self.hs = Highscore(score)
         self.dw = DrawWidget(score)
+        self.dw.set_callback(self.hs.set_highscores(score))

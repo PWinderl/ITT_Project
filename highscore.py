@@ -3,19 +3,22 @@ import sys
 
 
 # To call when Game is over
+from PyQt5.QtCore import QSize
+
+
 class Highscore(QtWidgets.QWidget):
-    print('In Highscore_________')
+    icon_size: QSize
     imagePath = "out.jpg"
 
     def __init__(self, score):
         super(Highscore, self).__init__()
+        self.score_pair = []
+        self.icon_size = QtCore.QSize(100, 80)
         self.new_score = score
         self.img = QtGui.QPixmap(self.imagePath)
+        self.score_pair.append([555, self.img])
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
-        self.header = self.highscore_table.verticalHeader()
-        self.highscore_table.resize(100, 100)
         self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
-        # self.icon_size = QtWidgets.QTableWidget.QSize(100, 100)
         self.init_ui()
 
     def init_ui(self):
@@ -23,11 +26,6 @@ class Highscore(QtWidgets.QWidget):
         self.setWindowTitle('Highscores')
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
-        # if score > self.highscores[-1]:
-        #     actual_hs_list = self.set_highscores()
-        #     self.draw_highscores(actual_hs_list)
-        # else:
-        #     self.draw_highscores(self.highscores)
         self.setLayout(layout)
         self.show()
 
@@ -60,18 +58,19 @@ class Highscore(QtWidgets.QWidget):
         for item in new_list:
             new_entry = QtWidgets.QTableWidgetItem(str(item))
             self.highscore_table.setItem(i, 1, new_entry)
+            self.highscore_table.setRowHeight(i, 60)
             i += 1
+
+        test_icon = QtGui.QIcon(QtGui.QPixmap(self.score_pair[0][1]))
+        test_item = QtWidgets.QTableWidgetItem(test_icon, "")
+        self.highscore_table.setItem(3, 0, test_item)
 
         icon = QtGui.QIcon(QtGui.QPixmap("out.jpg"))
         item = QtWidgets.QTableWidgetItem(icon, "")
         self.highscore_table.setItem(2, 0, item)
+        self.highscore_table.setIconSize(self.icon_size)
         self.highscore_table.resize(600, 600)
-        # self.header.se
 
-        # self.highscore_table.setIconSize(icon_size)
-
-        # imgTW = QtWidgets.QTableWidgetItem(QtGui.QPixmap(self.img))
-        # self.highscore_table.setItem(2, 0, imgTW)
         self.highscores = new_list
         print(self.highscores)
 

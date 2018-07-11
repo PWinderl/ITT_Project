@@ -25,6 +25,7 @@ Auflösung: xdpyinfo | grep dimensions
     - entweder FFT oder moving average (FFT wäre besser)
     - unbedingt mit SVM implementieren!
 - Error im Minigame: manchmal 67 oder 72 Punkte statt 64 (resample)
+- Error: y = point[1] * (size / box[1]) ZeroDivisionError: float division by zero bei scale_to_square
 
 
 ## Offene Themen:

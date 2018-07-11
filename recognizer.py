@@ -41,6 +41,7 @@ class Recognizer():
                 for line in f.readlines():
                     parts = line.split(":")
                     name = parts[0]
+                    print(len(eval(parts[1])))
                     templates.append(
                         {"name": name, "points": eval(parts[1])})
             # TODO: use this for read-in templates
@@ -58,13 +59,14 @@ class Recognizer():
     # Takes the points of the unistroke as input.
     # Calculates the distance distance between two points.
     # Returns the calculated points.
-    # TODO: 67 und 72 Errors 
+    # TODO: 67 und 72 Errors
     def resample(self, points):
         # length of each increment
         inc_length = self.get_path_length(points) / (self.stepsize - 1)
         new_points = []
         new_points.append(points[0])
         whole_distance = 0
+
         try:
             for idx, point in enumerate(points):
                 if idx == 0:
@@ -83,6 +85,8 @@ class Recognizer():
                     whole_distance += d
             if len(new_points) == 63:
                 new_points.append(points[-1])
+            if len(new_points) > 64:                
+                return new_points[63:]
         except Exception as e:
             print(e)
             print("new points")
@@ -127,6 +131,8 @@ class Recognizer():
         return new_points
 
     # Scales the points to a specified size and returns the new points
+    # TODO: y = point[1] * (size / box[1])
+    # ZeroDivisionError: float division by zero
     def scale_to_square(self, points, size):
         box = self.bounding_box(points)
         new_points = []

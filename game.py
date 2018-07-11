@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore, Qt
 import sys
 import pygame
 from threading import Thread
+from bluetooth_input import SetupBluetooth
 
 NOTE_INCOMING = pygame.USEREVENT + 1
 PAUSE = pygame.USEREVENT + 2
@@ -172,3 +173,10 @@ event.emit({"size": (20, 20),
             "line": 1, "speed": 30, "screen": 2})
 pygame.event.post(pygame.event.Event(PAUSE))
 pygame.event.post(pygame.event.Event(CONTINUE))
+
+def emit():
+    event.emit({"size": (20, 20),
+            "line": 0, "speed": 30, "screen": 1})
+
+d = SetupBluetooth(1)
+d1.register_click_callback(emit)

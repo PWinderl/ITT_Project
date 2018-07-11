@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 from recognizer import Recognizer
 from random import randint
+from bluetooth_input import SetupBluetooth
 
 
 class DrawWidget(QtWidgets.QWidget):
@@ -156,12 +157,21 @@ class MiniGame():
         rec.set_callback(self.on_result)
         template = TemplateWidget(
             resolution[0] / 2 - size[0] / 2, resolution[1] / 2 - size[1] / 2, size[0], size[1])
+
+        d1 = SetupBluetooth(1)
+        d2 = SetupBluetooth(2)
+
+        d1.register_click_callback(player.on_click)
+        d1.register_move_callback(player.on_move)
+        d2.register_click_callback(conductor.on_click)
+        d2.register_move_callback(conductor.on_move)
+        
         sys.exit(app.exec_())
 
     def on_result(self, template, score, name):
         print(name)
-        print(score)
-        print(template)
+        #print(score)
+        #print(template)
 
 
 # 1920/975 my resolution

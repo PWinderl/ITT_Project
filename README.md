@@ -24,6 +24,7 @@ Auflösung: xdpyinfo | grep dimensions
 - Activity Recognizing
     - entweder FFT oder moving average (FFT wäre besser)
     - unbedingt mit SVM implementieren!
+- Error im Minigame: manchmal 67 oder 72 Punkte statt 64 (resample)
 
 
 ## Offene Themen:

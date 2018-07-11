@@ -27,9 +27,6 @@ class Transform():
         return (top_left, bottom_left, bottom_right, top_right)
 
     def transform(self, points, output_res, wiimote_point):
-        print(points)
-        print(output_res)
-        print(wiimote_point)
         points = self.sort(points)
         A = points[0]
         B = points[1]
@@ -90,8 +87,6 @@ class Transform():
                                                                [1]]))]
         x = x / z
         y = y / z
-
-        print(x, y)
         return (x, y)
 
 

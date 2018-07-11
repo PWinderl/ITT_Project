@@ -8,7 +8,7 @@ from PyQt5.QtCore import QSize
 
 
 class Highscore(QtWidgets.QWidget):
-    icon_size: QSize
+    # icon_size: QSize
     imagePath = "out.jpg"
 
     def __init__(self, score):
@@ -37,7 +37,8 @@ class Highscore(QtWidgets.QWidget):
     def highscore_chart(self):
 
         # Testing new List
-        sorted_hs_list = sorted(self.highscore_list, key=itemgetter(0), reverse=True)
+        sorted_hs_list = sorted(self.highscore_list,
+                                key=itemgetter(0), reverse=True)
         print(sorted_hs_list)
         print('Score Pair: ', self.score_pair[0][0])
         print('Last HS List Item SCore: ', sorted_hs_list[-1][0])
@@ -60,7 +61,8 @@ class Highscore(QtWidgets.QWidget):
     # Appends new score to highscore list
     def set_highscores(self):
         # Testing new List
-        sorted_hs_list = sorted(self.highscore_list, key=itemgetter(0), reverse=True)
+        sorted_hs_list = sorted(self.highscore_list,
+                                key=itemgetter(0), reverse=True)
         if sorted_hs_list[-1][0] < self.score_pair[0][0]:
             del sorted_hs_list[-1]
             sorted_hs_list.append(self.score_pair[0])
@@ -91,7 +93,7 @@ class Highscore(QtWidgets.QWidget):
                 sign_to_icon = QtGui.QIcon(QtGui.QPixmap(item[1]))
                 new_sign_entry = QtWidgets.QTableWidgetItem(sign_to_icon, "")
                 self.highscore_table.setItem(i, 0, new_sign_entry)
-                
+
             new_score_entry = QtWidgets.QTableWidgetItem(str(actual_score))
             self.highscore_table.setItem(i, 1, new_score_entry)
             self.highscore_table.setRowHeight(i, 60)
@@ -119,8 +121,8 @@ class DrawWidget(QtWidgets.QWidget):
 
     def __init__(self, score):
         super(DrawWidget, self).__init__()
-        self.width = 600
-        self.height = 400
+        self.width = 1000
+        self.height = 1000
         self.actual_score = score
         self.setMouseTracking(True)
         self.recognize_flag = False

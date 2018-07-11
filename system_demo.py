@@ -114,6 +114,8 @@ class SetupWidget(QtWidgets.QWidget):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     main_window = SetupWidget('SysArgv1', 'SysArgv2')
+    wm_one = bluetooth_input.SetupBluetooth(1)
+    wm_two = bluetooth_input.SetupBluetooth(2)
     if len(sys.argv) == 2:
         wm_one = bluetooth_input.SetupBluetooth(sys.argv[1])
         # wm_two = bluetooth_input.SetupBluetooth(sys.argv[2])
@@ -126,6 +128,9 @@ def main():
     wm_one.register_move_callback(hs.dw.set_cursor)
     wm_one.register_click_callback(hs.dw.on_click)
     wm_one.register_confirm_callback(hs.dw.save_highscore)
+    wm_two.register_move_callback(hs.dw.set_cursor)
+    wm_two.register_click_callback(hs.dw.on_click)
+    wm_two.register_confirm_callback(hs.dw.save_highscore)
 
     sys.exit(app.exec_())
 

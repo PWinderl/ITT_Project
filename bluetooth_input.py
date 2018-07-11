@@ -8,10 +8,17 @@ from pyqtgraph.Qt import QtGui, QtCore
 class SetupBluetooth:
     def __init__(self, bluetooth_adress):
         print('BT Adress: ', bluetooth_adress)
-        try:
+        if bluetooth_adress == 1:
+            self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
+        else:
             self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+
+        try:
+            #
+            pass
             # self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
-        except:
+        except Exception as e:
+            print(e)
             print("No valid bluetooth addresses.")
             sys.exit()
             return
@@ -39,7 +46,7 @@ class SetupBluetooth:
         if obj is not None and len(obj) > 0:
             if obj[0][0] == 'B':
                 print('B-Button')
-                #self.activity_recognizer()
+                # self.activity_recognizer()
                 if obj[0][1] is True:
                     self.wm.ir.register_callback(self.__on_move__)
                     if self.click_callback is not None:
@@ -78,7 +85,8 @@ class SetupBluetooth:
                 points.append((item['x'], item['y']))
             # P is the center point of the wiimote IR camera
             # DEST is the destination resolution
-            P, DEST = (1024 / 2, 768 / 2), (1920, 1080)
+            # needs to have widget resolution!
+            P, DEST = (1024 / 2, 768 / 2), (500, 500)
             try:
                 x, y = Transform().transform(points, DEST, P)
             except Exception as e:
@@ -98,9 +106,9 @@ class SetupBluetooth:
             return
         self._acc_vals = self.wm.accelerometer
         val = self._acc_vals
-        #if 400 <= val[0] <= 450 and 425 <= val[1] <= 475 and 500 <= val[2] <= 545:
+        # if 400 <= val[0] <= 450 and 425 <= val[1] <= 475 and 500 <= val[2] <= 545:
         #    print("Geige")
-        #else:
+        # else:
         #    print("keine Geige")
         # print(self._acc_vals)
 
@@ -110,4 +118,3 @@ class SetupBluetooth:
 
     def update_accel(self, acc_vals):
         self._acc_vals = self.wm.accelerometer
-

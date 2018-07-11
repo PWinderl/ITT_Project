@@ -58,29 +58,36 @@ class Recognizer():
     # Takes the points of the unistroke as input.
     # Calculates the distance distance between two points.
     # Returns the calculated points.
+    # TODO: 67 und 72 Errors 
     def resample(self, points):
         # length of each increment
         inc_length = self.get_path_length(points) / (self.stepsize - 1)
         new_points = []
         new_points.append(points[0])
         whole_distance = 0
-        for idx, point in enumerate(points):
-            if idx == 0:
-                continue
-            last_pos = points[idx - 1]
-            d = self.distance(last_pos, point)
-            if whole_distance + d >= inc_length:
-                qx = last_pos[0] + ((inc_length - whole_distance) / d) * \
-                    (point[0] - last_pos[0])
-                qy = last_pos[1] + ((inc_length - whole_distance) / d) * \
-                    (point[1] - last_pos[1])
-                new_points.append((qx, qy))
-                points.insert(idx, (qx, qy))
-                whole_distance = 0
-            else:
-                whole_distance += d
-        if len(new_points) == 63:
-            new_points.append(points[-1])
+        try:
+            for idx, point in enumerate(points):
+                if idx == 0:
+                    continue
+                last_pos = points[idx - 1]
+                d = self.distance(last_pos, point)
+                if whole_distance + d >= inc_length:
+                    qx = last_pos[0] + ((inc_length - whole_distance) / d) * \
+                        (point[0] - last_pos[0])
+                    qy = last_pos[1] + ((inc_length - whole_distance) / d) * \
+                        (point[1] - last_pos[1])
+                    new_points.append((qx, qy))
+                    points.insert(idx, (qx, qy))
+                    whole_distance = 0
+                else:
+                    whole_distance += d
+            if len(new_points) == 63:
+                new_points.append(points[-1])
+        except Exception as e:
+            print(e)
+            print("new points")
+            print(len(new_points))
+            print(new_points)
         return new_points
 
     # Gets two points and calculates and returns the distance between them.
@@ -202,6 +209,8 @@ class Recognizer():
     def path_distance(self, a, b):
         d = 0
         length = len(a)
+        print(len(a))
+        print(len(b))
         for idx in range(length - 1):
             d += self.distance(a[idx], b[idx])
         return d / length

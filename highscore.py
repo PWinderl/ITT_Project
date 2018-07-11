@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
+from operator import itemgetter
 import sys
 
 
@@ -19,6 +20,10 @@ class Highscore(QtWidgets.QWidget):
         self.score_pair.append([555, self.img])
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
         self.highscores = [1, 2, 3, 4, 11, 6, 7, 8, 9, 10]
+
+        # Testing new List
+        self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"]]
+
         self.init_ui()
 
     def init_ui(self):
@@ -30,34 +35,65 @@ class Highscore(QtWidgets.QWidget):
         self.show()
 
     def highscore_chart(self):
-        print('Highscore_chart: ', self.new_score)
-        new_list = sorted(self.highscores, reverse=True)
-        print('Sortiert im Chart: ', new_list)
-        if self.new_score > new_list[-1]:
-            actual_hs_list = self.set_highscores()
-            self.draw_highscores(actual_hs_list)
+
+        # Testing new List
+        sorted_hs_list = sorted(self.highscore_list, key=itemgetter(0), reverse=True)
+        print(sorted_hs_list)
+        print('Score Pair: ', self.score_pair[0][0])
+        print('Last HS List Item SCore: ', sorted_hs_list[-1][0])
+        if self.score_pair[0][0] > sorted_hs_list[-1][0]:
+            new_hs_list = self.set_highscores()
+            self.draw_highscores(new_hs_list)
         else:
-            self.draw_highscores(self.highscores)
+            print('HS in Else')
+            self.draw_highscores(self.highscore_list)
+
+        # print('Highscore_chart: ', self.new_score)
+        # new_list = sorted(self.highscores, reverse=True)
+        # print('Sortiert im Chart: ', new_list)
+        # if self.new_score > new_list[-1]:
+        #     actual_hs_list = self.set_highscores()
+        #     self.draw_highscores(actual_hs_list)
+        # else:
+        #     self.draw_highscores(self.highscores)
 
     # Appends new score to highscore list
     def set_highscores(self):
-        new_list = sorted(self.highscores, reverse=True)
-        if new_list[-1] < self.new_score:
-            del new_list[-1]
-            new_list.append(self.new_score)
+        # Testing new List
+        sorted_hs_list = sorted(self.highscore_list, key=itemgetter(0), reverse=True)
+        if sorted_hs_list[-1][0] < self.score_pair[0][0]:
+            del sorted_hs_list[-1]
+            sorted_hs_list.append(self.score_pair[0])
+            print('New Score List with appen: ', sorted_hs_list)
         else:
             pass
-        return new_list
+        return sorted_hs_list
+
+        # new_list = sorted(self.highscores, reverse=True)
+        # if new_list[-1] < self.new_score:
+        #     del new_list[-1]
+        #     new_list.append(self.new_score)
+        # else:
+        #     pass
+        # return new_list
 
     # Draws Table with highscores
     def draw_highscores(self, actual_list):
-        new_list = sorted(actual_list, reverse=True)
+        new_list = sorted(actual_list, key=itemgetter(0), reverse=True)
         self.highscore_table.setRowCount(10)
         self.highscore_table.setColumnCount(2)
         i = 0
         for item in new_list:
-            new_entry = QtWidgets.QTableWidgetItem(str(item))
-            self.highscore_table.setItem(i, 1, new_entry)
+            actual_score = item[0]
+            if type(item[1]) is not str:
+                actual_signature = item[1]
+                print('Signature: ', actual_signature)
+                sign_to_icon = QtGui.QIcon(QtGui.QPixmap(item[1]))
+                new_sign_entry = QtWidgets.QTableWidgetItem(sign_to_icon, "")
+                self.highscore_table.setItem(i, 0, new_sign_entry)
+                
+            new_score_entry = QtWidgets.QTableWidgetItem(str(actual_score))
+            self.highscore_table.setItem(i, 1, new_score_entry)
             self.highscore_table.setRowHeight(i, 60)
             i += 1
 

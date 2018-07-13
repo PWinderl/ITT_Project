@@ -32,3 +32,16 @@ Auflösung: xdpyinfo | grep dimensions
 
 - Welche activity? (Geige könnte Probleme verursachen)
 - Sounds abspielen, wenn "Dirigent" Ton vorgibt?
+
+## Sounds:
+
+- C F G A
+- C D F G
+- C ES F G
+- C ES G A
+
+oder chords:
+- C E G
+- G B D
+- A C E
+- F A C

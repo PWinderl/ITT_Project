@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+"""
+By Thomas Oswald
+"""
+
 from numpy import matrix
 from numpy.linalg import solve, inv
-
-# points = [(x,y), (x,y), (x,y), (x,y)]
 
 
 class Transform():
@@ -88,19 +90,3 @@ class Transform():
         x = x / z
         y = y / z
         return (x, y)
-
-
-"""
-WIIMOTE_IR_CAM_WIDTH, WIIMOTE_IR_CAM_HEIGHT = 1024, 768
-# top left
-A = 450, 690
-# bottom left
-B = 500, 300
-# bottom right
-C = 950, 300
-# top right
-D = 900, 700
-
-point = (512, 384)
-print(Transform().transform([A, B, C, D], (1920, 1080), point))
-"""

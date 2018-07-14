@@ -1,8 +1,14 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+By Thomas Oswald
+"""
+
 from PyQt5 import QtWidgets, QtCore, Qt
 import sys
 import pygame
 from threading import Thread
-from bluetooth_input import SetupBluetooth
 
 NOTE_INCOMING = pygame.USEREVENT + 1
 PAUSE = pygame.USEREVENT + 2
@@ -13,10 +19,18 @@ HIT = pygame.USEREVENT + 5
 # TODO: notes destroy target, when no action_flag is set
 
 
-class GameController():
+class Game():
 
     def __init__(self, width, height):
         self.width, self.height = width, height
+        """
+        SET WINDOW POS
+        x = 100
+        y = 0
+        import os
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+        """
+        pygame.init()
         self.surface = pygame.display.set_mode((width, height), pygame.NOFRAME)
         self.circles = []
         self.init_ui()
@@ -61,7 +75,10 @@ class GameController():
                 if event.type == NOTE_INCOMING:
                     try:
                         rects.append(
-                            {"size": event.dict["size"], "line": event.dict["line"], "speed": event.dict["speed"], "screen": event.dict["screen"]})
+                            {"size": event.dict["size"],
+                                "line": event.dict["line"],
+                                "speed": event.dict["speed"],
+                                "screen": event.dict["screen"]})
                     except Exception as e:
                         print(e)
                 if event.type == PAUSE:
@@ -117,6 +134,11 @@ class GameController():
                 clock.tick(240)
         pygame.quit()
 
+    # TODO: Extend this code
+    def play_note(self):
+        pygame.mixer.music.load("Sample.mp3")
+        pygame.mixer.music.play()
+
     def change_ellipse_color(self, rect, color):
         ellipse = pygame.draw.ellipse(self.surface, color, rect)
         pygame.display.update(rect)
@@ -138,14 +160,15 @@ class GameController():
         return [middle - width / 2, 0, width, height]
 
 
-class Game(Thread):
+class GameController(Thread):
 
     def __init__(self, width, height):
         super().__init__()
-        self.controller = GameController(width, height)
+        self.game = Game(width, height)
 
     def run(self):
-        self.controller.run()
+        self.game.run()
+        pygame.quit()
 
 
 class GameEvent():
@@ -165,6 +188,22 @@ class GameEvent():
         pygame.event.post(pygame.event.Event(self.event, data))
 
 
+class GameWidget(QtWidgets.QWidget):
+
+    def __init__(self, parent=None):
+        super(GameWidget, self).__init__(parent)
+        self.init_ui()
+        self.init_game()
+
+    def init_ui(self):
+        self.setFixedSize(650, 650)
+        self.show()
+
+    def init_game(self):
+        self.controller = GameController(500, 500).start()
+
+
+"""
 event = GameEvent(NOTE_INCOMING)
 Game(1920, 800).start()
 event.emit({"size": (20, 20),
@@ -174,9 +213,12 @@ event.emit({"size": (20, 20),
 pygame.event.post(pygame.event.Event(PAUSE))
 pygame.event.post(pygame.event.Event(CONTINUE))
 
+
 def emit():
     event.emit({"size": (20, 20),
-            "line": 0, "speed": 30, "screen": 1})
+                "line": 0, "speed": 30, "screen": 1})
 
-d = SetupBluetooth(1)
-d1.register_click_callback(emit)
+
+# d = SetupBluetooth(1)
+# d1.register_click_callback(emit)
+"""

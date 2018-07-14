@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from PyQt5 import QtWidgets
-import pygame, sys, time
+import pygame
+import sys
+import time
 from pygame.locals import *
 import highscore
 import bluetooth_input
@@ -53,11 +55,12 @@ class SetupWidget(QtWidgets.QWidget):
         self.bt_change_player.clicked.connect(self.change_player)
         layout.addWidget(self.bt_change_player, 0, 1)
 
-        self.player_selection.setText('Player 1 is currently Wiimote: ' + str(address_one))
+        self.player_selection.setText(
+            'Player 1 is currently Wiimote: ' + str(address_one))
         layout.addWidget(self.player_selection, 0, 2)
 
         self.inst_player_one.setText('Player 1' + "\n" +
-                                    'As the notes comes down you have to play violin as shown below and' + "\n" +
+                                     'As the notes comes down you have to play violin as shown below and' + "\n" +
                                      'push the correct button according to the lines.' + "\n" +
                                      'Each correct played note gets you points.' + "\n" +
                                      'During the game there will appear mini games where you have to paint' + "\n" +
@@ -73,7 +76,8 @@ class SetupWidget(QtWidgets.QWidget):
                                      '- B for the second column' + "\n" +
                                      '- 1 for the third column' + "\n" +
                                      '- 2 for the fourth column' + "\n" +
-                                     'When mini games starts and you are able to draw faster than your opponent' + "\n" +
+                                     'When mini games starts and you are able to draw \
+                                      faster than your opponent' + "\n" +
                                      'points from his score will be substracted')
         layout.addWidget(self.inst_player_two, 1, 1)
 
@@ -96,7 +100,8 @@ class SetupWidget(QtWidgets.QWidget):
         old_player_one = self.player_one
         self.player_one = self.player_two
         self.player_two = old_player_one
-        self.player_selection.setText('Player 1 is currently Wiimote: ' + str(self.player_one))
+        self.player_selection.setText(
+            'Player 1 is currently Wiimote: ' + str(self.player_one))
 
 
 # To connect to Wiimotes

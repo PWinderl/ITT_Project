@@ -1,8 +1,15 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+By Thomas Oswald
+"""
+
 from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 from recognizer import Recognizer
 from random import randint
-from bluetooth_input import SetupBluetooth
+# from bluetooth_input import SetupBluetooth
 
 
 class DrawWidget(QtWidgets.QFrame):

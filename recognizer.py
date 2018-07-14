@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+By Thomas Oswald
+"""
+
 import math
 import os
 
@@ -85,7 +92,7 @@ class Recognizer():
                     whole_distance += d
             if len(new_points) == 63:
                 new_points.append(points[-1])
-            if len(new_points) > 64:                
+            if len(new_points) > 64:
                 return new_points[63:]
         except Exception as e:
             print(e)

@@ -1,7 +1,17 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+By Thomas Oswald
+"""
+
+
 from PyQt5 import QtWidgets, QtCore
 
 
 class MenuWidget(QtWidgets.QWidget):
+
+    on_menu = QtCore.pyqtSignal(str)
 
     def __init__(self, size, parent=None):
         super(MenuWidget, self).__init__(parent)
@@ -27,7 +37,7 @@ class MenuWidget(QtWidgets.QWidget):
 
         quit_game = QtWidgets.QPushButton(self)
         quit_game.setFixedSize(200, 50)
-        quit_game.setText("Quit")
+        quit_game.setText("Quit (ESC)")
         quit_game.clicked.connect(lambda: self.on_click(2))
         w_layout.addWidget(quit_game, alignment=QtCore.Qt.AlignCenter)
         self.setLayout(w_layout)
@@ -35,8 +45,8 @@ class MenuWidget(QtWidgets.QWidget):
 
     def on_click(self, idx):
         if idx == 0:
-            pass
+            self.on_menu.emit("game")
         elif idx == 1:
-            pass
+            self.on_menu.emit("highscore")
         elif idx == 2:
             QtWidgets.QApplication.quit()

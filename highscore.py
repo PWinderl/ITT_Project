@@ -7,12 +7,12 @@ import sys
 from PyQt5.QtCore import QSize
 
 
-class Highscore(QtWidgets.QWidget):
+class HighscoreWidget(QtWidgets.QWidget):
     # icon_size: QSize
     imagePath = "out.jpg"
 
-    def __init__(self, score):
-        super(Highscore, self).__init__()
+    def __init__(self, score, parent=None):
+        super(HighscoreWidget, self).__init__(parent)
         self.score_pair = []
         self.icon_size = QtCore.QSize(100, 80)
         self.new_score = score
@@ -27,8 +27,8 @@ class Highscore(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Highscores')
+        self.showFullScreen()
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
         self.setLayout(layout)
@@ -115,7 +115,6 @@ class Highscore(QtWidgets.QWidget):
 
 class DrawWidget(QtWidgets.QWidget):
 
-    print('im draw widget')
     # pyqtsignal for the recognition at the end of each drawing interaction
     finished_unistroke = QtCore.pyqtSignal(object, bool, str)
 
@@ -215,6 +214,6 @@ class DrawWidget(QtWidgets.QWidget):
 class HighscoreHandler():
     def __init__(self, score):
         super(HighscoreHandler, self).__init__()
-        self.hs = Highscore(43)
+        self.hs = HighscoreWidget(43)
         self.dw = DrawWidget(score)
         self.dw.set_callback(self.hs.highscore_chart)

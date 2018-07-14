@@ -8,13 +8,14 @@ By Thomas Oswald
 from PyQt5 import QtWidgets, QtCore, Qt
 import sys
 import pygame
-from threading import Thread
+import os
 
 NOTE_INCOMING = pygame.USEREVENT + 1
 PAUSE = pygame.USEREVENT + 2
 CONTINUE = pygame.USEREVENT + 3
 ACTION = pygame.USEREVENT + 4
 HIT = pygame.USEREVENT + 5
+EXIT = pygame.USEREVENT + 6
 
 # TODO: notes destroy target, when no action_flag is set
 
@@ -23,15 +24,10 @@ class Game():
 
     def __init__(self, width, height):
         self.width, self.height = width, height
-        """
-        SET WINDOW POS
-        x = 100
-        y = 0
-        import os
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
-        """
+        # SET WINDOW POS
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (100, 100)
         pygame.init()
-        self.surface = pygame.display.set_mode((width, height), pygame.NOFRAME)
+        self.screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
         self.circles = []
         self.init_ui()
 
@@ -50,8 +46,8 @@ class Game():
                 x, y = (int((line_size * step + line_size *
                              (step + 1)) / 2) - circle_radius / 2, self.height - 50)
                 self.circles.append(pygame.draw.ellipse(
-                    self.surface, (255, 255, 255), (x, y, circle_radius, circle_radius)))
-            pygame.draw.line(self.surface, color,  [
+                    self.screen, (255, 255, 255), (x, y, circle_radius, circle_radius)))
+            pygame.draw.line(self.screen, color,  [
                 line_size * step, 0], [line_size * step, self.height], 5)
             if step == lines / 3 or step == lines / 2:
                 color = (255, 255, 255)
@@ -62,6 +58,7 @@ class Game():
         pygame.display.update()
 
     def run(self):
+        is_running = True
         pause_flag = False
 
         # for testing on True
@@ -70,7 +67,7 @@ class Game():
         rects = []
         clock = pygame.time.Clock()
         white = (255, 255, 255)
-        while 1:
+        while is_running:
             for event in pygame.event.get():
                 if event.type == NOTE_INCOMING:
                     try:
@@ -81,9 +78,23 @@ class Game():
                                 "screen": event.dict["screen"]})
                     except Exception as e:
                         print(e)
+                # Used for hiding and showing:
+                # https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-
+                # surface-and-keep-all-objects-within-proportionate-to-t
                 if event.type == PAUSE:
+                    screen = pygame.display.set_mode(
+                        (300, 300), pygame.NOFRAME)
+                    screen.blit(pygame.transform.scale(
+                        self.screen, (300, 300)), (0, 0))
+                    pygame.display.flip()
                     pause_flag = True
                 if event.type == CONTINUE:
+                    screen = pygame.display.set_mode(
+                        (self.width, self.height), pygame.NOFRAME)
+                    screen.blit(pygame.transform.scale(
+                        self.screen, (self.width, self.height)), (0, 0))
+                    self.screen = screen
+                    pygame.display.flip()
                     pause_flag = False
                 if event.type == ACTION:
                     action_flag = True
@@ -92,6 +103,8 @@ class Game():
                     for circle in self.circles:
                         self.change_ellipse_color(circle, white)
                     pygame.time.set_timer(HIT, 0)
+                if event.type == EXIT:
+                    is_running = False
                 if event.type == pygame.QUIT:
                     sys.exit()
             if not pause_flag:
@@ -103,7 +116,7 @@ class Game():
                     self.remove_rect(rect)
                     rect = rect.move(0, 1)
                     rect = pygame.draw.rect(
-                        self.surface, white, rect)
+                        self.screen, white, rect)
                     if item["screen"] == 1 and action_flag:
                         action_flag = False
                         if item["line"] == action_line:
@@ -140,16 +153,16 @@ class Game():
         pygame.mixer.music.play()
 
     def change_ellipse_color(self, rect, color):
-        ellipse = pygame.draw.ellipse(self.surface, color, rect)
+        ellipse = pygame.draw.ellipse(self.screen, color, rect)
         pygame.display.update(rect)
         return ellipse
 
     def remove_rect(self, rect):
-        pygame.draw.rect(self.surface, (0, 0, 0), rect)
+        pygame.draw.rect(self.screen, (0, 0, 0), rect)
         pygame.display.update(rect)
 
     def add_rect(self, item):
-        return pygame.draw.rect(self.surface, (0, 0, 0), self.get_pos_and_size(
+        return pygame.draw.rect(self.screen, (0, 0, 0), self.get_pos_and_size(
             item["screen"], item["line"], item["size"]))
 
     def get_pos_and_size(self, screen, line, size):
@@ -160,15 +173,14 @@ class Game():
         return [middle - width / 2, 0, width, height]
 
 
-class GameController(Thread):
+class GameController(QtCore.QThread):
 
-    def __init__(self, width, height):
-        super().__init__()
+    def __init__(self, width, height, parent=None):
+        super(GameController, self).__init__(parent)
         self.game = Game(width, height)
 
     def run(self):
         self.game.run()
-        pygame.quit()
 
 
 class GameEvent():
@@ -190,17 +202,28 @@ class GameEvent():
 
 class GameWidget(QtWidgets.QWidget):
 
-    def __init__(self, parent=None):
+    def __init__(self, size, parent=None):
         super(GameWidget, self).__init__(parent)
+        self.width, self.height = size
         self.init_ui()
         self.init_game()
 
     def init_ui(self):
-        self.setFixedSize(650, 650)
+        self.setFixedSize(self.width, self.height)
         self.show()
 
     def init_game(self):
-        self.controller = GameController(500, 500).start()
+        self.controller = GameController(
+            self.width - 100, self.height - 100, parent=self).start()
+
+        QtCore.QTimer.singleShot(500, self.test)
+        QtCore.QTimer.singleShot(1000, self.test2)
+
+    def test(self):
+        pygame.event.post(pygame.event.Event(PAUSE))
+
+    def test2(self):
+        pygame.event.post(pygame.event.Event(CONTINUE))
 
 
 """

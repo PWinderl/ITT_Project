@@ -11,8 +11,9 @@ class HighscoreWidget(QtWidgets.QWidget):
     # icon_size: QSize
     imagePath = "out.jpg"
 
-    def __init__(self, score, parent=None):
+    def __init__(self, size, score, parent=None):
         super(HighscoreWidget, self).__init__(parent)
+        self.width, self.height = size
         self.score_pair = []
         self.icon_size = QtCore.QSize(100, 80)
         self.new_score = score
@@ -27,8 +28,7 @@ class HighscoreWidget(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle('Highscores')
-        self.showFullScreen()
+        self.setFixedSize(self.width, self.height)
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
         self.setLayout(layout)

@@ -46,7 +46,7 @@ class Display(QtWidgets.QMainWindow):
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
             widget = GameWidget((650, 650), parent=self.window)
-            self.setWindowState(QtCore.Qt.WindowMinimized)
+            # self.setWindowState(QtCore.Qt.WindowMinimized)
         elif widget_type == "minigame":
             widget = MiniGameWidget((500, 500), parent=self.window)
         elif widget_type == "highscore":
@@ -67,8 +67,8 @@ class Display(QtWidgets.QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
-            self.setWindowState(QtCore.Qt.WindowFullScreen)
-            # QtWidgets.QApplication.quit()
+            # self.setWindowState(QtCore.Qt.WindowFullScreen)
+            QtWidgets.QApplication.quit()
 
 
 if __name__ == "__main__":

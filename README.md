@@ -12,20 +12,34 @@ Auflösung: xdpyinfo | grep dimensions
 - Minigame
     - ~~Templates definieren und in TemplateWidget darstellen~~
     - 2 Pointer implementieren (Rechtecke, die den jeweiligen Cursor repräsentieren)
-    - Gesten/Zeichenerkennung
+    - Gesten/Zeichenerkennung muss funktionieren
     - ~~2 Bluetooth Inputs hinzufügen~~
-- 2 Wiimote handling
-- Button Input
+- ~~2 Wiimote handling~~
+- ~~Button Input~~
 - Sounds einbinden (4 Töne)
 - ~~Menüscreen~~
 - ~~Bis auf game.py alles in einem großen Widget anzeigen~~
 - Activity Recognizing
 - Game
     - Sounds einbinden (4 Töne)
-    - Sprites
     - Eventsystem finalisieren
+    - Einbinden der Activity Recognition
+    - Minigame Timer
+    - Randwidget mit Punkteanzahl
 - Setup
     - Bluetooth connection abfragen / Events
+    - Bevor Verbindung steht, setup screen anzeigen -> evtl anderer Thread für Verbindungsaufbau
+- Wechsel von Game zu Minigame und wieder zurück
+- GUI
+    - Sprites
+        - "Target" also Kreise, die das Ziel darstellen
+        - "Cube" Noten, die durch die Lines fahren
+        - "Line" abgrenzende Linie
+    - Hintergrund
+        - für Widgets
+        - für pygame (wenn möglich / nötig)
+    - Buttons
+
 
 ## Errors
 

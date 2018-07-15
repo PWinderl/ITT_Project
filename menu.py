@@ -13,7 +13,7 @@ class MenuWidget(QtWidgets.QWidget):
 
     on_menu = QtCore.pyqtSignal(str)
 
-    def __init__(self, size, parent=None):
+    def __init__(self, size, devices, parent=None):
         super(MenuWidget, self).__init__(parent)
         self.width, self.height = size
         self.init_ui()

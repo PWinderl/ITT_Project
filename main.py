@@ -19,39 +19,41 @@ import sys
 
 class Display(QtWidgets.QMainWindow):
 
-    def __init__(self):
+    def __init__(self, addresses=None):
         super(Display, self).__init__()
         self.current_widget = None
         self.init_ui()
+        self.devices = []
+        self.on_widget_change("setup")
+        self.current_widget.init_devices(addresses)
 
     def init_ui(self):
         self.showFullScreen()
         self.window = QtWidgets.QWidget(self)
         self.setCentralWidget(self.window)
         layout = QtWidgets.QVBoxLayout(self.window)
-
-        self.on_widget_change("menu")
-
         self.window.setLayout(layout)
 
         self.show()
 
+    # TODO: Get display resolution
     def on_widget_change(self, widget_type):
         widget = None
         if widget_type == "setup":
             widget = SetupWidget((500, 500), parent=self.window)
-            widget.on_setup_end.connect(lambda: self.on_widget_change("menu"))
+            widget.on_setup_end.connect(lambda d: self.connect_devices(d))
         elif widget_type == "menu":
-            widget = MenuWidget((500, 500), parent=self.window)
+            widget = MenuWidget((500, 500), self.devices, parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
-            widget = GameWidget((650, 650), parent=self.window)
+            widget = GameWidget((1920, 975), self.devices, parent=self.window)
             # self.setWindowState(QtCore.Qt.WindowMinimized)
         elif widget_type == "minigame":
-            widget = MiniGameWidget((500, 500), parent=self.window)
+            widget = MiniGameWidget(
+                (500, 500), self.devices, parent=self.window)
         elif widget_type == "highscore":
-            score = 1
-            widget = HighscoreWidget((500, 500), score, parent=self.window)
+            widget = HighscoreWidget(
+                (500, 500), self.devices, parent=self.window)
         self.change_widget(widget)
 
     def change_widget(self, widget):
@@ -65,6 +67,10 @@ class Display(QtWidgets.QMainWindow):
         self.current_widget = widget
         self.show()
 
+    def connect_devices(self, devices):
+        self.devices = devices
+        self.on_widget_change("menu")
+
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
             # self.setWindowState(QtCore.Qt.WindowFullScreen)
@@ -73,5 +79,8 @@ class Display(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    d = Display()
+    if len(sys.argv) > 1:
+        d = Display(sys.argv[1:])
+    else:
+        d = Display()
     sys.exit(app.exec_())

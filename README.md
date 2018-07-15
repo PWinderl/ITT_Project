@@ -31,6 +31,9 @@ Auflösung: xdpyinfo | grep dimensions
 
 - Error im Minigame: manchmal 67 oder 72 Punkte statt 64 (resample)
 - Error: y = point[1] * (size / box[1]) ZeroDivisionError: float division by zero bei scale_to_square
+- Error in Game:
+    - QObject::~QObject: Timers cannot be stopped from another thread
+    - Segmentation fault
 
 
 ## Offene Themen:

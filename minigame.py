@@ -144,7 +144,7 @@ class TemplateWidget(QtWidgets.QFrame):
 
 class MiniGameWidget(QtWidgets.QWidget):
 
-    def __init__(self, size, b_player=None, b_conductor=None, parent=None):
+    def __init__(self, size, devices, b_player=None, b_conductor=None, parent=None):
         super(MiniGameWidget, self).__init__(parent)
         self.showFullScreen()
         rec = Recognizer()

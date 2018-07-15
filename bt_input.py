@@ -5,10 +5,11 @@ from pyqtgraph.Qt import QtGui, QtCore
 
 
 # To connect to Wiimotes
-class SetupBluetooth:
-    def __init__(self, bluetooth_adress):
-        print('BT Adress: ', bluetooth_adress)
-        if bluetooth_adress == 1:
+class Device:
+
+    def __init__(self, bluetooth_address):
+        print('BT Address: ', bluetooth_address)
+        if bluetooth_address == "1":
             self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
         else:
             self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
@@ -42,40 +43,29 @@ class SetupBluetooth:
         self.confirm_callback = callback
 
     # Registers button pushes
-    def __on_press__(self, obj):
-        if obj is not None and len(obj) > 0:
-            if obj[0][0] == 'B':
-                print('B-Button')
-                # self.activity_recognizer()
-                if obj[0][1] is True:
-                    self.wm.ir.register_callback(self.__on_move__)
+    def __on_press__(self, objects):
+        if objects is not None and len(objects) > 0:
+            for btn_object in objects:
+                btn = btn_object[0]
+                is_down = btn_object[1]
+                if btn == 'B':
+                    if is_down:
+                        self.wm.ir.register_callback(self.__on_move__)
+                        if self.confirm_callback is not None:
+                            self.confirm_callback()
+                    else:
+                        self.wm.ir.unregister_callback(self.__on_move__)
                     if self.click_callback is not None:
-                        self.click_callback()
-                else:
-                    self.wm.ir.unregister_callback(self.__on_move__)
+                        self.click_callback(2, is_down)
+                elif btn == 'A':
                     if self.click_callback is not None:
-                        self.click_callback()
-            if obj[0][0] == 'A':
-                print('A-Button')
-                if self.confirm_callback is not None:
-                    self.confirm_callback()
-
-            if obj[0][0] == 'Left':
-                print('Left')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == 'Up':
-                print('Up')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == 'Right':
-                print('Right')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == 'Down':
-                print('Down')
-                if self.click_callback is not None:
-                    self.click_callback()
+                        self.click_callback(1, is_down)
+                elif btn == 'One':
+                    if self.click_callback is not None:
+                        self.click_callback(3, is_down)
+                elif btn == 'Two':
+                    if self.click_callback is not None:
+                        self.click_callback(4, is_down)
 
     def __on_move__(self, data):
         # Only accepts data that has all 4 leds

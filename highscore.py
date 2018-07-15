@@ -11,12 +11,13 @@ class HighscoreWidget(QtWidgets.QWidget):
     # icon_size: QSize
     imagePath = "out.jpg"
 
-    def __init__(self, size, score, parent=None):
+    def __init__(self, size, devices, parent=None):
         super(HighscoreWidget, self).__init__(parent)
         self.width, self.height = size
         self.score_pair = []
         self.icon_size = QtCore.QSize(100, 80)
-        self.new_score = score
+        # handle the score in another way.
+        self.new_score = 1
         self.img = QtGui.QPixmap(self.imagePath)
         self.score_pair.append([555, self.img])
         self.highscore_table = QtWidgets.QTableWidget(parent=self)

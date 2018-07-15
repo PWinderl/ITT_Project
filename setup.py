@@ -2,15 +2,16 @@
 # coding: utf-8
 
 from PyQt5 import QtWidgets, QtCore
+from bt_input import Device
 
 # TODO: This widget should show a starting screen and request the players to connect their wiimotes
 
 
 class SetupWidget(QtWidgets.QWidget):
 
-    on_setup_end = QtCore.pyqtSignal()
+    on_setup_end = QtCore.pyqtSignal(object)
 
-    def __init__(self, size, parent=None):
+    def __init__(self, size, addresses=None, parent=None):
         super(SetupWidget, self).__init__(parent)
         self.width, self.height = size
         self.init_ui()
@@ -28,7 +29,9 @@ class SetupWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         self.show()
 
-    # For testing purposes
-    def emit(self):
-        # Run through
-        self.on_setup_end.emit()
+    def init_devices(self, addresses):
+        devices = []
+        if addresses is not None:
+            for address in addresses:
+                devices.append(Device(address))
+        self.on_setup_end.emit(devices)

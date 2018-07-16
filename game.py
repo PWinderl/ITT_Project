@@ -225,6 +225,7 @@ class Game():
             pos_y = pre_pos_y
         return pygame.draw.rect(screen, self.WHITE, [middle - side / 2, pos_y, side, side])
 
+
 class GameController(QtCore.QThread):
 
     def __init__(self, res, parent=None):
@@ -279,7 +280,6 @@ class GameWidget(QtWidgets.QWidget):
 
         self.points_player = QtWidgets.QLabel("Points", parent=self)
         layout.addWidget(self.points_player, alignment=QtCore.Qt.AlignTop)
-
 
         self.points_conductor = QtWidgets.QLabel("Points", parent=self)
         layout.addWidget(self.points_conductor, alignment=QtCore.Qt.AlignTop)

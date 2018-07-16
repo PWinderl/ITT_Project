@@ -63,8 +63,8 @@ class Device:
                     if self.click_callback is not None:
                         self.click_callback(self.BTN_B, is_down)
                 elif btn == 'A':
-                    if self.click_callback is not None:
-                        self.click_callback(self.BTN_A, is_down)
+                    if self.confirm_callback is not None:
+                        self.confirm_callback()
                 elif btn == 'One':
                     if self.click_callback is not None:
                         self.click_callback(self.BTN_ONE, is_down)

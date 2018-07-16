@@ -14,6 +14,8 @@ class HighscoreWidget(QtWidgets.QWidget):
     def __init__(self, size, devices, parent=None):
         super(HighscoreWidget, self).__init__(parent)
         self.width, self.height = size
+        self.wm_one = None
+        self.wm_two = None
         self.score_pair = []
         self.icon_size = QtCore.QSize(100, 80)
         # handle the score in another way.
@@ -28,12 +30,27 @@ class HighscoreWidget(QtWidgets.QWidget):
 
         self.init_ui()
 
+        self.dw = DrawWidget()
+        self.dw.set_callback(self.highscore_chart)
+        self.init_devices(devices)
+
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
         self.setLayout(layout)
         self.show()
+
+    def init_devices(self, devices):
+        if len(devices) == 1:
+            self.wm_one = devices[0]
+            self.wm_one.register_confirm_callback(self.dw.save_highscore)
+        elif len(devices) == 2:
+            self.wm_one = devices[0]
+            self.wm_one.register_confirm_callback(self.dw.save_highscore)
+            self.wm_two = devices[1]
+            self.wm_two.register_confirm_callback(self.dw.save_highscore)
+
 
     def highscore_chart(self):
 
@@ -119,11 +136,10 @@ class DrawWidget(QtWidgets.QWidget):
     # pyqtsignal for the recognition at the end of each drawing interaction
     finished_unistroke = QtCore.pyqtSignal(object, bool, str)
 
-    def __init__(self, score):
+    def __init__(self):
         super(DrawWidget, self).__init__()
         self.width = 1000
         self.height = 1000
-        self.actual_score = score
         self.setMouseTracking(True)
         self.recognize_flag = False
         self.click_flag = False
@@ -153,6 +169,7 @@ class DrawWidget(QtWidgets.QWidget):
         signature.save("out.jpg")
         if self.save_callback is not None:
             self.save_callback()
+            print('In If SH')
         self.close()
 
     def set_name(self, flag, name):
@@ -213,8 +230,8 @@ class DrawWidget(QtWidgets.QWidget):
 
 
 class HighscoreHandler():
-    def __init__(self, score):
+    def __init__(self):
         super(HighscoreHandler, self).__init__()
-        self.hs = HighscoreWidget(43)
-        self.dw = DrawWidget(score)
-        self.dw.set_callback(self.hs.highscore_chart)
+        # self.hs = HighscoreWidget(43)
+        self.dw = DrawWidget()
+        # self.dw.set_callback(self.hs.highscore_chart)

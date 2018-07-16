@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="66f292ab-8f01-4d77-b902-dda35d7f1d39" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/highscore.py" beforeDir="false" afterPath="$PROJECT_DIR$/highscore.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/out.jpg" afterDir="false" />
-    </list>
+    <list default="true" id="66f292ab-8f01-4d77-b902-dda35d7f1d39" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +44,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="highscore.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="highscore.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/highscore.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="428">
@@ -59,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bt_input.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bt_input.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bt_input.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-32">
-              <caret line="45" column="31" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="31" />
+            <state relative-caret-position="118">
+              <caret line="55" column="35" lean-forward="true" selection-start-line="55" selection-start-column="35" selection-end-line="55" selection-end-column="35" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -133,9 +130,9 @@
       <find>register_confirm_callback</find>
       <find>current_widget</find>
       <find>register_click_callback</find>
-      <find>trans</find>
       <find>on_button</find>
       <find>bt_save</find>
+      <find>trans</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -269,7 +266,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="174" y="22" width="1106" height="710" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14562212" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -692,22 +688,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bt_input.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="118">
+          <caret line="55" column="35" lean-forward="true" selection-start-line="55" selection-start-column="35" selection-end-line="55" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/highscore.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="428">
           <caret line="50" column="55" selection-start-line="50" selection-start-column="55" selection-end-line="50" selection-end-column="55" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bt_input.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-32">
-          <caret line="45" column="31" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -17,15 +17,14 @@ class HighscoreWidget(QtWidgets.QWidget):
         self.wm_one = None
         self.wm_two = None
         self.score_pair = []
+        self.img = None
         self.icon_size = QtCore.QSize(100, 80)
-        self.new_score = 1
-        self.img = QtGui.QPixmap(self.imagePath)
         # TODO: Score from game.py
-        self.score_pair.append([555, self.img])
+        self.new_score = 1
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
 
         # Highscore list
-        self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"]]
+        self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"]]
 
         self.init_ui()
 
@@ -57,6 +56,9 @@ class HighscoreWidget(QtWidgets.QWidget):
             self.wm_two.register_confirm_callback(self.dw.save_highscore)
 
     def highscore_chart(self):
+        self.img = QtGui.QPixmap(self.imagePath)
+        # TODO: Insert real score
+        self.score_pair.append([555, self.img])
         sorted_hs_list = sorted(self.highscore_list,
                                 key=itemgetter(0), reverse=True)
         if self.score_pair[0][0] > sorted_hs_list[-1][0]:
@@ -68,14 +70,12 @@ class HighscoreWidget(QtWidgets.QWidget):
 
     # Appends new score to highscore list
     def set_highscores(self):
+        print('In set highscores')
         sorted_hs_list = sorted(self.highscore_list,
                                 key=itemgetter(0), reverse=True)
-        if len(sorted_hs_list) == 10:
-            if sorted_hs_list[-1][0] < self.score_pair[0][0]:
-                del sorted_hs_list[-1]
-                sorted_hs_list.append(self.score_pair[0])
-            else:
-                pass
+        if len(sorted_hs_list) == 10 and sorted_hs_list[-1][0] < self.score_pair[0][0]:
+            del sorted_hs_list[-1]
+            sorted_hs_list.append(self.score_pair[0])
         else:
             sorted_hs_list.append(self.score_pair[0])
         return sorted_hs_list
@@ -98,11 +98,11 @@ class HighscoreWidget(QtWidgets.QWidget):
 
             new_score_entry = QtWidgets.QTableWidgetItem(str(actual_score))
             self.highscore_table.setItem(i, 1, new_score_entry)
-            self.highscore_table.setRowHeight(i, 70)
+            self.highscore_table.setRowHeight(i, 60)
             i += 1
 
         self.highscore_table.setIconSize(self.icon_size)
-        self.highscore_table.resize(600, 600)
+        self.highscore_table.resize(300, 500)
         self.highscore_list = new_list
 
 
@@ -167,7 +167,6 @@ class DrawWidget(QtWidgets.QWidget):
     # https://stackoverflow.com/questions/8381735/how-to-toggle-a-value-in-python
     # Pyqtsignal emitting
     def on_click(self):
-        print('In onClick____')
         self.recognize_flag ^= True
         self.click_flag ^= True
         if not self.click_flag:

@@ -5,9 +5,6 @@ from PyQt5 import QtWidgets, QtCore
 from bt_input import Device
 from time import sleep
 
-# TODO: This widget should show a starting screen and request the players to connect their wiimotes
-
-
 class SetupThread(QtCore.QThread):
 
     device_found = QtCore.pyqtSignal(object)

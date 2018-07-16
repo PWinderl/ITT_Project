@@ -1,14 +1,9 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from operator import itemgetter
-import sys
 
 
 # To call when Game is over
-from PyQt5.QtCore import QSize
-
-
 class HighscoreWidget(QtWidgets.QWidget):
-    # icon_size: QSize
     imagePath = "out.jpg"
 
     def __init__(self, size, devices, parent=None):
@@ -22,8 +17,6 @@ class HighscoreWidget(QtWidgets.QWidget):
         # TODO: Score from game.py
         self.new_score = 1
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
-
-        # Highscore list
         self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"]]
 
         self.init_ui()
@@ -56,6 +49,7 @@ class HighscoreWidget(QtWidgets.QWidget):
             self.wm_two.register_confirm_callback(self.dw.save_highscore)
 
     def highscore_chart(self):
+        print('In Highscore Chart!')
         self.img = QtGui.QPixmap(self.imagePath)
         # TODO: Insert real score
         self.score_pair.append([555, self.img])
@@ -65,12 +59,10 @@ class HighscoreWidget(QtWidgets.QWidget):
             new_hs_list = self.set_highscores()
             self.draw_highscores(new_hs_list)
         else:
-            print('HS in Else')
             self.draw_highscores(self.highscore_list)
 
     # Appends new score to highscore list
     def set_highscores(self):
-        print('In set highscores')
         sorted_hs_list = sorted(self.highscore_list,
                                 key=itemgetter(0), reverse=True)
         if len(sorted_hs_list) == 10 and sorted_hs_list[-1][0] < self.score_pair[0][0]:
@@ -85,6 +77,7 @@ class HighscoreWidget(QtWidgets.QWidget):
         new_list = sorted(actual_list, key=itemgetter(0), reverse=True)
         self.highscore_table.setRowCount(10)
         self.highscore_table.setColumnCount(2)
+        self.highscore_table.setHorizontalHeaderLabels(['Name', 'Score'])
         i = 0
         for item in new_list:
             actual_score = item[0]
@@ -139,7 +132,6 @@ class DrawWidget(QtWidgets.QWidget):
         self.save_callback = callback
 
     def save_highscore(self):
-        print('In save_highscore_______')
         signature = QtWidgets.QWidget.grab(self)
         signature.save("out.jpg")
         if self.save_callback is not None:
@@ -159,6 +151,7 @@ class DrawWidget(QtWidgets.QWidget):
     def paintEvent(self, event):
         qp = QtGui.QPainter()
         qp.begin(self)
+        qp.setPen(QtGui.QPen(QtCore.Qt.black, 7, QtCore.Qt.SolidLine))
         qp.drawPath(self.path)
         qp.end()
 
@@ -197,9 +190,9 @@ class DrawWidget(QtWidgets.QWidget):
         self.positions = []
 
 
-class HighscoreHandler():
-    def __init__(self):
-        super(HighscoreHandler, self).__init__()
+# class HighscoreHandler():
+    # def __init__(self):
+       # super(HighscoreHandler, self).__init__()
         # self.hs = HighscoreWidget(43)
-        self.dw = DrawWidget()
+        # self.dw = DrawWidget()
         # self.dw.set_callback(self.hs.highscore_chart)

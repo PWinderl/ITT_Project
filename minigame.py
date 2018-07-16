@@ -155,9 +155,12 @@ class TemplateWidget(QtWidgets.QFrame):
 class MiniGameWidget(QtWidgets.QWidget):
 
     on_end = QtCore.pyqtSignal(str)
+    actual_score_mg = None
 
-    def __init__(self, size, devices, b_player=None, b_conductor=None, parent=None):
+    def __init__(self, size, devices, score, b_player=None, b_conductor=None, parent=None):
         super(MiniGameWidget, self).__init__(parent)
+        self.actual_score_mg = score
+        print('Actual Score im MW:', self.actual_score_mg)
         self.showFullScreen()
         rec = Recognizer()
         rec.set_callback(self.on_result)

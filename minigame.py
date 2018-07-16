@@ -25,6 +25,8 @@ class DrawWidget(QtWidgets.QFrame):
         self.recognize_flag = False
         self.click_flag = False
         self.positions = []
+        self.cursor_radius = 10
+        self.cursor_pos = None
         self.path = QtGui.QPainterPath()
         self.init_ui(name, width, height)
         self.name = name
@@ -35,15 +37,23 @@ class DrawWidget(QtWidgets.QFrame):
         self.setFrameShape(QtWidgets.QFrame.Box)
         self.setFixedSize(width, height)
         self.setStyleSheet("background-color:white;")
+        self.cursor_pos = QtCore.QPoint(width / 2, height / 2)
         self.update()
 
     def set_cursor(self, x, y):
-        QtGui.QCursor.setPos(self.mapToGlobal(QtCore.QPoint(x, y)))
+        # QtGui.QCursor.setPos(self.mapToGlobal(QtCore.QPoint(x, y)))
+        self.cursor_pos = self.mapToGlobal(QtCore.QPoint(x, y))
+
+    def draw_cursor(self, qp):
+        if self.cursor_pos is not None:
+            qp.drawEllipse(self.cursor_pos, self.cursor_radius,
+                           self.cursor_radius)
 
     def paintEvent(self, event):
         qp = QtGui.QPainter()
         qp.begin(self)
         qp.drawPath(self.path)
+        self.draw_cursor(qp)
         qp.end()
 
     # callback function for the button press and release event
@@ -145,6 +155,8 @@ class TemplateWidget(QtWidgets.QFrame):
 
 class MiniGameWidget(QtWidgets.QWidget):
 
+    on_end = QtCore.pyqtSignal(str)
+
     def __init__(self, size, devices, b_player=None, b_conductor=None, parent=None):
         super(MiniGameWidget, self).__init__(parent)
         self.showFullScreen()
@@ -169,9 +181,6 @@ class MiniGameWidget(QtWidgets.QWidget):
 
         layout.addWidget(conductor, alignment=QtCore.Qt.AlignRight)
 
-        button = QtWidgets.QPushButton(self)
-        layout.addWidget(button)
-
         self.setLayout(layout)
 
         if devices is not None and len(devices) > 0:
@@ -182,13 +191,14 @@ class MiniGameWidget(QtWidgets.QWidget):
         self.show()
 
     def connect_devices(self, devices, player, conductor):
-
         devices[0].register_click_callback(player.on_click)
         devices[0].register_move_callback(player.on_move)
-        devices[1].register_click_callback(conductor.on_click)
-        devices[1].register_move_callback(conductor.on_move)
+        if len(devices) > 1:
+            devices[1].register_click_callback(conductor.on_click)
+            devices[1].register_move_callback(conductor.on_move)
 
     def on_result(self, template, score, name):
         print(name, "won")
+        self.on_end.emit(name)
         # print(score)
         # print(template)

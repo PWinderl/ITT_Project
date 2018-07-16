@@ -26,8 +26,11 @@ class Display(QtWidgets.QMainWindow):
         self.current_widget = None
         self.init_ui()
         self.devices = []
-        self.on_widget_change("setup")
-        self.current_widget.init_devices(addresses)
+        if addresses is not None:
+            self.addresses = addresses
+            self.on_widget_change("setup")
+        else:
+            self.on_widget_change("menu")
 
     def init_ui(self):
         self.showFullScreen()
@@ -42,7 +45,7 @@ class Display(QtWidgets.QMainWindow):
     def on_widget_change(self, widget_type):
         widget = None
         if widget_type == "setup":
-            widget = SetupWidget((500, 500), parent=self.window)
+            widget = SetupWidget((500, 500), self.addresses, parent=self.window)
             widget.on_setup_end.connect(lambda d: self.connect_devices(d))
         elif widget_type == "menu":
             widget = MenuWidget((500, 500), self.devices, parent=self.window)

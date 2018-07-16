@@ -56,12 +56,12 @@ class Device:
                 if btn == 'B':
                     if is_down:
                         self.wm.ir.register_callback(self.__on_move__)
-                        if self.confirm_callback is not None:
-                            self.confirm_callback()
+                        if self.click_callback is not None:
+                            self.click_callback()
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)
                     if self.click_callback is not None:
-                        self.click_callback(self.BTN_B, is_down)
+                        self.click_callback()
                 elif btn == 'A':
                     if self.confirm_callback is not None:
                         self.confirm_callback()

@@ -45,15 +45,18 @@ class Display(QtWidgets.QMainWindow):
     def on_widget_change(self, widget_type):
         widget = None
         if widget_type == "setup":
-            widget = SetupWidget((500, 500), self.addresses, parent=self.window)
+            widget = SetupWidget(
+                (500, 500), self.addresses, parent=self.window)
             widget.on_setup_end.connect(lambda d: self.connect_devices(d))
         elif widget_type == "menu":
             widget = MenuWidget((500, 500), self.devices, parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
-            widget = GameWidget(
-                self.RESOLUTION, self.devices, parent=self.window)
+            # widget = GameWidget(
+             #   self.RESOLUTION, self.devices, parent=self.window)
             # self.setWindowState(QtCore.Qt.WindowMinimized)
+            widget = MiniGameWidget(
+                (500, 500), self.devices, parent=self.window)
         elif widget_type == "minigame":
             widget = MiniGameWidget(
                 (500, 500), self.devices, parent=self.window)

@@ -107,8 +107,6 @@ class ActivityRecognizer():
         all_vals = act + vio + guitar + drums
         #print(all_vals)
         min_len = min([len(x) for x in all_vals])
-        print("len")
-        print(min_len)
         act = [l[:min_len] for l in act]
         vio = [l[:min_len] for l in vio]
         guitar = [l[:min_len] for l in guitar]
@@ -121,6 +119,7 @@ class ActivityRecognizer():
 
 
     def activity_recognizer(self):
+        self.write_csv()
         self.status = 0
         self.counter = 0
         self.acc_vals = []
@@ -133,7 +132,7 @@ class ActivityRecognizer():
         if self.wm is None:
             return
         self.acc_vals = self.wm.accelerometer
-        if self.status == 1:
+        if self.status == 0:
             self.add_csv(self.acc_vals)
         #if self.status == 1:
         #    print(self.acc_vals)
@@ -152,7 +151,7 @@ class ActivityRecognizer():
         self.acc_vals = self.wm.accelerometer
 
     def fft(self, data):
-        print(data)
+        #print(data)
         data_freq = []
         for l in data:
             #print("l")
@@ -171,10 +170,12 @@ class ActivityRecognizer():
         guitar = 1
         drums = 2
         categories = [vio] *3  + [guitar] * 3 + [drums] *3#+ [walk]*3
-        print("WG")
         #print(categories)
         training_data = vio_freq[1:] + guitar_freq[1:] + drums_freq[1:]
         #print(training_data)
         c.fit(training_data, categories)
         result = c.predict([act_freq[0]])
-        print(result)
+        self.current_activity = result
+
+    def getActivity(self):
+        return self.current_activity

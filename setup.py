@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+"""
+By Thomas Oswald
+"""
+
 from PyQt5 import QtWidgets, QtCore
 from bt_input import Device
 from time import sleep

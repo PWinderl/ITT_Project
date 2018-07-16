@@ -9,7 +9,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 from recognizer import Recognizer
 from random import randint
-# from bluetooth_input import SetupBluetooth
+from bt_input import Device
 
 
 class DrawWidget(QtWidgets.QFrame):
@@ -50,12 +50,13 @@ class DrawWidget(QtWidgets.QFrame):
     # Toggle funcitonality by
     # https://stackoverflow.com/questions/8381735/how-to-toggle-a-value-in-python
     # Pyqtsignal emitting
-    def on_click(self):
-        self.recognize_flag ^= True
-        self.click_flag ^= True
-        if not self.click_flag:
-            self.finished_unistroke.emit(
-                self.positions, True, self.name)
+    def on_click(self, btn, is_down):
+        if btn == Device.BTN_A:
+            self.recognize_flag ^= True
+            self.click_flag ^= True
+            if not self.click_flag:
+                self.finished_unistroke.emit(
+                    self.positions, True, self.name)
 
     # on move callback for position update of wiimote
     def on_move(self, x, y):
@@ -173,35 +174,21 @@ class MiniGameWidget(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
-        self.connect_wms(player, conductor)
+        if devices is not None and len(devices) > 0:
+            self.connect_devices(devices, player, conductor)
         template.show()
         player.show()
         conductor.show()
         self.show()
 
-    def connect_wms(self, player, conductor):
-        """
-        d1 = SetupBluetooth(1)
-        d2 = SetupBluetooth(2)
+    def connect_devices(self, devices, player, conductor):
 
-        d1.register_click_callback(player.on_click)
-        d1.register_move_callback(player.on_move)
-        d2.register_click_callback(conductor.on_click)
-        d2.register_move_callback(conductor.on_move)
-        """
-        # connect to input of player wiimote
-        # player.on_click.connect()
-        # player.on_move.connect()
-
-        # connect to input of conductor wiimote
-        # conductor.on_click.connect()
-        # conductor.on_move.connect()
+        devices[0].register_click_callback(player.on_click)
+        devices[0].register_move_callback(player.on_move)
+        devices[1].register_click_callback(conductor.on_click)
+        devices[1].register_move_callback(conductor.on_move)
 
     def on_result(self, template, score, name):
-        print(name)
+        print(name, "won")
         # print(score)
         # print(template)
-
-
-# 1920/975 my resolution
-# find out with xdpyinfo | grep dimensions

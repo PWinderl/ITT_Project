@@ -19,6 +19,8 @@ import sys
 
 class Display(QtWidgets.QMainWindow):
 
+    RESOLUTION = (1920, 975)
+
     def __init__(self, addresses=None):
         super(Display, self).__init__()
         self.current_widget = None
@@ -46,7 +48,8 @@ class Display(QtWidgets.QMainWindow):
             widget = MenuWidget((500, 500), self.devices, parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
-            widget = GameWidget((1920, 975), self.devices, parent=self.window)
+            widget = GameWidget(
+                self.RESOLUTION, self.devices, parent=self.window)
             # self.setWindowState(QtCore.Qt.WindowMinimized)
         elif widget_type == "minigame":
             widget = MiniGameWidget(

@@ -36,16 +36,19 @@ class HighscoreWidget(QtWidgets.QWidget):
         if len(devices) == 1:
             self.wm_one = devices[0]
             self.wm_one.register_move_callback(self.dw.set_cursor)
-            self.wm_one.register_click_callback(self.dw.on_click)
+            self.wm_one.register_click_callback(
+                lambda btn, is_down: self.dw.on_click())
             self.wm_one.register_confirm_callback(self.dw.save_highscore)
         elif len(devices) == 2:
             self.wm_one = devices[0]
             self.wm_one.register_move_callback(self.dw.set_cursor)
-            self.wm_one.register_click_callback(self.dw.on_click)
+            self.wm_one.register_click_callback(
+                lambda btn, is_down: self.dw.on_click())
             self.wm_one.register_confirm_callback(self.dw.save_highscore)
             self.wm_two = devices[1]
             self.wm_two.register_move_callback(self.dw.set_cursor)
-            self.wm_two.register_click_callback(self.dw.on_click)
+            self.wm_two.register_click_callback(
+                lambda btn, is_down: self.dw.on_click())
             self.wm_two.register_confirm_callback(self.dw.save_highscore)
 
     def highscore_chart(self):

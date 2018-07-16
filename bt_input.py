@@ -12,17 +12,16 @@ class Device:
     BTN_ONE = 3
     BTN_TWO = 4
 
-    def __init__(self, bluetooth_address):
-        print('BT Address: ', bluetooth_address)
-        if bluetooth_address == "1":
-            self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
-            #self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
-        else:
-            self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+    def __init__(self, address):
+        print('BT Address: ', address)
         try:
-            #
-            pass
-            #self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
+            if address == "1":
+                self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
+                #self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
+            elif address == "2":
+                self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+            else:
+                self.wm = wiimote.connect(address)
         except Exception as e:
             print(e)
             print("No valid bluetooth addresses.")
@@ -34,9 +33,12 @@ class Device:
         self.move_callback = None
         self.click_callback = None
         self.confirm_callback = None
-
+        self.current_w_size = (500, 500)
         # activity recognizer
-        ActivityRecognizer(self)
+        self.ar = ActivityRecognizer(self)
+
+    def set_widget_size(self, size):
+        self.current_w_size = size
 
     def register_move_callback(self, callback):
         self.move_callback = callback
@@ -72,7 +74,6 @@ class Device:
                     if self.click_callback is not None:
                         self.click_callback(self.BTN_TWO, is_down)
 
-    # TODO: somehow get widget resolution
     def __on_move__(self, data):
         # Only accepts data that has all 4 leds
         if len(data) == 4:
@@ -82,7 +83,7 @@ class Device:
             # P is the center point of the wiimote IR camera
             # DEST is the destination resolution
             # needs to have widget resolution!
-            P, DEST = (1024 / 2, 768 / 2), (500, 500)
+            P, DEST = (1024 / 2, 768 / 2), self.current_w_size
             try:
                 x, y = Transform().transform(points, DEST, P)
             except Exception as e:
@@ -90,42 +91,3 @@ class Device:
                 x = y = -1
             if self.move_callback is not None:
                 self.move_callback(x, y)
-
-
-"""
-Code by Fabian - for merging purposes.
-
-            if obj[0][0] == 'Left':
-                print('Left')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == 'Up':
-                print('Up')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == 'Right':
-                print('Right')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == 'Down':
-                print('Down')
-                if self.click_callback is not None:
-                    self.click_callback()
-            if obj[0][0] == "One":
-                print("One")
-                if self.click_callback is not None:
-                    # self.click_callback()
-                    self.write_csv()
-                    #self.activity_vals = []
-                    #self.counter = 0
-                    self.status = 1
-            if obj[0][0] == "Two":
-                print("Two")
-                if self.click_callback is not None:
-                    # self.click_callback()
-                    self.status = 0
-                    self.buffer()
-                    # print(self.activity_vals)
-                    # self.fft(activity_vals)
-                    # print(self.activity_vals)
-"""

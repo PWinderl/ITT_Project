@@ -128,7 +128,6 @@ class TemplateWidget(QtWidgets.QFrame):
         self.setFixedSize(width, height)
         self.setAutoFillBackground(True)
 
-    # TODO: points need to be a accurate in the center
     def draw(self, points):
         center = (200, 200)
         self.path.moveTo(points[0][0] + center[0],

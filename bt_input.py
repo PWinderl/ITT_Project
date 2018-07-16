@@ -17,7 +17,7 @@ class Device:
         try:
             if address == "1":
                 self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
-                #self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
+                # self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
             elif address == "2":
                 self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
             else:
@@ -100,4 +100,3 @@ class Device:
         self.ar.write_csv()
         self.ar.status = 0
         return self.ar.getActivity()
-

@@ -15,7 +15,7 @@ from bt_input import Device
 class DrawWidget(QtWidgets.QFrame):
 
     # pyqtsignal for the recognition at the end of each drawing interaction
-    finished_unistroke = QtCore.pyqtSignal(object, bool, str)
+    finished_unistroke = QtCore.pyqtSignal(object, str)
 
     def __init__(self, name, width, height, parent=None):
         super(DrawWidget, self).__init__(parent)
@@ -60,20 +60,21 @@ class DrawWidget(QtWidgets.QFrame):
     # Toggle funcitonality by
     # https://stackoverflow.com/questions/8381735/how-to-toggle-a-value-in-python
     # Pyqtsignal emitting
-    def on_click(self, btn, is_down):
-        if btn == Device.BTN_A:
-            self.recognize_flag ^= True
-            self.click_flag ^= True
-            if not self.click_flag:
-                self.finished_unistroke.emit(
-                    self.positions, True, self.name)
+    def on_click(self):
+        # self.recognize_flag ^= True
+        self.begin = True
+        if not self.click_flag:
+            self.finished_unistroke.emit(
+                self.positions, self.name)
 
     # on move callback for position update of wiimote
     def on_move(self, x, y):
         self.set_cursor(x, y)
         pos = QtCore.QPoint(x, y)
-        if self.click_flag:
-            self.click_flag = False
+        print("on move")
+        print(self.click_flag)
+        if self.begin:
+            self.begin = False
             self.path.moveTo(pos)
             self.positions.append((pos.x(), pos.y()))
             self.update()
@@ -159,14 +160,16 @@ class MiniGameWidget(QtWidgets.QWidget):
     def __init__(self, size, devices, b_player=None, b_conductor=None, parent=None):
         super(MiniGameWidget, self).__init__(parent)
         self.showFullScreen()
-        rec = Recognizer()
-        rec.set_callback(self.on_result)
+        rec_1 = Recognizer()
+        rec_2 = Recognizer()
+        rec_1.set_callback(self.on_result)
+        rec_2.set_callback(self.on_result)
 
         layout = QtWidgets.QHBoxLayout(self)
 
         player = DrawWidget("player", size[0], size[1], self)
 
-        player.finished_unistroke.connect(rec.recognize)
+        player.finished_unistroke.connect(lambda points, name: self.on_rec(rec_1, points, name))
 
         layout.addWidget(player, alignment=QtCore.Qt.AlignLeft)
 
@@ -176,7 +179,7 @@ class MiniGameWidget(QtWidgets.QWidget):
 
         conductor = DrawWidget("conductor", size[0], size[1], self)
 
-        conductor.finished_unistroke.connect(rec.recognize)
+        conductor.finished_unistroke.connect(lambda points, name: self.on_rec(rec_2, points, name))
 
         layout.addWidget(conductor, alignment=QtCore.Qt.AlignRight)
 
@@ -188,12 +191,15 @@ class MiniGameWidget(QtWidgets.QWidget):
         player.show()
         conductor.show()
         self.show()
+    
+    def on_rec(self, rec, points, name):
+        rec.recognize(points, name)
 
     def connect_devices(self, devices, player, conductor):
-        devices[0].register_click_callback(player.on_click)
+        devices[0].register_confirm_callback(player.on_click)
         devices[0].register_move_callback(player.on_move)
         if len(devices) > 1:
-            devices[1].register_click_callback(conductor.on_click)
+            devices[1].register_confirm_callback(conductor.on_click)
             devices[1].register_move_callback(conductor.on_move)
 
     def on_result(self, template, score, name):

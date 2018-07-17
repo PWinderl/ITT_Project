@@ -68,15 +68,16 @@ class Device:
                 btn = btn_object[0]
                 is_down = btn_object[1]
                 if btn == 'B':
+                    if self.click_callback is not None and self.is_violin():
+                        self.click_callback(self.BTN_B, is_down)
+                elif btn == 'A':
                     if is_down:
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)
                     if self.click_callback is not None and self.is_violin():
-                        self.click_callback(self.BTN_B, is_down)
-                elif btn == 'A':
-                    if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_A, is_down)
+
                     if self.confirm_callback is not None and is_down:
                         self.confirm_callback()
                 elif btn == 'One':

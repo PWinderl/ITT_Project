@@ -56,7 +56,7 @@ class Display(QtWidgets.QMainWindow):
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
-            self.start_timer(self.on_minigame_start, 60000)
+            self.start_timer(self.on_minigame_start, 500)
         elif widget_type == "minigame":
             widget = MiniGameWidget(
                 (500, 500), self.devices, parent=self.window)

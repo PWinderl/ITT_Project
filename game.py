@@ -135,69 +135,82 @@ class GameThread(QtCore.QThread):
 
         frame_rate = 200
         while is_running:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        self.on_end.emit()
-                if event.type == NOTE_INCOMING:
-                    try:
-                        line = event.dict["line"]
-                        field = event.dict["field"]
-                        note = Note(line, field, self.RECT_FACTOR)
-                        note.init_rect(self.lines, self.width)
-                        self.note_sprites.add(note)
-                    except Exception as e:
-                        print(e)
-                # Used for hiding and showing:
-                # https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-
-                # surface-and-keep-all-objects-within-proportionate-to-t
-                if event.type == PAUSE:
-                    self.center_position(self.p_width, self.p_height)
-                    screen = pygame.display.set_mode(
-                        (self.p_width, self.p_height), pygame.NOFRAME)
-                    screen.blit(pygame.transform.scale(
-                        self.screen, (self.p_width, self.p_height)), (0, 0))
-                    self.redraw(screen, self.p_width, self.p_height)
-                    pygame.display.flip()
-                    pause_flag = True
-                if event.type == CONTINUE:
-                    self.center_position(self.width, self.height)
-                    screen = pygame.display.set_mode(
-                        (self.width, self.height), pygame.NOFRAME)
-                    screen.blit(pygame.transform.scale(
-                        self.screen, (self.width, self.height)), (0, 0))
-                    self.screen = self.redraw(screen, self.width, self.height)
-                    pygame.display.flip()
-                    pause_flag = False
-                if event.type == ACTION:
-                    action_line = event.dict["line"]
-                    target = self.get_target_by_id(action_line)
-                    found_target = False
-                    for note in self.note_sprites.sprites():
-                        if note.field == 1 and note.line == action_line:
-                            if note.has_hit(target):
-                                self.on_hit.emit()
-                                found_target = True
-                                self.remove_rect(note)
-                                self.note_sprites.remove(note)
-                            else:
-                                self.on_fail.emit()
-                    if not found_target:
-                        target.change_state(target.fail)
-                        pygame.time.set_timer(CLEAR_TARGET, 100)
-                    else:
+            try:
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            pause_flag = True
+                            self.on_end.emit()
+                            pygame.quit()
+                    if event.type == NOTE_INCOMING:
+                        try:
+                            line = event.dict["line"]
+                            field = event.dict["field"]
+                            note = Note(line, field, self.RECT_FACTOR)
+                            note.init_rect(self.lines, self.width)
+                            self.note_sprites.add(note)
+                        except Exception as e:
+                            print(e)
+                    # Used for hiding and showing:
+                    # https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-
+                    # surface-and-keep-all-objects-within-proportionate-to-t
+                    if event.type == PAUSE:
+                        self.center_position(self.p_width, self.p_height)
+                        screen = pygame.display.set_mode(
+                            (self.p_width, self.p_height), pygame.NOFRAME)
+                        screen.blit(pygame.transform.scale(
+                            self.screen, (self.p_width, self.p_height)), (0, 0))
+                        self.redraw(screen, self.p_width, self.p_height)
+                        pygame.display.flip()
+                        pause_flag = True
+                    if event.type == CONTINUE:
+                        self.center_position(self.width, self.height)
+                        screen = pygame.display.set_mode(
+                            (self.width, self.height), pygame.NOFRAME)
+                        screen.blit(pygame.transform.scale(
+                            self.screen, (self.width, self.height)), (0, 0))
+                        self.screen = self.redraw(
+                            screen, self.width, self.height)
+                        pygame.display.flip()
+                        pause_flag = False
+                    if event.type == ACTION:
+                        action_line = event.dict["line"]
+                        target = self.get_target_by_id(action_line)
                         found_target = False
-                    last_target = target
-                if event.type == CLEAR_MUSIC:
-                    pygame.mixer.music.stop()
-                if event.type == CLEAR_TARGET:
-                    if last_target is not None:
-                        last_target.change_state(last_target.inactive)
-                if event.type == EXIT:
-                    is_running = False
-                if event.type == pygame.QUIT:
-                    sys.exit()
+                        already_failed = False
+                        if len(self.note_sprites.sprites()) == 0:
+                            target.change_state(target.fail)
+                            pygame.time.set_timer(CLEAR_TARGET, 100)
+                            self.on_fail.emit()
+                            already_failed = True
+                        for note in self.note_sprites.sprites():
+                            if note.field == 1 and note.line == action_line:
+                                if note.has_hit(target):
+                                    self.on_hit.emit()
+                                    found_target = True
+                                    self.remove_rect(note)
+                                    self.note_sprites.remove(note)
+                                else:
+                                    self.on_fail.emit()
+                        if not found_target and not already_failed:
+                            target.change_state(target.fail)
+                            pygame.time.set_timer(CLEAR_TARGET, 100)
+                            self.on_fail.emit()
+                        else:
+                            found_target = False
+                        last_target = target
+                    if event.type == CLEAR_MUSIC:
+                        pygame.mixer.music.stop()
+                    if event.type == CLEAR_TARGET:
+                        if last_target is not None:
+                            last_target.change_state(last_target.inactive)
+                    if event.type == EXIT:
+                        is_running = False
+                    if event.type == pygame.QUIT:
+                        # sys.exit()
+                        pass
+            except Exception as e:
+                pass
             if not pause_flag:
                 width, height = self.screen.get_size()
                 self.screen.blit(self.background, (0, 0))
@@ -234,11 +247,12 @@ class Note(pygame.sprite.Sprite):
         super().__init__()
         self.line = line
         self.field = field
-
+        self.image = None
         self.size_factor = size_factor
 
     def reload(self):
-        self.image, self.rect = self.__load_png__("sprites/note.png")
+        if self.image is None:
+            self.image, self.rect = self.__load_png__("sprites/note.png")
 
     def init_rect(self, lines, window_width, other_y=None):
         self.reload()
@@ -280,8 +294,8 @@ class Note(pygame.sprite.Sprite):
     def has_hit(self, target):
         hit = False
         if self.rect.colliderect(target.rect):
-            target.change_state(target.success)
             target.play()
+            target.change_state(target.success)
             hit = True
         else:
             target.change_state(target.fail)
@@ -404,12 +418,12 @@ class GameWidget(QtWidgets.QWidget):
         self.game.on_hit.connect(self.on_player_success)
         self.game.on_end.connect(self.on_end)
         self.game.start()
-
         try:
             QtCore.QTimer.singleShot(
                 500, lambda: self.on_button("conductor", 1, True))
         except Exception as e:
-            print(traceback.format_exc())
+            pass
+            # print(traceback.format_exc())
 
     def on_end(self):
         print("end")
@@ -417,9 +431,9 @@ class GameWidget(QtWidgets.QWidget):
 
     def update_score(self, name):
         if name == "player":
-            self.player_score += 10
+            self.score += 10
         else:
-            self.player_score -= 10
+            self.score -= 10
         self.points_player.setText("Points: " + str(self.score))
         self.update()
 

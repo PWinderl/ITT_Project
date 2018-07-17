@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+By Thomas Oswald
+"""
+
 import wiimote
 import sys
 from transform import Transform

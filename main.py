@@ -13,10 +13,6 @@ from game import GameWidget
 from setup import SetupWidget
 import sys
 
-# TODO: Define window size (dependent to resolution)
-# TODO: MINIMIZE or FULLSCREEN window OR game minimize and maximize ...
-
-
 class Display(QtWidgets.QMainWindow):
 
     def __init__(self, res, addresses=None):

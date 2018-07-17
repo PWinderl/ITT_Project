@@ -55,13 +55,12 @@ class Display(QtWidgets.QMainWindow):
             widget = MenuWidget((500, 500), self.devices, parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
-            print("hello game")
             widget = GameWidget(
                 self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
-            self.start_timer(self.on_minigame_start, 1000)
+            self.start_timer(self.on_minigame_start, 60000)
         elif widget_type == "minigame":
             widget = MiniGameWidget(
                 (500, 500), self.devices, parent=self.window)
@@ -98,7 +97,6 @@ class Display(QtWidgets.QMainWindow):
         self.on_widget_change("minigame")
 
     def on_minigame_end(self, name):
-        print("hello")
         self.minigame_winner = name
         self.on_widget_change("game")
         self.current_widget.on_continue()

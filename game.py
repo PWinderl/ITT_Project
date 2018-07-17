@@ -41,6 +41,9 @@ class GameThread(QtCore.QThread):
                    "sprites/one_success.png"],
                ["sprites/two_inactive.png", "sprites/two_fail.png", "sprites/two_success.png"]]
 
+    SOUNDS = ["sounds/violin_c.wav", "sounds/violin_f.wav",
+              "sounds/violin_g.wav", "sounds/violin_a.wav"]
+
     def __init__(self, res, parent=None):
         super(GameThread, self).__init__(parent)
         # SET WINDOW POS
@@ -100,7 +103,8 @@ class GameThread(QtCore.QThread):
         for step in range(4):
             x, y = (int((line_size * step + line_size *
                          (step + 1)) / 2) - radius / 2, target_y)
-            group.add(Target(step, x, y, radius, self.TARGETS[step]))
+            group.add(Target(step, x, y, radius,
+                             self.TARGETS[step], self.SOUNDS[step]))
         return group
 
     def redraw(self, screen, width, height):
@@ -272,17 +276,12 @@ class Note(pygame.sprite.Sprite):
         hit = False
         if self.rect.colliderect(target.rect):
             target.change_state(target.success)
-            self.play()
+            target.play()
             hit = True
         else:
             target.change_state(target.fail)
         pygame.time.set_timer(CLEAR_TARGET, 100)
         return hit
-
-    def play(self):
-        print("PLAY NOTE HERE")
-        pygame.mixer.music.load("Sample.mp3")
-        pygame.mixer.music.play()
 
     # Pygame tutorial
     def __load_png__(self, name):
@@ -299,7 +298,7 @@ class Note(pygame.sprite.Sprite):
 
 class Target(pygame.sprite.Sprite):
 
-    def __init__(self, id, x, y, radius, images):
+    def __init__(self, id, x, y, radius, images, sound):
         super().__init__()
         self.id = id
         self.inactive = images[0]
@@ -308,7 +307,12 @@ class Target(pygame.sprite.Sprite):
         self.radius = radius
         self.pos = (x, y)
         self.current_state = self.inactive
+        self.sound = sound
         self.change_state(self.current_state)
+
+    def play(self):
+        pygame.mixer.music.load(self.sound)
+        pygame.mixer.music.play()
 
     def set_radius_and_y(self, radius, y):
         self.radius = radius
@@ -364,7 +368,8 @@ class GameWidget(QtWidgets.QWidget):
 
         layout = QtWidgets.QVBoxLayout(self)
         font = QtGui.QFont("Times", 20, QtGui.QFont.Bold)
-        self.points_player = QtWidgets.QLabel("Points: " + str(self.score), parent=self)
+        self.points_player = QtWidgets.QLabel(
+            "Points: " + str(self.score), parent=self)
         self.points_player.setFont(font)
         self.points_player.setStyleSheet('color: white')
         layout.addWidget(self.points_player, alignment=QtCore.Qt.AlignCenter)
@@ -389,22 +394,21 @@ class GameWidget(QtWidgets.QWidget):
         self.game.on_fail.connect(self.on_player_fail)
         self.game.on_hit.connect(self.on_player_success)
         self.game.start()
-        
+
         try:
             QtCore.QTimer.singleShot(
                 500, lambda: self.on_button("conductor", 1, True))
         except Exception as e:
             print(traceback.format_exc())
-        
 
     def update_score(self, name):
         if name == "player":
-            self.player_score += 10     
+            self.player_score += 10
         else:
             self.player_score -= 10
         self.points_player.setText("Points: " + str(self.score))
         self.update()
-    
+
     def on_player_fail(self):
         self.score -= 5
         self.points_player.setText("Points: " + str(self.score))

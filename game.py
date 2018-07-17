@@ -415,7 +415,7 @@ class GameWidget(QtWidgets.QWidget):
         self.update()
 
     def on_player_success(self):
-        self.player_score += 5
+        self.score += 5
         self.points_player.setText("Points: " + str(self.score))
         self.update()
 

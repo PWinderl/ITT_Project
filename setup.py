@@ -45,7 +45,7 @@ class SetupWidget(QtWidgets.QWidget):
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
         layout = QtWidgets.QHBoxLayout(self)
-        font = QtGui.QFont("Times", 20, QtGui.QFont.Bold)
+        font = QtGui.QFont("Times", 10, QtGui.QFont.Bold)
         self.player = QtWidgets.QLabel("Trying to connect player ...")
         self.player.setFont(font)
         self.player.setStyleSheet('color: white')

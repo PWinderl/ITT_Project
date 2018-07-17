@@ -56,6 +56,11 @@ class Device:
     def register_confirm_callback(self, callback):
         self.confirm_callback = callback
 
+    def is_violin(self):
+        if self.check_activity()[0] == 0:
+            return True
+        return False
+
     # Registers button pushes
     def __on_press__(self, objects):
         if objects is not None and len(objects) > 0:
@@ -66,22 +71,21 @@ class Device:
                     if is_down:
                         # TODO: ValueError Invalid number of FFT data points (0) specified.
                         # value for activity ([0] = violin, [1] = guitar, [2] = drums)
-                        # print(self.check_activity())
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)
-                    if self.click_callback is not None:
+                    if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_B, is_down)
                 elif btn == 'A':
-                    if self.click_callback is not None:
+                    if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_A, is_down)
                     if self.confirm_callback is not None and is_down:
                         self.confirm_callback()
                 elif btn == 'One':
-                    if self.click_callback is not None:
+                    if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_ONE, is_down)
                 elif btn == 'Two':
-                    if self.click_callback is not None:
+                    if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_TWO, is_down)
 
     def __on_move__(self, data):

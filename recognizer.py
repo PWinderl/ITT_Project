@@ -48,12 +48,10 @@ class Recognizer():
                 for line in f.readlines():
                     parts = line.split(":")
                     name = parts[0]
-                    print(len(eval(parts[1])))
                     templates.append(
                         {"name": name, "points": eval(parts[1])})
             if templates is not None and len(templates) > 0:
                 result = self.compare(points, templates, 100)
-                print(p_name)
                 if result[0] is not None and self.callback is not None:
                     self.callback(result[0]["name"], result[1], p_name)
                 else:
@@ -93,8 +91,8 @@ class Recognizer():
         except Exception as e:
             print(e)
             print("new points")
-            print(len(new_points))
-            print(new_points)
+            # print(len(new_points))
+            #print(new_points)
         return new_points
 
     # Gets two points and calculates and returns the distance between them.
@@ -218,8 +216,8 @@ class Recognizer():
     def path_distance(self, a, b):
         d = 0
         length = len(a)
-        print(len(a))
-        print(len(b))
+        # print(len(a))
+        # print(len(b))
         for idx in range(length - 1):
             d += self.distance(a[idx], b[idx])
         return d / length

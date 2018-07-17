@@ -418,15 +418,22 @@ class GameWidget(QtWidgets.QWidget):
         self.game.on_hit.connect(self.on_player_success)
         self.game.on_end.connect(self.on_end)
         self.game.start()
+        
+        # sets focus to pygame window
+        os.system("wmctrl -a pygame")
         try:
             QtCore.QTimer.singleShot(
                 500, lambda: self.on_button("conductor", 1, True))
         except Exception as e:
             pass
             # print(traceback.format_exc())
+    
+    # Call function after a while of playing
+    def quit_game(self):
+        pygame.quit()
+        self.on_end()
 
     def on_end(self):
-        print("end")
         self.game_end.emit(self.score)
 
     def update_score(self, name):

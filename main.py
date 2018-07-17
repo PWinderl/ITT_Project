@@ -13,6 +13,7 @@ from game import GameWidget
 from setup import SetupWidget
 import sys
 
+
 class Display(QtWidgets.QMainWindow):
 
     def __init__(self, res, addresses=None):
@@ -42,6 +43,7 @@ class Display(QtWidgets.QMainWindow):
         self.update()
 
     def on_widget_change(self, widget_type):
+        print(widget_type)
         widget = None
         if widget_type == "setup":
             widget = SetupWidget(
@@ -56,7 +58,8 @@ class Display(QtWidgets.QMainWindow):
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
-            self.start_timer(self.on_minigame_start, 500)
+            widget.game_end.connect(self.on_game_end)
+            self.start_timer(self.on_minigame_start, 3000)
         elif widget_type == "minigame":
             widget = MiniGameWidget(
                 (500, 500), self.devices, parent=self.window)
@@ -77,6 +80,9 @@ class Display(QtWidgets.QMainWindow):
         self.current_widget = widget
         self.show()
 
+    def on_game_end(self, score):
+        print(score)
+
     def start_timer(self, callback, ms=60000):
         def handler():
             callback()
@@ -93,6 +99,7 @@ class Display(QtWidgets.QMainWindow):
         self.on_widget_change("minigame")
 
     def on_minigame_end(self, name):
+        print("end")
         self.minigame_winner = name
         self.on_widget_change("game")
         self.current_widget.on_continue()

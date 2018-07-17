@@ -108,7 +108,7 @@ class DrawWidget(QtWidgets.QFrame):
 
     def mouseReleaseEvent(self, event):
         self.recognize_flag = False
-        self.finished_unistroke.emit(self.positions, True, self.name)
+        self.finished_unistroke.emit(self.positions, self.name)
         self.positions = []
 
 
@@ -185,6 +185,8 @@ class MiniGameWidget(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
+        self.scores = []
+
         if devices is not None and len(devices) > 0:
             self.connect_devices(devices, player, conductor)
         template.show()
@@ -203,5 +205,9 @@ class MiniGameWidget(QtWidgets.QWidget):
             devices[1].register_move_callback(conductor.on_move)
 
     def on_result(self, template, score, name):
-        print(name, "won")
-        self.on_end.emit(name)
+        self.scores.append({"name": name, "score": score})
+        if len(self.scores) > 1:
+            if self.scores[0]["score"] < self.scores[1]["score"]:
+                self.on_end.emit(self.scores[0]["name"])
+            else:
+                self.on_end.emit(self.scores[1]["name"])

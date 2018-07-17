@@ -9,6 +9,7 @@ from PyQt5 import QtWidgets, QtCore, Qt, QtGui
 import sys
 import pygame
 import os
+import time
 # For testing
 import traceback
 
@@ -18,12 +19,14 @@ CONTINUE = pygame.USEREVENT + 3
 ACTION = pygame.USEREVENT + 4
 CLEAR_TARGET = pygame.USEREVENT + 5
 EXIT = pygame.USEREVENT + 6
+CLEAR_MUSIC = pygame.USEREVENT + 7
 
 
 class GameThread(QtCore.QThread):
 
     on_hit = QtCore.pyqtSignal()
     on_fail = QtCore.pyqtSignal()
+    on_end = QtCore.pyqtSignal()
 
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
@@ -41,8 +44,8 @@ class GameThread(QtCore.QThread):
                    "sprites/one_success.png"],
                ["sprites/two_inactive.png", "sprites/two_fail.png", "sprites/two_success.png"]]
 
-    SOUNDS = ["sounds/violin_c.wav", "sounds/violin_f.wav",
-              "sounds/violin_g.wav", "sounds/violin_a.wav"]
+    SOUNDS = ["sounds/violin_c.mp3", "sounds/violin_f.mp3",
+              "sounds/violin_g.mp3", "sounds/violin_a.mp3"]
 
     def __init__(self, res, parent=None):
         super(GameThread, self).__init__(parent)
@@ -136,7 +139,7 @@ class GameThread(QtCore.QThread):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
-                        sys.exit()
+                        self.on_end.emit()
                 if event.type == NOTE_INCOMING:
                     try:
                         line = event.dict["line"]
@@ -186,6 +189,8 @@ class GameThread(QtCore.QThread):
                     else:
                         found_target = False
                     last_target = target
+                if event.type == CLEAR_MUSIC:
+                    pygame.mixer.music.stop()
                 if event.type == CLEAR_TARGET:
                     if last_target is not None:
                         last_target.change_state(last_target.inactive)
@@ -312,7 +317,10 @@ class Target(pygame.sprite.Sprite):
 
     def play(self):
         pygame.mixer.music.load(self.sound)
+        pygame.mixer.music.set_volume(1.0)
+        pygame.mixer.music.set_pos(1)
         pygame.mixer.music.play()
+        pygame.time.set_timer(CLEAR_MUSIC, 1000)
 
     def set_radius_and_y(self, radius, y):
         self.radius = radius
@@ -345,6 +353,8 @@ class Target(pygame.sprite.Sprite):
 
 
 class GameWidget(QtWidgets.QWidget):
+
+    game_end = QtCore.pyqtSignal(int)
 
     def __init__(self, resolution, devices, score=0, game=None, parent=None):
         super(GameWidget, self).__init__(parent)
@@ -393,6 +403,7 @@ class GameWidget(QtWidgets.QWidget):
             self.game = GameThread(self.res, parent=self)
         self.game.on_fail.connect(self.on_player_fail)
         self.game.on_hit.connect(self.on_player_success)
+        self.game.on_end.connect(self.on_end)
         self.game.start()
 
         try:
@@ -400,6 +411,10 @@ class GameWidget(QtWidgets.QWidget):
                 500, lambda: self.on_button("conductor", 1, True))
         except Exception as e:
             print(traceback.format_exc())
+        
+    def on_end(self):
+        print("end")
+        self.game_end.emit(self.score)
 
     def update_score(self, name):
         if name == "player":

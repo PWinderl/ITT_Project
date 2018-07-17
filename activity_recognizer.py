@@ -27,7 +27,7 @@ class ActivityRecognizer():
             self.update_timer.timeout.connect(self.update_all_sensors)
 
             self.wm.accelerometer.register_callback(self.update_accel)
-            self.update_timer.start(1000.0 / 20)
+            self.update_timer.start(30)
             print("end ar")
         except Exception as e:
             print(e)

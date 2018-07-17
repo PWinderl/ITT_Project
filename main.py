@@ -25,7 +25,10 @@ class Display(QtWidgets.QMainWindow):
         self.res = res
         self.init_ui()
         self.devices = []
-        self.actual_score = None
+
+        self.old_score = 0
+        self.game = None
+        self.minigame_winner = None
         if addresses is not None:
             self.addresses = addresses
             self.on_widget_change("setup")
@@ -52,15 +55,17 @@ class Display(QtWidgets.QMainWindow):
             widget = MenuWidget((500, 500), self.devices, parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
+            print("hello game")
             widget = GameWidget(
-                self.res, self.devices, self.actual_score, parent=self.window)
-            widget.on_change_game.connect(self.on_widget_change)
-            self.actual_score = widget.score
+                self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
+            if self.minigame_winner is not None:
+                widget.update_score(self.minigame_winner)
+                self.minigame_winner = None
+            self.start_timer(self.on_minigame_start, 1000)
         elif widget_type == "minigame":
             widget = MiniGameWidget(
-                (500, 500), self.devices, self.actual_score, parent=self.window)
-            widget.on_end.connect(self.on_widget_change)
-            self.actual_score =widget.actual_score_mg
+                (500, 500), self.devices, parent=self.window)
+            widget.on_end.connect(self.on_minigame_end)
         elif widget_type == "highscore":
             widget = HighscoreWidget(
                 (500, 500), self.devices, parent=self.window)
@@ -76,6 +81,27 @@ class Display(QtWidgets.QMainWindow):
             self.current_widget.close()
         self.current_widget = widget
         self.show()
+
+    def start_timer(self, callback, ms=60000):
+        def handler():
+            callback()
+            timer.stop()
+            timer.deleteLater()
+        timer = QtCore.QTimer()
+        timer.timeout.connect(handler)
+        timer.start(ms)
+
+    def on_minigame_start(self):
+        self.old_score = self.current_widget.score
+        self.game = self.current_widget.game
+        self.current_widget.on_pause()
+        self.on_widget_change("minigame")
+
+    def on_minigame_end(self, name):
+        print("hello")
+        self.minigame_winner = name
+        self.on_widget_change("game")
+        self.current_widget.on_continue()
 
     def connect_devices(self, devices):
         self.devices = devices

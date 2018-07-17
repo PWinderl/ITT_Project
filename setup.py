@@ -5,9 +5,10 @@
 By Thomas Oswald
 """
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from bt_input import Device
 from time import sleep
+
 
 class SetupThread(QtCore.QThread):
 
@@ -44,11 +45,15 @@ class SetupWidget(QtWidgets.QWidget):
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
         layout = QtWidgets.QHBoxLayout(self)
-
+        font = QtGui.QFont("Times", 20, QtGui.QFont.Bold)
         self.player = QtWidgets.QLabel("Trying to connect player ...")
+        self.player.setFont(font)
+        self.player.setStyleSheet('color: white')
         layout.addWidget(self.player, alignment=QtCore.Qt.AlignLeft)
 
         self.conductor = QtWidgets.QLabel("Trying to connect conductor ...")
+        self.conductor.setFont(font)
+        self.conductor.setStyleSheet('color: white')
         layout.addWidget(self.conductor, alignment=QtCore.Qt.AlignRight)
 
         self.setLayout(layout)

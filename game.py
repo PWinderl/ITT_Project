@@ -126,7 +126,7 @@ class GameThread(QtCore.QThread):
         self.target_sprites = self.init_targets()
         clock = pygame.time.Clock()
 
-        frame_rate = 120
+        frame_rate = 200
         while is_running:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -342,19 +342,16 @@ class Target(pygame.sprite.Sprite):
 
 class GameWidget(QtWidgets.QWidget):
 
-    ###
-    on_change_game = QtCore.pyqtSignal(str, int)
-    score = 234
-    ###
-
-    def __init__(self, resolution, devices, actual_score, parent=None):
-        # self.score = actual_score
+    def __init__(self, resolution, devices, score=0, game=None, parent=None):
         super(GameWidget, self).__init__(parent)
-        print('Actual Score im GW: ', actual_score)
         self.res = resolution
         self.is_pause = False
         self.player = None
         self.conductor = None
+
+        self.score = score
+
+        self.game = game
 
         self.init_ui()
         self.init_devices(devices)
@@ -365,15 +362,13 @@ class GameWidget(QtWidgets.QWidget):
         height = self.res[1] * 0.6
         self.setFixedSize(width, height)
 
-        layout = QtWidgets.QHBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         font = QtGui.QFont("Times", 20, QtGui.QFont.Bold)
-        self.points_player = QtWidgets.QLabel("Points", parent=self)
+        self.points_player = QtWidgets.QLabel("Points: " + str(self.score), parent=self)
         self.points_player.setFont(font)
-        layout.addWidget(self.points_player, alignment=QtCore.Qt.AlignTop)
-
-        self.points_conductor = QtWidgets.QLabel("Points", parent=self)
-        self.points_conductor.setFont(font)
-        layout.addWidget(self.points_conductor, alignment=QtCore.Qt.AlignTop)
+        self.points_player.setStyleSheet('color: white')
+        layout.addWidget(self.points_player, alignment=QtCore.Qt.AlignCenter)
+        layout.setAlignment(QtCore.Qt.AlignTop)
 
         self.setLayout(layout)
         self.show()
@@ -389,17 +384,36 @@ class GameWidget(QtWidgets.QWidget):
                     lambda btn, is_down: self.on_button("conductor", btn, is_down))
 
     def init_game(self):
-        self.game = GameThread(self.res, parent=self)
-        self.game.on_fail.connect(lambda: print("fail"))
-        self.game.on_hit.connect(lambda: print("hit"))
+        if self.game is None:
+            self.game = GameThread(self.res, parent=self)
+        self.game.on_fail.connect(self.on_player_fail)
+        self.game.on_hit.connect(self.on_player_success)
         self.game.start()
+        
         try:
             QtCore.QTimer.singleShot(
                 500, lambda: self.on_button("conductor", 1, True))
-            QtCore.QTimer.singleShot(2000, self.on_pause)
-            QtCore.QTimer.singleShot(4000, self.on_continue)
         except Exception as e:
             print(traceback.format_exc())
+        
+
+    def update_score(self, name):
+        if name == "player":
+            self.player_score += 10     
+        else:
+            self.player_score -= 10
+        self.points_player.setText("Points: " + str(self.score))
+        self.update()
+    
+    def on_player_fail(self):
+        self.score -= 5
+        self.points_player.setText("Points: " + str(self.score))
+        self.update()
+
+    def on_player_success(self):
+        self.player_score += 5
+        self.points_player.setText("Points: " + str(self.score))
+        self.update()
 
     def on_button(self, char, btn, is_down):
         if not self.is_pause and is_down:
@@ -413,7 +427,6 @@ class GameWidget(QtWidgets.QWidget):
     def on_pause(self):
         pygame.event.post(pygame.event.Event(PAUSE))
         self.is_pause = True
-        self.on_change_game.emit("minigame", 457)
 
     def on_continue(self):
         pygame.event.post(pygame.event.Event(CONTINUE))

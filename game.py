@@ -5,7 +5,7 @@
 By Thomas Oswald
 """
 
-from PyQt5 import QtWidgets, QtCore, Qt
+from PyQt5 import QtWidgets, QtCore, Qt, QtGui
 import sys
 import pygame
 import os
@@ -16,34 +16,42 @@ NOTE_INCOMING = pygame.USEREVENT + 1
 PAUSE = pygame.USEREVENT + 2
 CONTINUE = pygame.USEREVENT + 3
 ACTION = pygame.USEREVENT + 4
-HIT = pygame.USEREVENT + 5
-FAIL = pygame.USEREVENT + 6
-EXIT = pygame.USEREVENT + 7
-
-# TODO: notes destroy target, when no action_flag is set
+CLEAR_TARGET = pygame.USEREVENT + 5
+EXIT = pygame.USEREVENT + 6
 
 
-class Game():
+class GameThread(QtCore.QThread):
+
+    on_hit = QtCore.pyqtSignal()
+    on_fail = QtCore.pyqtSignal()
 
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     GREEN = (100, 250, 115)
     BLUE = (51, 0, 255)
 
-    CUBE_FACTOR = 0.2
-    CIRCLE_FACTOR = 0.3
+    RECT_FACTOR = 0.2
+    TARGET_FACTOR = 0.3
     TARGET_Y_FACTOR = 0.1
 
-    def __init__(self, res):
+    TARGETS = [["sprites/a_inactive.png", "sprites/a_fail.png", "sprites/a_success.png"],
+               ["sprites/b_inactive.png", "sprites/b_fail.png",
+                   "sprites/b_success.png"],
+               ["sprites/one_inactive.png", "sprites/one_fail.png",
+                   "sprites/one_success.png"],
+               ["sprites/two_inactive.png", "sprites/two_fail.png", "sprites/two_success.png"]]
+
+    def __init__(self, res, parent=None):
+        super(GameThread, self).__init__(parent)
         # SET WINDOW POS
+        self.res = res
         width, height = res
-        self.width = int(width * 0.8)
-        self.height = int(height * 0.8)
-        print(width, height, self.width, self.height)
-        frame_x = (width - self.width) / 2
-        frame_y = (height - self.height) / 2
-        print(frame_x, frame_y)
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (frame_x, frame_y)
+        self.width = int(width * 0.5)
+        self.height = int(height * 0.5)
+        self.center_position(self.width, self.height)
+
+        # size of pause window
+        self.p_width, self.p_height = (300, 300)
 
         # 8 lines and 4 for spacing between screens
         self.lines = 8 + 4
@@ -52,50 +60,73 @@ class Game():
             (self.width, self.height), pygame.NOFRAME)
         self.circles = []
         self.rects = []
-        self.init_ui(self.screen, self.width, self.height)
+        self.background = self.init_background(self.screen)
+
+    def center_position(self, width, height):
+        full_width, full_height = self.res
+        frame_x = (full_width - width) / 2
+        frame_y = (full_height - height) / 2
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (frame_x, frame_y)
 
     # part 1 lines: 0 - 1 | 1 - 2 | 2 - 3 | 3 - 4 |
     # part 2 lines: 8 - 9 | 9 - 10 | 10 - 11 | 11 - 12 |
-    def init_ui(self, screen, width, height):
+    def init_background(self, screen):
+        width, height = screen.get_size()
+        background = pygame.Surface((width, height))
+        background = background.convert()
+        background.fill((0, 0, 0))
         line_size = width / self.lines
         step = 0
         color = self.WHITE
-        circle_radius = line_size * self.CIRCLE_FACTOR
-        circle_y = height * self.TARGET_Y_FACTOR
+
         while step <= self.lines:
             if step == self.lines / 2:
                 color = self.GREEN
-            if step < 4:
-                x, y = (int((line_size * step + line_size *
-                             (step + 1)) / 2) - circle_radius / 2, height - circle_y)
-                self.circles.append(pygame.draw.ellipse(
-                    screen, self.BLUE, (x, y, circle_radius, circle_radius)))
-            pygame.draw.line(screen, color,  [
+
+            pygame.draw.line(background, color,  [
                 line_size * step, 0], [line_size * step, height], 5)
             if step == self.lines / 3 or step == self.lines / 2:
                 color = self.WHITE
                 step += 2
             else:
                 step += 1
+        return background
 
-        pygame.display.flip()
+    def init_targets(self):
+        line_size = self.width / self.lines
+        radius = int(line_size * self.TARGET_FACTOR)
+        target_y = self.height - (self.height * self.TARGET_Y_FACTOR)
+        group = pygame.sprite.Group()
+        for step in range(4):
+            x, y = (int((line_size * step + line_size *
+                         (step + 1)) / 2) - radius / 2, target_y)
+            group.add(Target(step, x, y, radius, self.TARGETS[step]))
+        return group
 
     def redraw(self, screen, width, height):
-        self.init_ui(screen, width, height)
-        for item in self.rects:
-            if "rect" in item:
-                ratio_y = item["rect"].y / self.width
-                new_y = width * ratio_y
-                item["rect"] = self.create_cube(screen, item, width, new_y)
-                self.rects[self.rects.index(item)] = item
+        self.background = self.init_background(screen)
+        for sprite in self.note_sprites.sprites():
+            ratio_y = sprite.rect.y / self.width
+            new_y = width * ratio_y
+            sprite.init_rect(self.lines, width, new_y)
+
+        radius = int(width / self.lines * self.TARGET_FACTOR)
+        target_y = height - (height * self.TARGET_Y_FACTOR)
+        for sprite in self.target_sprites.sprites():
+            sprite.set_radius_and_y(radius, target_y)
+            sprite.reload()
+        return screen
 
     def run(self):
         is_running = True
         pause_flag = False
+        last_target = None
 
+        self.note_sprites = pygame.sprite.Group()
+        self.target_sprites = self.init_targets()
         clock = pygame.time.Clock()
 
-        frame_rate = 60
+        frame_rate = 120
         while is_running:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -104,158 +135,209 @@ class Game():
                         sys.exit()
                 if event.type == NOTE_INCOMING:
                     try:
-                        self.rects.append(
-                            {"speed": frame_rate / 2,
-                                "line": event.dict["line"],
-                                "field": event.dict["field"]})
+                        line = event.dict["line"]
+                        field = event.dict["field"]
+                        note = Note(line, field, self.RECT_FACTOR)
+                        note.init_rect(self.lines, self.width)
+                        self.note_sprites.add(note)
                     except Exception as e:
                         print(e)
                 # Used for hiding and showing:
                 # https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-
                 # surface-and-keep-all-objects-within-proportionate-to-t
                 if event.type == PAUSE:
+                    self.center_position(self.p_width, self.p_height)
                     screen = pygame.display.set_mode(
-                        (300, 300), pygame.NOFRAME)
+                        (self.p_width, self.p_height), pygame.NOFRAME)
                     screen.blit(pygame.transform.scale(
-                        self.screen, (300, 300)), (0, 0))
-                    self.redraw(screen, 300, 300)
+                        self.screen, (self.p_width, self.p_height)), (0, 0))
+                    self.redraw(screen, self.p_width, self.p_height)
                     pygame.display.flip()
                     pause_flag = True
                 if event.type == CONTINUE:
+                    self.center_position(self.width, self.height)
                     screen = pygame.display.set_mode(
                         (self.width, self.height), pygame.NOFRAME)
                     screen.blit(pygame.transform.scale(
                         self.screen, (self.width, self.height)), (0, 0))
-                    self.screen = screen
-                    self.redraw(self.screen, self.width, self.height)
+                    self.screen = self.redraw(screen, self.width, self.height)
                     pygame.display.flip()
                     pause_flag = False
                 if event.type == ACTION:
-                    print("Is hit:", self.is_hit(event.dict["line"]))
-                if event.type == HIT:
-                    for circle in self.circles:
-                        self.change_ellipse_color(circle, self.BLUE)
-                    pygame.time.set_timer(HIT, 0)
-                if event.type == FAIL:
-                    for circle in self.circles:
-                        self.change_ellipse_color(circle, self.BLUE)
-                    pygame.time.set_timer(FAIL, 0)
+                    action_line = event.dict["line"]
+                    target = self.get_target_by_id(action_line)
+                    found_target = False
+                    for note in self.note_sprites.sprites():
+                        if note.field == 1 and note.line == action_line:
+                            if note.has_hit(target):
+                                self.on_hit.emit()
+                                found_target = True
+                                self.remove_rect(note)
+                                self.note_sprites.remove(note)
+                            else:
+                                self.on_fail.emit()
+                    if not found_target:
+                        target.change_state(target.fail)
+                        pygame.time.set_timer(CLEAR_TARGET, 100)
+                    else:
+                        found_target = False
+                    last_target = target
+                if event.type == CLEAR_TARGET:
+                    if last_target is not None:
+                        last_target.change_state(last_target.inactive)
                 if event.type == EXIT:
                     is_running = False
                 if event.type == pygame.QUIT:
                     sys.exit()
             if not pause_flag:
-                for item in self.rects:
-                    # moving rect
-                    if "rect" not in item:
-                        rect = item["rect"] = self.create_cube(
-                            self.screen, item, self.width)
-                    else:
-                        rect = item["rect"]
-                    self.remove_rect(rect)
-                    rect = rect.move(0, 1)
-                    rect = pygame.draw.rect(
-                        self.screen, self.WHITE, rect)
-
-                    # change game field (conductor -> player)
-                    if rect.top >= self.height - rect.height:
-                        self.remove_rect(rect)
-                        self.rects.remove(item)
-                        if item["field"] == 2:
-                            item["field"] = 1
-                            item["rect"] = self.add_rect(item)
-                            self.rects.append(item)
-                    else:
-                        try:
-                            item["rect"] = rect
-                            self.rects[self.rects.index(item)] = item
-                        except ValueError as e:
-                            pass
-
-                    # needs to run in every loop
-                    pygame.display.update(rect)
+                width, height = self.screen.get_size()
+                self.screen.blit(self.background, (0, 0))
+                for sprite in self.note_sprites.sprites():
+                    self.remove_rect(sprite.rect)
+                    if sprite.rect.top >= height - sprite.rect.height:
+                        if sprite.field == 2:
+                            sprite.move_to_field(1, self.lines, width)
+                    if sprite.rect.y >= height:
+                        self.on_fail.emit()
+                        self.note_sprites.remove(sprite)
+                        continue
+                    self.screen.blit(self.background, sprite.rect, sprite.rect)
+                self.note_sprites.update()
+                self.note_sprites.draw(self.screen)
+                self.target_sprites.draw(self.screen)
+                pygame.display.flip()
                 clock.tick(frame_rate)
         pygame.quit()
 
-    # TODO: Extend this code
-    def play_note(self):
-        pygame.mixer.music.load("Sample.mp3")
-        pygame.mixer.music.play()
-
-    def is_hit(self, line):
-        for item in self.rects:
-            if "rect" in item:
-                rect = item["rect"]
-                target = self.circles[line]
-                if item["field"] == 1 and item["line"] == line and rect.colliderect(target):
-                    self.remove_rect(rect)
-                    self.rects.remove(item)
-                    self.change_ellipse_color(
-                        target, self.GREEN)
-                    pygame.time.set_timer(HIT, 100)
-                    return True
-                else:
-                    self.change_ellipse_color(
-                        target, self.RED)
-                    pygame.time.set_timer(FAIL, 100)
-        return False
-
-    def change_ellipse_color(self, rect, color):
-        ellipse = pygame.draw.ellipse(self.screen, color, rect)
-        pygame.display.update(rect)
-        return ellipse
+    def get_target_by_id(self, id):
+        for target in self.target_sprites.sprites():
+            if target.id == id:
+                return target
+        return None
 
     def remove_rect(self, rect):
         pygame.draw.rect(self.screen, (0, 0, 0), rect)
-        pygame.display.update(rect)
 
-    def create_cube(self, screen, item, window_width, pre_pos_y=None):
-        line = item["line"]
-        field = item["field"]
-        if field == 2:
+
+class Note(pygame.sprite.Sprite):
+
+    def __init__(self, line, field, size_factor):
+        super().__init__()
+        self.line = line
+        self.field = field
+
+        self.size_factor = size_factor
+
+    def reload(self):
+        self.image, self.rect = self.__load_png__("sprites/note.png")
+
+    def init_rect(self, lines, window_width, other_y=None):
+        self.reload()
+        line = self.line
+        if self.field == 2:
             line += 8
 
-        # get position and size of a cuboid
-        # side = width and height of cuboid
-        side = window_width / self.lines * self.CUBE_FACTOR
-        middle = (window_width / self.lines * line +
-                  window_width / self.lines * (line + 1)) / 2
-        pos_y = 0
-        if pre_pos_y is not None:
-            pos_y = pre_pos_y
-        return pygame.draw.rect(screen, self.WHITE, [middle - side / 2, pos_y, side, side])
+        self.rect.x = self.calc_line_center(lines, window_width, line)
+        if other_y is not None:
+            self.rect.y = other_y
+        else:
+            self.rect.y = 0
+        size = self.calc_size(lines, window_width)
+        self.image = pygame.transform.scale(self.image, (size, size))
 
+    def set_size(self, width, height):
+        self.rect.width = width
+        self.rect.height = height
 
-class GameController(QtCore.QThread):
+    def update(self):
+        self.rect = self.rect.move(0, 1)
 
-    def __init__(self, res, parent=None):
-        super(GameController, self).__init__(parent)
-        self.game = Game(res)
+    def move_to_field(self, field, lines, window_width):
+        self.field = field
+        size = self.calc_size(lines, window_width)
+        center = self.calc_line_center(lines, window_width)
+        self.rect.x = center - size / 2
+        self.rect.y = 0
 
-    def run(self):
+    def calc_size(self, lines, window_width):
+        return int(window_width / lines * self.size_factor)
+
+    def calc_line_center(self, lines, window_width, line=None):
+        if line is None:
+            line = self.line
+        return (window_width / lines * line +
+                window_width / lines * (line + 1)) / 2
+
+    def has_hit(self, target):
+        hit = False
+        if self.rect.colliderect(target.rect):
+            target.change_state(target.success)
+            self.play()
+            hit = True
+        else:
+            target.change_state(target.fail)
+        pygame.time.set_timer(CLEAR_TARGET, 100)
+        return hit
+
+    def play(self):
+        print("PLAY NOTE HERE")
+        pygame.mixer.music.load("Sample.mp3")
+        pygame.mixer.music.play()
+
+    # Pygame tutorial
+    def __load_png__(self, name):
+        # Load image and return image object
+        fullname = name
         try:
-            self.game.run()
-        except Exception as e:
-            # TODO: video system not initialized
-            print(traceback.format_exc())
-            print(e)
+            image = pygame.image.load(fullname)
+            image = image.convert_alpha()
+        except pygame.error as message:
+            print('Cannot load image:', fullname)
+            raise(SystemExit, message)
+        return image, image.get_rect()
 
 
-class GameEvent():
+class Target(pygame.sprite.Sprite):
 
-    def __init__(self, event):
-        self.event = event
-        self.callbacks = []
+    def __init__(self, id, x, y, radius, images):
+        super().__init__()
+        self.id = id
+        self.inactive = images[0]
+        self.fail = images[1]
+        self.success = images[2]
+        self.radius = radius
+        self.pos = (x, y)
+        self.current_state = self.inactive
+        self.change_state(self.current_state)
 
-    def register_callback(self, callback):
-        self.callbacks.append(callback)
+    def set_radius_and_y(self, radius, y):
+        self.radius = radius
+        self.pos = (self.pos[0], y)
 
-    def call(self, data):
-        for callback in self.callbacks:
-            callback(data)
+    def change_state(self, state):
+        self.current_state = state
+        self.reload()
 
-    def emit(self, data={}):
-        pygame.event.post(pygame.event.Event(self.event, data))
+    def reload(self):
+        self.image, self.rect = self.__load_png__(self.current_state)
+        self.image = pygame.transform.scale(
+            self.image, (self.radius, self.radius))
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+    def __load_png__(self, name):
+        # Load image and return image object
+        fullname = name
+        try:
+            image = pygame.image.load(fullname)
+            if image.get_alpha is None:
+                image = image.convert()
+            else:
+                image = image.convert_alpha()
+        except pygame.error as message:
+            print('Cannot load image:', fullname)
+            raise(SystemExit, message)
+        return image, image.get_rect()
 
 
 class GameWidget(QtWidgets.QWidget):
@@ -272,16 +354,18 @@ class GameWidget(QtWidgets.QWidget):
         self.init_game()
 
     def init_ui(self):
-        width = self.res[0] * 0.9
-        height = self.res[1] * 0.9
+        width = self.res[0] * 0.6
+        height = self.res[1] * 0.6
         self.setFixedSize(width, height)
 
         layout = QtWidgets.QHBoxLayout(self)
-
+        font = QtGui.QFont("Times", 20, QtGui.QFont.Bold)
         self.points_player = QtWidgets.QLabel("Points", parent=self)
+        self.points_player.setFont(font)
         layout.addWidget(self.points_player, alignment=QtCore.Qt.AlignTop)
 
         self.points_conductor = QtWidgets.QLabel("Points", parent=self)
+        self.points_conductor.setFont(font)
         layout.addWidget(self.points_conductor, alignment=QtCore.Qt.AlignTop)
 
         self.setLayout(layout)
@@ -294,9 +378,14 @@ class GameWidget(QtWidgets.QWidget):
                 lambda btn, is_down: self.on_button("player", btn, is_down))
             if len(devices) > 1:
                 self.conductor = devices[1]
+                self.conductor.register_click_callback(
+                    lambda btn, is_down: self.on_button("conductor", btn, is_down))
 
     def init_game(self):
-        self.controller = GameController(self.res, parent=self).start()
+        self.game = GameThread(self.res, parent=self)
+        self.game.on_fail.connect(lambda: print("fail"))
+        self.game.on_hit.connect(lambda: print("hit"))
+        self.game.start()
         try:
             QtCore.QTimer.singleShot(
                 500, lambda: self.on_button("conductor", 1, True))

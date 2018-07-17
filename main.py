@@ -5,7 +5,7 @@
 By Thomas Oswald
 """
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from menu import MenuWidget
 from minigame import MiniGameWidget
 from highscore import HighscoreWidget
@@ -39,6 +39,7 @@ class Display(QtWidgets.QMainWindow):
         self.window.setLayout(layout)
 
         self.show()
+        self.update()
 
     def on_widget_change(self, widget_type):
         widget = None
@@ -74,6 +75,18 @@ class Display(QtWidgets.QMainWindow):
     def connect_devices(self, devices):
         self.devices = devices
         self.on_widget_change("menu")
+
+    # https://forum.qt.io/topic/40151/solved-scaled-background-image-using-stylesheet/10
+    # comment by mbnoimi
+    def paintEvent(self, evnt):
+        pixmap = QtGui.QPixmap()
+        pixmap.load("./background.png")
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        pixmap = pixmap.scaled(
+            self.res[0], self.res[1], QtCore.Qt.KeepAspectRatioByExpanding)
+        qp.drawPixmap(0, 0, pixmap)
+        qp.end()
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:

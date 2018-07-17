@@ -28,15 +28,16 @@ Auflösung: xdpyinfo | grep dimensions
 - Setup
     - ~~Bluetooth connection abfragen / Events
     - ~~Bevor Verbindung steht, setup screen anzeigen -> evtl anderer Thread für Verbindungsaufbau~~
-    - Hintergrund
+    - ~~Hintergrund~~
     - Text styling
-- Wechsel von Game zu Minigame und wieder zurück !
+- ~~Wechsel von Game zu Minigame und wieder zurück !~~
 - GUI
     - Sprites
-        - "Target" also Kreise, die das Ziel darstellen
-        - "Cube" Noten, die durch die Lines fahren
-        - "Line" abgrenzende Linie
+        - ~~"Target" also Kreise, die das Ziel darstellen~~
+        - ~~"Cube" Noten, die durch die Lines fahren~~
+        - ~~"Line" abgrenzende Linie~~
     - Hintergrund
+        - ~~für main widget~~
         - für Widgets
         - für pygame (wenn möglich / nötig)
     - Buttons

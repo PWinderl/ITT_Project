@@ -57,8 +57,9 @@ class Device:
                 is_down = btn_object[1]
                 if btn == 'B':
                     if is_down:
+                        # TODO: ValueError Invalid number of FFT data points (0) specified.
                         # value for activity ([0] = violin, [1] = guitar, [2] = drums)
-                        print(self.check_activity())
+                        # print(self.check_activity())
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)

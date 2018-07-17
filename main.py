@@ -25,6 +25,7 @@ class Display(QtWidgets.QMainWindow):
         self.res = res
         self.init_ui()
         self.devices = []
+        self.actual_score = None
         if addresses is not None:
             self.addresses = addresses
             self.on_widget_change("setup")
@@ -52,10 +53,14 @@ class Display(QtWidgets.QMainWindow):
             widget.on_menu.connect(self.on_widget_change)
         elif widget_type == "game":
             widget = GameWidget(
-                self.res, self.devices, parent=self.window)
+                self.res, self.devices, self.actual_score, parent=self.window)
+            widget.on_change_game.connect(self.on_widget_change)
+            self.actual_score = widget.score
         elif widget_type == "minigame":
             widget = MiniGameWidget(
-                (500, 500), self.devices, parent=self.window)
+                (500, 500), self.devices, self.actual_score, parent=self.window)
+            widget.on_end.connect(self.on_widget_change)
+            self.actual_score =widget.actual_score_mg
         elif widget_type == "highscore":
             widget = HighscoreWidget(
                 (500, 500), self.devices, parent=self.window)

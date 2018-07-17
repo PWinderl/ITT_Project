@@ -342,8 +342,15 @@ class Target(pygame.sprite.Sprite):
 
 class GameWidget(QtWidgets.QWidget):
 
-    def __init__(self, resolution, devices, parent=None):
+    ###
+    on_change_game = QtCore.pyqtSignal(str, int)
+    score = 234
+    ###
+
+    def __init__(self, resolution, devices, actual_score, parent=None):
+        # self.score = actual_score
         super(GameWidget, self).__init__(parent)
+        print('Actual Score im GW: ', actual_score)
         self.res = resolution
         self.is_pause = False
         self.player = None
@@ -406,6 +413,7 @@ class GameWidget(QtWidgets.QWidget):
     def on_pause(self):
         pygame.event.post(pygame.event.Event(PAUSE))
         self.is_pause = True
+        self.on_change_game.emit("minigame", 457)
 
     def on_continue(self):
         pygame.event.post(pygame.event.Event(CONTINUE))

@@ -44,8 +44,8 @@ class GameThread(QtCore.QThread):
                    "sprites/one_success.png"],
                ["sprites/two_inactive.png", "sprites/two_fail.png", "sprites/two_success.png"]]
 
-    SOUNDS = ["sounds/violin_c.mp3", "sounds/violin_f.mp3",
-              "sounds/violin_g.mp3", "sounds/violin_a.mp3"]
+    SOUNDS = ["sounds/violin_c.wav", "sounds/violin_f.wav",
+              "sounds/violin_g.wav", "sounds/violin_a.wav"]
 
     def __init__(self, res, parent=None):
         super(GameThread, self).__init__(parent)
@@ -318,7 +318,6 @@ class Target(pygame.sprite.Sprite):
     def play(self):
         pygame.mixer.music.load(self.sound)
         pygame.mixer.music.set_volume(1.0)
-        pygame.mixer.music.set_pos(1)
         pygame.mixer.music.play()
         pygame.time.set_timer(CLEAR_MUSIC, 1000)
 
@@ -411,7 +410,7 @@ class GameWidget(QtWidgets.QWidget):
                 500, lambda: self.on_button("conductor", 1, True))
         except Exception as e:
             print(traceback.format_exc())
-        
+
     def on_end(self):
         print("end")
         self.game_end.emit(self.score)

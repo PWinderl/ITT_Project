@@ -67,11 +67,13 @@ class Device:
             for btn_object in objects:
                 btn = btn_object[0]
                 is_down = btn_object[1]
+                # Button push for signature confirm and "B-Note" playing
                 if btn == 'B':
                     if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_B, is_down)
                     if self.confirm_callback is not None and is_down:
                         self.confirm_callback()
+                # Button hold for drawing gestures and signature
                 elif btn == 'A':
                     if is_down:
                         self.wm.ir.register_callback(self.__on_move__)
@@ -82,9 +84,11 @@ class Device:
 
                     # if self.confirm_callback is not None and is_down:
                     #     self.confirm_callback()
+                # Button push for "One-Note" playing
                 elif btn == 'One':
                     if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_ONE, is_down)
+                # Button push for "Two-Note" playing
                 elif btn == 'Two':
                     if self.click_callback is not None and self.is_violin():
                         self.click_callback(self.BTN_TWO, is_down)

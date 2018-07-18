@@ -95,7 +95,8 @@ class Recognizer():
             #print(new_points)
         return new_points
 
-    # Gets two points and calculates and returns the distance between them.
+    # Gets two points
+    # Calculates and returns the distance between them.
     def distance(self, pos1, pos2):
         return math.sqrt((pos1[0] - pos2[0])**2 +
                          (pos1[1] - pos2[1])**2)

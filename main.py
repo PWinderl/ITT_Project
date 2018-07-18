@@ -82,8 +82,8 @@ class Display(QtWidgets.QMainWindow):
         self.current_widget = widget
         self.show()
 
+    # Providing score for highscore widget
     def on_game_end(self, score):
-        print('On Game End: ', score)
         self.game_running = False
         self.end_score = score
         self.on_widget_change("highscore")

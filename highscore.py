@@ -6,7 +6,7 @@ from operator import itemgetter
 class HighscoreWidget(QtWidgets.QWidget):
     imagePath = "out.jpg"
 
-    def __init__(self, size, devices, parent=None):
+    def __init__(self, size, devices, end_score, parent=None):
         super(HighscoreWidget, self).__init__(parent)
         self.width, self.height = size
         self.wm_one = None
@@ -15,15 +15,25 @@ class HighscoreWidget(QtWidgets.QWidget):
         self.img = None
         self.icon_size = QtCore.QSize(100, 80)
         # TODO: Score from game.py
-        self.new_score = 1
+        self.new_score = end_score
+        print('New Score in HW: ', self.new_score)
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
-        self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"]]
+        self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"], [44, "Paul"], [44, "Paul"], [44, "Paul"],
+                               [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"]]
 
         self.init_ui()
 
-        self.dw = DrawWidget()
-        self.dw.set_callback(self.highscore_chart)
-        self.init_devices(devices)
+        # TODO: Hier abfangen ob vom Menü aus gestartet oder nach Game end
+        # TODO: Anschließend Draw Highscores mit highscore list aufrufen
+        if self.new_score != 0:
+            print('Ist nicht Null')
+            self.dw = DrawWidget()
+            self.dw.set_callback(self.highscore_chart)
+            self.init_devices(devices)
+        else:
+            print('Ist Null')
+            self.draw_highscores(self.highscore_list)
+        ###
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
@@ -55,7 +65,9 @@ class HighscoreWidget(QtWidgets.QWidget):
         print('In Highscore Chart!')
         self.img = QtGui.QPixmap(self.imagePath)
         # TODO: Insert real score
-        self.score_pair.append([555, self.img])
+        # TODO: abfangen ob es einen neuen score gibt oder der aufruf vom menü kommt
+        self.score_pair.append([self.new_score, self.img])
+        print('Score Pair nach append: ', self.score_pair)
         sorted_hs_list = sorted(self.highscore_list,
                                 key=itemgetter(0), reverse=True)
         if self.score_pair[0][0] > sorted_hs_list[-1][0]:

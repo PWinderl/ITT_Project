@@ -68,7 +68,7 @@ class Display(QtWidgets.QMainWindow):
             widget.on_end.connect(self.on_minigame_end)
         elif widget_type == "highscore":
             widget = HighscoreWidget(
-                (500, 500), self.devices, self.end_score, parent=self.window)
+                (500, 650), self.devices, self.end_score, parent=self.window)
         self.change_widget(widget)
 
     def change_widget(self, widget):

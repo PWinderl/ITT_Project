@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui, Qt
 from operator import itemgetter
 
 
@@ -15,63 +15,60 @@ class HighscoreWidget(QtWidgets.QWidget):
         self.img = None
         self.icon_size = QtCore.QSize(100, 80)
         self.new_score = end_score
-        print('New Score in HW: ', self.new_score)
-        self.highscore_table = QtWidgets.QTableWidget(parent=self)
+        self.highscore_table = QtWidgets.QTableWidget(10, 2, parent=self)
+        self.highscore_table.setHorizontalHeaderLabels(['Name', 'Score'])
+        self.highscore_table.horizontalHeader().setStretchLastSection(True)
+        self.highscore_table.verticalHeader().setStretchLastSection(True)
         self.highscore_list = [[55, "Fabian"], [44, "Paul"], [66, "Thomas"], [44, "Paul"], [44, "Paul"], [44, "Paul"],
-                               [44, "Paul"], [44, "Paul"], [44, "Paul"], [44, "Paul"]]
-
+                               [44, "Paul"], [44, "Paul"], [44, "Paul"]]
         self.init_ui()
 
-        # Abfangen ob vom Menü aus gestartet oder nach Game end
+        # Check if highscore.py was started from menu or after game
+        # In case of game show signature screen
         if self.new_score != 0:
             self.dw = DrawWidget()
-            self.dw.set_callback(self.highscore_chart)
             self.init_devices(devices)
+            self.dw.set_callback(self.highscore_chart)
         else:
             self.draw_highscores(self.highscore_list)
 
+    # Init UI: sets size and layout
     def init_ui(self):
-        self.setFixedSize(self.width, self.height)
+        self.setFixedSize(300, self.height)
         layout = QtWidgets.QGridLayout(self)
         layout.addWidget(self.highscore_table, 1, 1)
         self.setLayout(layout)
         self.show()
 
+    # Registers Wiimote
+    # Set callbacks for Wiimote
     def init_devices(self, devices):
-        if len(devices) == 1:
-            self.wm_one = devices[0]
+        # if len(devices) == 1:
+        self.wm_one = devices[0]
+        self.wm_one.register_click_callback(
+            lambda btn, is_down: self.dw.on_click())
+        self.wm_one.register_confirm_callback(self.dw.save_highscore)
+        # elif len(devices) == 2:
+        #     self.wm_one = devices[0]
+        #     self.wm_one.register_move_callback(self.dw.set_cursor)
+        #     self.wm_one.register_click_callback(
+        #         lambda btn, is_down: self.dw.on_click())
+        #     self.wm_one.register_confirm_callback(self.dw.save_highscore)
+        #     self.wm_two = devices[1]
+        #     self.wm_two.register_move_callback(self.dw.set_cursor)
+        #     self.wm_two.register_click_callback(
+        #         lambda btn, is_down: self.dw.on_click())
+        #     self.wm_two.register_confirm_callback(self.dw.save_highscore)
 
-            # self.wm_one.register_sign_move_callback(self.dw.set_cursor)
-
-            self.wm_one.register_click_callback(
-                lambda btn, is_down: self.dw.on_click())
-            self.wm_one.register_confirm_callback(self.dw.save_highscore)
-
-            # self.wm_one.register_paint_callback(self.dw.on_click())
-            # self.wm_one.register_sign_confirm_callback(self.dw.save_highscore)
-
-        elif len(devices) == 2:
-            self.wm_one = devices[0]
-            self.wm_one.register_move_callback(self.dw.set_cursor)
-            self.wm_one.register_click_callback(
-                lambda btn, is_down: self.dw.on_click())
-            self.wm_one.register_confirm_callback(self.dw.save_highscore)
-            self.wm_two = devices[1]
-            self.wm_two.register_move_callback(self.dw.set_cursor)
-            self.wm_two.register_click_callback(
-                lambda btn, is_down: self.dw.on_click())
-            self.wm_two.register_confirm_callback(self.dw.save_highscore)
-
+    # Fetch signature painting and translate to QPixmap
+    # Connect new score with painted signature
+    # Check if new score is high enough to append to highscore list
     def highscore_chart(self):
-        print('In Highscore Chart!')
         self.img = QtGui.QPixmap(self.imagePath)
-        # TODO: Insert real score
-        # TODO: abfangen ob es einen neuen score gibt oder der aufruf vom menü kommt
         self.score_pair.append([self.new_score, self.img])
-        print('Score Pair nach append: ', self.score_pair)
         sorted_hs_list = sorted(self.highscore_list,
                                 key=itemgetter(0), reverse=True)
-        if self.score_pair[0][0] > sorted_hs_list[-1][0]:
+        if self.score_pair[0][0] > sorted_hs_list[-1][0] or len(sorted_hs_list) < 10:
             new_hs_list = self.set_highscores()
             self.draw_highscores(new_hs_list)
         else:
@@ -91,9 +88,6 @@ class HighscoreWidget(QtWidgets.QWidget):
     # Draws Table with highscores
     def draw_highscores(self, actual_list):
         new_list = sorted(actual_list, key=itemgetter(0), reverse=True)
-        self.highscore_table.setRowCount(10)
-        self.highscore_table.setColumnCount(2)
-        self.highscore_table.setHorizontalHeaderLabels(['Name', 'Score'])
         i = 0
         for item in new_list:
             actual_score = item[0]
@@ -103,21 +97,26 @@ class HighscoreWidget(QtWidgets.QWidget):
                 self.highscore_table.setItem(i, 0, new_sign_entry)
             elif type(item[1]) is str:
                 sign_placeholder = QtWidgets.QTableWidgetItem(item[1])
+                sign_placeholder.setBackground(QtCore.Qt.gray)
                 self.highscore_table.setItem(i, 0, sign_placeholder)
 
             new_score_entry = QtWidgets.QTableWidgetItem(str(actual_score))
+            if i % 2 == 0:
+                new_score_entry.setBackground(QtCore.Qt.green)
+            else:
+                new_score_entry.setBackground(QtCore.Qt.blue)
             self.highscore_table.setItem(i, 1, new_score_entry)
             self.highscore_table.setRowHeight(i, 60)
             i += 1
 
         self.highscore_table.setIconSize(self.icon_size)
-        self.highscore_table.resize(300, 500)
+
         self.highscore_list = new_list
 
 
 class DrawWidget(QtWidgets.QWidget):
 
-    # pyqtsignal for the recognition at the end of each drawing interaction
+    # pyqtsignal for the recognition at the end of the drawing interaction
     finished_unistroke = QtCore.pyqtSignal(object, bool, str)
 
     def __init__(self):
@@ -136,6 +135,7 @@ class DrawWidget(QtWidgets.QWidget):
         self.t_name = ""
         self.save_callback = None
 
+    # UI for signature drawing
     def init_ui(self):
         self.setWindowTitle("Signature")
         self.setGeometry(0, 0, self.width, self.height)
@@ -146,10 +146,9 @@ class DrawWidget(QtWidgets.QWidget):
         self.bt_save.setFixedSize(120, 30)
         self.bt_save.clicked.connect(self.save_highscore)
         layout.addWidget(self.bt_save)
-        self.instruction.setText('Click and hold "B" for drawing'
-                                 'Release "B" when you are ready'
-                                 'Confirm with "A')
-        # self.instruction.move(130, 250)
+        self.instruction.setText('Click and hold "A" for drawing' + "\n" +
+                                 'Release "A" when you are ready' + "\n" +
+                                 'Confirm with "B"')
         layout.addWidget(self.instruction, alignment=QtCore.Qt.AlignTop)
         self.setLayout(layout)
         self.show()
@@ -214,11 +213,3 @@ class DrawWidget(QtWidgets.QWidget):
         self.recognize_flag = False
         self.finished_unistroke.emit(self.positions, self.flag, self.t_name)
         self.positions = []
-
-
-# class HighscoreHandler():
-    # def __init__(self):
-       # super(HighscoreHandler, self).__init__()
-        # self.hs = HighscoreWidget(43)
-        # self.dw = DrawWidget()
-        # self.dw.set_callback(self.hs.highscore_chart)

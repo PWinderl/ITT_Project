@@ -14,7 +14,6 @@ class HighscoreWidget(QtWidgets.QWidget):
         self.score_pair = []
         self.img = None
         self.icon_size = QtCore.QSize(100, 80)
-        # TODO: Score from game.py
         self.new_score = end_score
         print('New Score in HW: ', self.new_score)
         self.highscore_table = QtWidgets.QTableWidget(parent=self)
@@ -23,17 +22,13 @@ class HighscoreWidget(QtWidgets.QWidget):
 
         self.init_ui()
 
-        # TODO: Hier abfangen ob vom Menü aus gestartet oder nach Game end
-        # TODO: Anschließend Draw Highscores mit highscore list aufrufen
+        # Abfangen ob vom Menü aus gestartet oder nach Game end
         if self.new_score != 0:
-            print('Ist nicht Null')
             self.dw = DrawWidget()
             self.dw.set_callback(self.highscore_chart)
             self.init_devices(devices)
         else:
-            print('Ist Null')
             self.draw_highscores(self.highscore_list)
-        ###
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
@@ -45,10 +40,16 @@ class HighscoreWidget(QtWidgets.QWidget):
     def init_devices(self, devices):
         if len(devices) == 1:
             self.wm_one = devices[0]
-            self.wm_one.register_move_callback(self.dw.set_cursor)
+
+            # self.wm_one.register_sign_move_callback(self.dw.set_cursor)
+
             self.wm_one.register_click_callback(
                 lambda btn, is_down: self.dw.on_click())
             self.wm_one.register_confirm_callback(self.dw.save_highscore)
+
+            # self.wm_one.register_paint_callback(self.dw.on_click())
+            # self.wm_one.register_sign_confirm_callback(self.dw.save_highscore)
+
         elif len(devices) == 2:
             self.wm_one = devices[0]
             self.wm_one.register_move_callback(self.dw.set_cursor)

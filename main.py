@@ -25,6 +25,7 @@ class Display(QtWidgets.QMainWindow):
 
         self.old_score = 0
         self.end_score = 0
+        self.game_running = True
         self.game = None
         self.minigame_winner = None
         if addresses is not None:
@@ -60,7 +61,7 @@ class Display(QtWidgets.QMainWindow):
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
             widget.game_end.connect(self.on_game_end)
-            self.start_timer(self.on_minigame_start, 300)
+            self.start_timer(self.on_minigame_start, 3000)
         elif widget_type == "minigame":
             widget = MiniGameWidget(
                 (500, 500), self.devices, parent=self.window)
@@ -83,6 +84,7 @@ class Display(QtWidgets.QMainWindow):
 
     def on_game_end(self, score):
         print('On Game End: ', score)
+        self.game_running = False
         self.end_score = score
         self.on_widget_change("highscore")
 
@@ -96,10 +98,11 @@ class Display(QtWidgets.QMainWindow):
         timer.start(ms)
 
     def on_minigame_start(self):
-        self.old_score = self.current_widget.score
-        self.game = self.current_widget.game
-        self.current_widget.on_pause()
-        self.on_widget_change("minigame")
+        if self.game_running:
+            self.old_score = self.current_widget.score
+            self.game = self.current_widget.game
+            self.current_widget.on_pause()
+            self.on_widget_change("minigame")
 
     def on_minigame_end(self, name):
         print("end")

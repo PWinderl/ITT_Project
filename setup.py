@@ -7,6 +7,7 @@ By Thomas Oswald
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from bt_input import Device
+from bluetooth import BluetoothError
 from time import sleep
 
 
@@ -23,7 +24,7 @@ class SetupThread(QtCore.QThread):
             if self.addresses is not None:
                 for address in self.addresses:
                     self.device_found.emit(Device(address))
-        except Exception as e:
+        except BluetoothError as e:
             print(e)
 
 
@@ -31,7 +32,7 @@ class SetupWidget(QtWidgets.QWidget):
 
     on_setup_end = QtCore.pyqtSignal(object)
 
-    DEVICE_LIMIT = 1
+    DEVICE_LIMIT = 2
 
     def __init__(self, size, addresses, parent=None):
         super(SetupWidget, self).__init__(parent)
@@ -45,7 +46,7 @@ class SetupWidget(QtWidgets.QWidget):
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
         layout = QtWidgets.QHBoxLayout(self)
-        font = QtGui.QFont("Times", 10, QtGui.QFont.Bold)
+        font = QtGui.QFont("Times", 14, QtGui.QFont.Bold)
         self.player = QtWidgets.QLabel("Trying to connect player ...")
         self.player.setFont(font)
         self.player.setStyleSheet('color: white')
@@ -59,13 +60,23 @@ class SetupWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         self.show()
 
+    # When a device is found, it will appended to the devices list.
+    # Depending whether a device connected beforehand,
+    # the device will be declared as player or conductor.
+    # At last a callback is fired, when the DEVICE_LIMIT is reached.
     def on_device_found(self, device):
         self.devices.append(device)
         length = len(self.devices)
+
+        # First device will be always the player.
         if length == 1:
             self.player.setText("Connected player.")
             self.player.repaint()
+
+        # Second device will be always the player.
         elif length == 2:
+            device.leds[1] = False
+            device.leds[2] = True
             self.conductor.setText("Connected conductor.")
             self.conductor.repaint()
         if len(self.devices) == self.DEVICE_LIMIT:

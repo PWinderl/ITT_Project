@@ -33,7 +33,7 @@ class Recognizer():
     def set_callback(self, callback):
         self.callback = callback
 
-    def recognize(self, points, p_name="None"):
+    def recognize(self, points, p_name, t_name):
         if len(points) > 1:
             points = self.resample(points)
             points = self.rotate_to_zero(points)
@@ -48,19 +48,21 @@ class Recognizer():
                 for line in f.readlines():
                     parts = line.split(":")
                     name = parts[0]
-                    templates.append(
-                        {"name": name, "points": eval(parts[1])})
-            if templates is not None and len(templates) > 0:
+                    if t_name == name:
+                        templates.append(
+                            {"name": name, "points": eval(parts[1])})
+            if len(templates) > 0:
                 result = self.compare(points, templates, 100)
                 if result[0] is not None and self.callback is not None:
                     self.callback(result[0]["name"], result[1], p_name)
-                else:
-                    self.callback("None", 0, p_name)
+                    return
+            self.callback("None", 0, p_name)
 
     # Takes the points of the unistroke as input.
     # Calculates the distance distance between two points.
     # Returns the calculated points.
     # TODO: 67 und 72 Errors
+
     def resample(self, points):
         # length of each increment
         inc_length = self.get_path_length(points) / (self.stepsize - 1)
@@ -92,7 +94,7 @@ class Recognizer():
             print(e)
             print("new points")
             # print(len(new_points))
-            #print(new_points)
+            # print(new_points)
         return new_points
 
     # Gets two points

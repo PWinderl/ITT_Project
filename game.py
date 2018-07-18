@@ -378,11 +378,9 @@ class GameWidget(QtWidgets.QWidget):
 
         self.score = score
 
-        self.game = game
-
         self.init_ui()
         self.init_devices(devices)
-        self.init_game()
+        self.game = self.init_game(game)
 
     def init_ui(self):
         width = self.res[0] * 0.6
@@ -411,38 +409,47 @@ class GameWidget(QtWidgets.QWidget):
                 self.conductor.register_click_callback(
                     lambda btn, is_down: self.on_button("conductor", btn, is_down))
 
-    def init_game(self):
-        if self.game is None:
-            self.game = GameThread(self.res, parent=self)
-        self.game.on_fail.connect(self.on_player_fail)
-        self.game.on_hit.connect(self.on_player_success)
-        self.game.on_end.connect(self.on_end)
-        self.game.start()
-        
+    def init_game(self, game):
+        if game is None:
+            game = GameThread(self.res, parent=self)
+        game.on_fail.connect(self.on_player_fail)
+        game.on_hit.connect(self.on_player_success)
+        game.on_end.connect(self.on_end)
+        game.start()
+
         # sets focus to pygame window
         os.system("wmctrl -a pygame")
-        try:
-            QtCore.QTimer.singleShot(
-                500, lambda: self.on_button("conductor", 1, True))
-        except Exception as e:
-            pass
-            # print(traceback.format_exc())
-    
+        return game
+
     # Call function after a while of playing
     def quit_game(self):
         pygame.quit()
         self.on_end()
 
-    def on_end(self):
-        self.game_end.emit(self.score)
-
     def update_score(self, name):
+        text = name + " won"
         if name == "player":
             self.score += 10
         else:
             self.score -= 10
-        self.points_player.setText("Points: " + str(self.score))
+
+        self.points_player.setText(text)
         self.update()
+
+        def callback():
+            self.points_player.setText("Points: " + str(self.score))
+            self.update()
+
+        self.start_timer(callback, 1000)
+
+    def start_timer(self, callback, ms):
+        def handler():
+            callback()
+            timer.stop()
+            timer.deleteLater()
+        timer = QtCore.QTimer()
+        timer.timeout.connect(handler)
+        timer.start(ms)
 
     def on_player_fail(self):
         self.score -= 5
@@ -464,9 +471,18 @@ class GameWidget(QtWidgets.QWidget):
                     NOTE_INCOMING, {"line": btn - 1, "field": 2}))
 
     def on_pause(self):
+        self.game.on_fail.disconnect(self.on_player_fail)
+        self.game.on_hit.disconnect(self.on_player_success)
+        self.game.on_end.disconnect(self.on_end)
         pygame.event.post(pygame.event.Event(PAUSE))
         self.is_pause = True
 
     def on_continue(self):
         pygame.event.post(pygame.event.Event(CONTINUE))
         self.is_pause = False
+
+    def on_end(self):
+        self.game.on_fail.disconnect(self.on_player_fail)
+        self.game.on_hit.disconnect(self.on_player_success)
+        self.game.on_end.disconnect(self.on_end)
+        self.game_end.emit(self.score)

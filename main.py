@@ -14,7 +14,21 @@ from setup import SetupWidget
 import sys
 
 
+class Constants():
+
+    # modules
+    SETUP = 0
+    MENU = 1
+    GAME = 2
+    MINIGAME = 3
+    HIGHSCORE = 4
+
+
 class Display(QtWidgets.QMainWindow):
+
+    WINDOW_SIZE = (500, 500)
+    BACKGROUND = "./background.png"
+    MINIGAME_TIMER = 5000
 
     def __init__(self, res, addresses=None):
         super(Display, self).__init__()
@@ -30,9 +44,9 @@ class Display(QtWidgets.QMainWindow):
         self.minigame_winner = None
         if addresses is not None:
             self.addresses = addresses
-            self.on_widget_change("setup")
+            self.on_widget_change(Constants.SETUP)
         else:
-            self.on_widget_change("menu")
+            self.on_widget_change(Constants.MENU)
 
     def init_ui(self):
         self.showFullScreen()
@@ -45,28 +59,28 @@ class Display(QtWidgets.QMainWindow):
         self.update()
 
     def on_widget_change(self, widget_type):
-        print(widget_type)
         widget = None
-        if widget_type == "setup":
+        if widget_type == Constants.SETUP:
             widget = SetupWidget(
-                (500, 500), self.addresses, parent=self.window)
+                self.WINDOW_SIZE, self.addresses, parent=self.window)
             widget.on_setup_end.connect(lambda d: self.connect_devices(d))
-        elif widget_type == "menu":
-            widget = MenuWidget((500, 500), self.devices, parent=self.window)
+        elif widget_type == Constants.MENU:
+            widget = MenuWidget(self.WINDOW_SIZE, self.devices,
+                                (Constants.GAME, Constants.HIGHSCORE), parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
-        elif widget_type == "game":
+        elif widget_type == Constants.GAME:
             widget = GameWidget(
                 self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
             widget.game_end.connect(self.on_game_end)
-            self.start_timer(self.on_minigame_start, 3000)
-        elif widget_type == "minigame":
+            self.start_timer(self.on_minigame_start, self.MINIGAME_TIMER)
+        elif widget_type == Constants.MINIGAME:
             widget = MiniGameWidget(
-                (500, 500), self.devices, parent=self.window)
+                self.WINDOW_SIZE, self.devices, parent=self.window)
             widget.on_end.connect(self.on_minigame_end)
-        elif widget_type == "highscore":
+        elif widget_type == Constants.HIGHSCORE:
             widget = HighscoreWidget(
                 (500, 650), self.devices, self.end_score, parent=self.window)
         self.change_widget(widget)
@@ -86,9 +100,9 @@ class Display(QtWidgets.QMainWindow):
     def on_game_end(self, score):
         self.game_running = False
         self.end_score = score
-        self.on_widget_change("highscore")
+        self.on_widget_change(Constants.HIGHSCORE)
 
-    def start_timer(self, callback, ms=60000):
+    def start_timer(self, callback, ms):
         def handler():
             callback()
             timer.stop()
@@ -102,23 +116,22 @@ class Display(QtWidgets.QMainWindow):
             self.old_score = self.current_widget.score
             self.game = self.current_widget.game
             self.current_widget.on_pause()
-            self.on_widget_change("minigame")
+            self.on_widget_change(Constants.MINIGAME)
 
     def on_minigame_end(self, name):
-        print("end")
         self.minigame_winner = name
-        self.on_widget_change("game")
+        self.on_widget_change(Constants.GAME)
         self.current_widget.on_continue()
 
     def connect_devices(self, devices):
         self.devices = devices
-        self.on_widget_change("menu")
+        self.on_widget_change(Constants.MENU)
 
     # https://forum.qt.io/topic/40151/solved-scaled-background-image-using-stylesheet/10
     # comment by mbnoimi
     def paintEvent(self, evnt):
         pixmap = QtGui.QPixmap()
-        pixmap.load("./background.png")
+        pixmap.load(self.BACKGROUND)
         qp = QtGui.QPainter()
         qp.begin(self)
         pixmap = pixmap.scaled(

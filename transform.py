@@ -2,7 +2,9 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+
+
+Author: Thomas Oswald
 """
 
 from numpy import matrix

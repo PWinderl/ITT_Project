@@ -21,6 +21,8 @@ CLEAR_TARGET = pygame.USEREVENT + 5
 EXIT = pygame.USEREVENT + 6
 CLEAR_MUSIC = pygame.USEREVENT + 7
 
+SCORE_LIMIT = 50
+
 
 class GameThread(QtCore.QThread):
 
@@ -439,8 +441,13 @@ class GameWidget(QtWidgets.QWidget):
         def callback():
             self.points_player.setText("Points: " + str(self.score))
             self.update()
+            self.chech_score()
 
         self.start_timer(callback, 1000)
+    
+    def check_score(self):
+        if abs(self.score) >= SCORE_LIMIT:
+            self.game_end.emit(self.score)
 
     # This was seen at 
     # https://stackoverflow.com/questions/46656634/pyqt5-qtimer-count-until-specific-seconds
@@ -457,11 +464,13 @@ class GameWidget(QtWidgets.QWidget):
         self.score -= 5
         self.points_player.setText("Points: " + str(self.score))
         self.update()
+        self.check_score()
 
     def on_player_success(self):
         self.score += 5
         self.points_player.setText("Points: " + str(self.score))
         self.update()
+        self.check_score()
 
     def on_button(self, char, btn, is_down):
         if not self.is_pause and is_down:

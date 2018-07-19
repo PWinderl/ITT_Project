@@ -61,6 +61,7 @@ class DisplayController(QtWidgets.QMainWindow):
         self.show()
         self.update()
 
+    # This function initializes the widget according to widget_type.
     def init_widget(self, widget_type):
         widget = None
         if widget_type == self.SETUP:
@@ -74,6 +75,9 @@ class DisplayController(QtWidgets.QMainWindow):
         elif widget_type == self.GAME:
             widget = GameWidget(
                 self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
+            
+            # Widget before was minigame. 
+            # The winner will be transfered to update the scores.
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
@@ -98,7 +102,7 @@ class DisplayController(QtWidgets.QMainWindow):
             self.current_widget.close()
         self.current_widget = widget
         self.show()
-    
+
     def on_widget_change(self, widget_type):
         self.init_widget(widget_type)
 
@@ -163,4 +167,6 @@ if __name__ == "__main__":
     res = (res.width(), res.height())
     if len(sys.argv) > 1:
         d = DisplayController(res, sys.argv[1:])
+    else:
+        sys.exit()
     sys.exit(app.exec_())

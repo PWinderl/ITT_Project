@@ -2,7 +2,11 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+The Minigame module consists of three widgets on a parent widget.
+Two of them are DrawWidget, which are used to let the players draw unistrokes.
+The third is the TemplateWidget. It will show a template, which the players need to draw.
+
+Author: Thomas Oswald
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -33,11 +37,10 @@ class DrawWidget(QtWidgets.QFrame):
         self.t_name = ""
 
     def init_ui(self, name, width, height):
-        self.setWindowTitle("DrawingBoard of " + name)
         self.setAutoFillBackground(True)
         self.setFrameShape(QtWidgets.QFrame.Box)
         self.setFixedSize(width, height)
-        self.setStyleSheet("background-color:white;")
+        self.setStyleSheet("background-color:white; border:1px solid rgb(0, 0, 0);")
         self.cursor_pos = QtCore.QPoint(width / 2, height / 2)
         self.update()
 
@@ -124,7 +127,7 @@ class TemplateWidget(QtWidgets.QFrame):
         self.path = QtGui.QPainterPath()
 
     def init_ui(self, width, height):
-        self.setWindowTitle("Template")
+        self.setStyleSheet("background-color:white; border:1px solid rgb(0, 0, 0);")
         self.setFixedSize(width, height)
         self.setAutoFillBackground(True)
 

@@ -2,7 +2,13 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+The setup module displays a UI for the connecting of devices.
+Furthermore, bluetooth addresses will be used to find a device, assign its led
+that are representing the players role and returns these devices (Type: Device) for further use.
+LED 1 -> player
+LED 2 -> conductor
+
+Author: Thomas Oswald
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -12,6 +18,12 @@ from time import sleep
 
 
 class SetupThread(QtCore.QThread):
+
+    """
+    The SetupThread handles the search for the bluetooth addresses.
+    It will return a device, when one was found.
+    If this is not the case the game can't start and will output an error.
+    """
 
     device_found = QtCore.pyqtSignal(object)
 
@@ -26,13 +38,21 @@ class SetupThread(QtCore.QThread):
                     self.device_found.emit(Device(address))
         except BluetoothError as e:
             print(e)
+            print(
+                "Game is not able to start, because no bluetooth device could be found.")
 
 
 class SetupWidget(QtWidgets.QWidget):
 
+    """
+    The SetupWidget is the UI representation of the setup state.
+    It will display messages to the users and change according to
+    the devices, which are added.
+    """
+
     on_setup_end = QtCore.pyqtSignal(object)
 
-    DEVICE_LIMIT = 1
+    DEVICE_LIMIT = 2
 
     def __init__(self, size, addresses, parent=None):
         super(SetupWidget, self).__init__(parent)
@@ -45,17 +65,19 @@ class SetupWidget(QtWidgets.QWidget):
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
-        layout = QtWidgets.QHBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         font = QtGui.QFont("Times", 14, QtGui.QFont.Bold)
-        self.player = QtWidgets.QLabel("Trying to connect player ...")
+        self.player = QtWidgets.QLabel(
+            "Player, press the sync button of your Wiimote.")
         self.player.setFont(font)
         self.player.setStyleSheet('color: white')
-        layout.addWidget(self.player, alignment=QtCore.Qt.AlignLeft)
+        layout.addWidget(self.player, alignment=QtCore.Qt.AlignCenter)
 
-        self.conductor = QtWidgets.QLabel("Trying to connect conductor ...")
+        self.conductor = QtWidgets.QLabel(
+            "Conductor, press the sync button of your Wiimote.")
         self.conductor.setFont(font)
         self.conductor.setStyleSheet('color: white')
-        layout.addWidget(self.conductor, alignment=QtCore.Qt.AlignRight)
+        layout.addWidget(self.conductor, alignment=QtCore.Qt.AlignCenter)
 
         self.setLayout(layout)
         self.show()

@@ -92,16 +92,17 @@ class SetupWidget(QtWidgets.QWidget):
     # the device will be declared as player or conductor.
     # At last a callback is fired, when the DEVICE_LIMIT is reached.
     def on_device_found(self, device):
-        self.devices.append(device)
+        if device is not None:
+            self.devices.append(device)
         length = len(self.devices)
 
         # First device will be always the player.
-        if length == 1 and self.devices[0] is not None:
+        if length == 1:
             self.player.setText("Connected player.")
             self.player.repaint()
 
         # Second device will be always the player.
-        elif length == 2 and self.devices[1] is not None:
+        elif length == 2:
             device.leds[1] = False
             device.leds[2] = True
             self.conductor.setText("Connected conductor.")

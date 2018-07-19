@@ -38,7 +38,7 @@ FRAME_RATE = 200
 # https://www.pygame.org/docs/tut/tom_games6.html
 
 
-def __load_png__(self, name):
+def __load_png__(name):
     fullname = name
     try:
         image = pygame.image.load(fullname)
@@ -97,7 +97,11 @@ class GameThread(QtCore.QThread):
 
         # 8 lines and 4 for spacing between screens
         self.lines = 8 + 4
+
+        # Init pygame
         pygame.init()
+
+        # Define size of pygame
         self.screen = pygame.display.set_mode(
             (self.width, self.height), pygame.NOFRAME)
         self.circles = []
@@ -185,8 +189,7 @@ class GameThread(QtCore.QThread):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pause_flag = True
-                        self.on_end.emit()
-                        pygame.quit()
+                        pygame.event.post(pygame.event.Event(pygame.QUIT))
                         print("Taking the emergency exit.")
                 # When the conductor plays a note, this event will be fired.
                 # As such, a note will be created and added to the "to-be-rendered" sprites.
@@ -267,8 +270,14 @@ class GameThread(QtCore.QThread):
                 if event.type == EXIT:
                     is_running = False
                 if event.type == pygame.QUIT:
-                    self.on_end.emit()
-                    sys.exit()
+                    try:
+                        self.on_end.emit()
+                        pygame.quit()
+                        sys.exit()
+                    except Exception as e:
+                        print(e)
+                        print("hello")
+                    return
 
             # This code block takes care of positioning and rendering.
             if not pause_flag:
@@ -296,6 +305,7 @@ class GameThread(QtCore.QThread):
                 pygame.display.flip()
                 clock.tick(FRAME_RATE)
         pygame.quit()
+        sys.exit()
 
     def get_target_by_id(self, id):
         for target in self.target_sprites.sprites():
@@ -467,7 +477,7 @@ class GameWidget(QtWidgets.QWidget):
     def init_devices(self, devices):
         if len(devices) > 0:
             self.player = devices[0]
-            self.player.gesture_btn_callback(
+            self.player.register_gesture_btn_callback(
                 lambda btn, is_down: self.on_button("player", btn, is_down))
             if len(devices) > 1:
                 self.conductor = devices[1]
@@ -541,6 +551,7 @@ class GameWidget(QtWidgets.QWidget):
 
     # Depending who pressed a button, different events will be fired.
     def on_button(self, char, btn, is_down):
+        print("hello button")
         if not self.is_pause and is_down:
             if char == "player":
                 pygame.event.post(pygame.event.Event(

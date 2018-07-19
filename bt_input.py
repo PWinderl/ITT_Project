@@ -97,7 +97,7 @@ class Device:
                         self.confirm_callback()
                 # Button hold for drawing gestures and signature
                 elif btn == 'A':
-                    if is_down:
+                    if is_down and self.move_callback is not None:
                         self.points_arr = []
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
@@ -127,12 +127,14 @@ class Device:
                 points.append((item['x'], item['y']))
             self.points_arr.append(points)
             if len(self.points_arr) == self.MV_SIZE:
-                self.__project_points(self.points_arr)
+                x, y = self.__project_points__(self.points_arr)
+                if self.move_callback is not None:
+                    self.move_callback(x, y)
                 self.points_arr = []
 
     # This function projects a point from the source projection
     # to the destination projection and returns the coordinate.
-    def __project_points(self, array):
+    def __project_points__(self, array):
 
         points = self.__mv_calc__(array)
 
@@ -141,10 +143,10 @@ class Device:
         P, DEST = (1024 / 2, 768 / 2), self.current_w_size
         try:
             x, y = Transform().transform(points, DEST, P)
+            return (x, y)
         except Exception as e:
             x = y = -1
-        if self.move_callback is not None:
-            self.move_callback(x, y)
+            return (x, y)
 
     # This method calculates the mean over moving values.
     def __mv_calc__(self, values):

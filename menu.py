@@ -27,6 +27,7 @@ class MenuWidget(QtWidgets.QWidget):
         self.width, self.height = size
         self.GAME, self.HIGHSCORE = codes
         self.init_ui()
+        self.connect_devices(devices)
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)

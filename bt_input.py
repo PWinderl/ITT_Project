@@ -20,7 +20,6 @@ class Device:
     BTN_TWO = 4
 
     def __init__(self, address):
-        print('BT Address: ', address)
         try:
             if address == "1":
                 self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
@@ -67,10 +66,10 @@ class Device:
             for btn_object in objects:
                 btn = btn_object[0]
                 is_down = btn_object[1]
+                found_btn = None
                 # Button push for signature confirm and "B-Note" playing
                 if btn == 'B':
-                    if self.click_callback is not None and self.is_violin():
-                        self.click_callback(self.BTN_B, is_down)
+                    found_btn = self.BTN_B
                     if self.confirm_callback is not None and is_down:
                         self.confirm_callback()
                 # Button hold for drawing gestures and signature
@@ -79,19 +78,16 @@ class Device:
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)
-                    if self.click_callback is not None and self.is_violin():
-                        self.click_callback(self.BTN_A, is_down)
-
-                    # if self.confirm_callback is not None and is_down:
-                    #     self.confirm_callback()
+                    found_btn = self.BTN_A
                 # Button push for "One-Note" playing
                 elif btn == 'One':
-                    if self.click_callback is not None and self.is_violin():
-                        self.click_callback(self.BTN_ONE, is_down)
+                    found_btn = self.BTN_ONE
                 # Button push for "Two-Note" playing
                 elif btn == 'Two':
-                    if self.click_callback is not None and self.is_violin():
-                        self.click_callback(self.BTN_TWO, is_down)
+                    found_btn = self.BTN_TWO
+
+                if found_btn is not None and self.click_callback is not None and self.is_violin():
+                    self.click_callback(self.BTN_B, is_down)
 
     def __on_move__(self, data):
         # Only accepts data that has all 4 leds
@@ -106,15 +102,13 @@ class Device:
             try:
                 x, y = Transform().transform(points, DEST, P)
             except Exception as e:
-                print(e)
                 x = y = -1
             if self.move_callback is not None:
                 self.move_callback(x, y)
 
     def check_activity(self):
-        try:
-            current_act = self.ar.buffer_act()
-        except Exception as e:
-            print(e)
-        self.ar.refresh_csv()
-        return current_act
+        self.ar.status = 1
+        self.ar.buffer()
+        self.ar.write_csv()
+        self.ar.status = 0
+        return self.ar.getActivity()

@@ -32,7 +32,7 @@ class SetupWidget(QtWidgets.QWidget):
 
     on_setup_end = QtCore.pyqtSignal(object)
 
-    DEVICE_LIMIT = 1
+    DEVICE_LIMIT = 2
 
     def __init__(self, size, addresses, parent=None):
         super(SetupWidget, self).__init__(parent)
@@ -45,17 +45,19 @@ class SetupWidget(QtWidgets.QWidget):
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
-        layout = QtWidgets.QHBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         font = QtGui.QFont("Times", 14, QtGui.QFont.Bold)
-        self.player = QtWidgets.QLabel("Trying to connect player ...")
+        self.player = QtWidgets.QLabel(
+            "Player, press the sync button of your Wiimote.")
         self.player.setFont(font)
         self.player.setStyleSheet('color: white')
-        layout.addWidget(self.player, alignment=QtCore.Qt.AlignLeft)
+        layout.addWidget(self.player, alignment=QtCore.Qt.AlignCenter)
 
-        self.conductor = QtWidgets.QLabel("Trying to connect conductor ...")
+        self.conductor = QtWidgets.QLabel(
+            "Conductor, press the sync button of your Wiimote.")
         self.conductor.setFont(font)
         self.conductor.setStyleSheet('color: white')
-        layout.addWidget(self.conductor, alignment=QtCore.Qt.AlignRight)
+        layout.addWidget(self.conductor, alignment=QtCore.Qt.AlignCenter)
 
         self.setLayout(layout)
         self.show()

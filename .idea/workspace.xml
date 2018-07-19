@@ -4,7 +4,8 @@
     <list default="true" id="66f292ab-8f01-4d77-b902-dda35d7f1d39" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/act.csv" beforeDir="false" afterPath="$PROJECT_DIR$/act.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bt_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/bt_input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/out.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,7 +31,7 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1470">
+            <state relative-caret-position="1217">
               <caret line="98" column="42" selection-start-line="98" selection-start-column="42" selection-end-line="98" selection-end-column="42" />
               <folding>
                 <element signature="e#66#108#0" expanded="true" />
@@ -60,20 +61,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bt_input.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bt_input.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bt_input.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="28" column="32" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
+            <state relative-caret-position="450">
+              <caret line="33" column="43" lean-forward="true" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="game.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="201">
+              <caret line="34" column="20" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2040">
-              <caret line="142" column="39" selection-start-line="142" selection-start-column="33" selection-end-line="142" selection-end-column="39" />
+            <state relative-caret-position="-1461">
+              <caret line="28" column="10" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="10" />
               <folding>
                 <element signature="e#66#112#0" expanded="true" />
               </folding>
@@ -96,8 +106,8 @@
       <file leaf-file-name="recognizer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/recognizer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="112" lean-forward="true" selection-start-line="112" selection-end-line="112" />
+            <state relative-caret-position="236">
+              <caret line="157" column="40" lean-forward="true" selection-start-line="157" selection-start-column="40" selection-end-line="157" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -125,7 +135,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Game</find>
       <find>flag</find>
       <find>on_pause</find>
       <find>PAUSE</find>
@@ -150,11 +159,12 @@
       <find>save_highscore</find>
       <find>icon_size</find>
       <find>highscore_table</find>
-      <find>on_end</find>
       <find>move_callback</find>
       <find>on_minigame_start</find>
       <find>set_name</find>
       <find>BluetoothInput</find>
+      <find>DEVICE_LIMIT</find>
+      <find>on_end</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -166,7 +176,6 @@
         <option value="$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py" />
         <option value="$PROJECT_DIR$/bluetooth_input.py" />
         <option value="$PROJECT_DIR$/system_demo.py" />
-        <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/transform.py" />
         <option value="$PROJECT_DIR$/game.py" />
         <option value="$PROJECT_DIR$/minigame.py" />
@@ -174,14 +183,15 @@
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/recognizer.py" />
         <option value="$PROJECT_DIR$/bt_input.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="248" />
+    <option name="x" value="-81" />
     <option name="y" value="22" />
-    <option name="width" value="1032" />
-    <option name="height" value="710" />
+    <option name="width" value="652" />
+    <option name="height" value="778" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -289,10 +299,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="248" y="22" width="1032" height="710" extended-state="0" />
+    <frame x="-81" y="22" width="652" height="778" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17507419" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.17507419" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -602,13 +612,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="61" column="23" selection-start-line="61" selection-start-column="8" selection-end-line="61" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wiimote.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -622,16 +625,6 @@
           <caret line="61" column="47" selection-start-line="61" selection-start-column="47" selection-end-line="61" selection-end-column="56" />
           <folding>
             <element signature="e#22#49#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2040">
-          <caret line="142" column="39" selection-start-line="142" selection-start-column="33" selection-end-line="142" selection-end-column="39" />
-          <folding>
-            <element signature="e#66#112#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -656,29 +649,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/recognizer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="112" lean-forward="true" selection-start-line="112" selection-end-line="112" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../ITT/Assignment_9/gesture_recognizer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="422" column="36" selection-start-line="422" selection-start-column="22" selection-end-line="422" selection-end-column="36" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1470">
-          <caret line="98" column="42" selection-start-line="98" selection-start-column="42" selection-end-line="98" selection-end-column="42" />
-          <folding>
-            <element signature="e#66#108#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -700,10 +676,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1217">
+          <caret line="98" column="42" selection-start-line="98" selection-start-column="42" selection-end-line="98" selection-end-column="42" />
+          <folding>
+            <element signature="e#66#108#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="34" column="20" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/bt_input.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="28" column="32" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
+        <state relative-caret-position="450">
+          <caret line="33" column="43" lean-forward="true" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/recognizer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="236">
+          <caret line="157" column="40" lean-forward="true" selection-start-line="157" selection-start-column="40" selection-end-line="157" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1461">
+          <caret line="28" column="10" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="10" />
+          <folding>
+            <element signature="e#66#112#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

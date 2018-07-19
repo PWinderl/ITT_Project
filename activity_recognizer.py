@@ -17,7 +17,7 @@ class ActivityRecognizer():
     def on_click(self, btn, is_down):
         if is_down:
             if btn == self.device.BTN_ONE:
-                self.write_csv()
+                self.status = 0
             if btn == self.device.BTN_TWO:
                 self.status = 0
 

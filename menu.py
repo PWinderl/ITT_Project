@@ -6,7 +6,7 @@ By Thomas Oswald
 """
 
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from bt_input import Device
 
 
@@ -26,20 +26,29 @@ class MenuWidget(QtWidgets.QWidget):
         w_layout = QtWidgets.QVBoxLayout(self)
 
         start = QtWidgets.QPushButton(self)
+        style = "image-position:left;border:2px solid white;color:white;font-size:20px;"
+        style = style + "border-radius:10px;image:url(sprites/one_inactive.png)"
+        start.setStyleSheet(style)
         start.setFixedSize(200, 50)
-        start.setText("1: Start")
+        start.setText("Start")
         start.clicked.connect(lambda: self.on_click(self.GAME))
         w_layout.addWidget(start, alignment=QtCore.Qt.AlignCenter)
 
         highscore = QtWidgets.QPushButton(self)
+        style = "image-position:left;border:2px solid white;color:white;font-size:20px;"
+        style = style + "border-radius:10px;image:url(sprites/two_inactive.png)"
+        highscore.setStyleSheet(style)
         highscore.setFixedSize(200, 50)
-        highscore.setText("2: Highscore")
+        highscore.setText(" Highscore")
         highscore.clicked.connect(lambda: self.on_click(self.HIGHSCORE))
         w_layout.addWidget(highscore, alignment=QtCore.Qt.AlignCenter)
 
         quit_game = QtWidgets.QPushButton(self)
+        style = "image-position:left;border:2px solid white;color:white;font-size:20px;"
+        style = style + "border-radius:10px;image:url(sprites/b_inactive.png)"
+        quit_game.setStyleSheet(style)
         quit_game.setFixedSize(200, 50)
-        quit_game.setText("B: Quit (ESC)")
+        quit_game.setText(" Quit (ESC)")
         quit_game.clicked.connect(lambda: self.on_click(-1))
         w_layout.addWidget(quit_game, alignment=QtCore.Qt.AlignCenter)
         self.setLayout(w_layout)

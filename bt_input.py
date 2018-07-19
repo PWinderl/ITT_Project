@@ -80,12 +80,6 @@ class Device:
     def register_confirm_callback(self, callback):
         self.confirm_callback = callback
 
-    # TODO: Fabian comment
-    def is_violin(self):
-        if self.check_activity()[0] == 0:
-            return True
-        return False
-
     # on_press handles all button presses of a Wiimote and acts in a defined way.
     def __on_press__(self, objects):
         if objects is not None and len(objects) > 0:
@@ -113,7 +107,7 @@ class Device:
                     found_btn = self.BTN_TWO
 
                 if found_btn is not None:
-                    if self.gesture_btn_callback is not None and self.is_violin():
+                    if self.gesture_btn_callback is not None and self.ar.is_violin():
                         self.gesture_btn_callback(found_btn, is_down)
 
                     if self.click_callback is not None:
@@ -137,11 +131,3 @@ class Device:
                 x = y = -1
             if self.move_callback is not None:
                 self.move_callback(x, y)
-
-    # TODO: Fabian comment
-    def check_activity(self):
-        self.ar.status = 1
-        self.ar.buffer()
-        self.ar.write_csv()
-        self.ar.status = 0
-        return self.ar.getActivity()

@@ -13,8 +13,11 @@ from game import GameWidget
 from setup import SetupWidget
 import sys
 
+class Display(QtWidgets.QMainWindow):
 
-class Constants():
+    WINDOW_SIZE = (500, 500)
+    BACKGROUND = "./background.png"
+    MINIGAME_TIMER = 5000
 
     # modules
     SETUP = 0
@@ -22,13 +25,6 @@ class Constants():
     GAME = 2
     MINIGAME = 3
     HIGHSCORE = 4
-
-
-class Display(QtWidgets.QMainWindow):
-
-    WINDOW_SIZE = (500, 500)
-    BACKGROUND = "./background.png"
-    MINIGAME_TIMER = 5000
 
     def __init__(self, res, addresses=None):
         super(Display, self).__init__()
@@ -44,9 +40,9 @@ class Display(QtWidgets.QMainWindow):
         self.minigame_winner = None
         if addresses is not None:
             self.addresses = addresses
-            self.on_widget_change(Constants.SETUP)
+            self.on_widget_change(self.SETUP)
         else:
-            self.on_widget_change(Constants.MENU)
+            self.on_widget_change(self.MENU)
 
     def init_ui(self):
         self.showFullScreen()
@@ -60,15 +56,15 @@ class Display(QtWidgets.QMainWindow):
 
     def on_widget_change(self, widget_type):
         widget = None
-        if widget_type == Constants.SETUP:
+        if widget_type == self.SETUP:
             widget = SetupWidget(
                 self.WINDOW_SIZE, self.addresses, parent=self.window)
             widget.on_setup_end.connect(lambda d: self.connect_devices(d))
-        elif widget_type == Constants.MENU:
+        elif widget_type == self.MENU:
             widget = MenuWidget(self.WINDOW_SIZE, self.devices,
-                                (Constants.GAME, Constants.HIGHSCORE), parent=self.window)
+                                (self.GAME, self.HIGHSCORE), parent=self.window)
             widget.on_menu.connect(self.on_widget_change)
-        elif widget_type == Constants.GAME:
+        elif widget_type == self.GAME:
             widget = GameWidget(
                 self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
             if self.minigame_winner is not None:
@@ -76,11 +72,11 @@ class Display(QtWidgets.QMainWindow):
                 self.minigame_winner = None
             widget.game_end.connect(self.on_game_end)
             self.start_timer(self.on_minigame_start, self.MINIGAME_TIMER)
-        elif widget_type == Constants.MINIGAME:
+        elif widget_type == self.MINIGAME:
             widget = MiniGameWidget(
                 self.WINDOW_SIZE, self.devices, parent=self.window)
             widget.on_end.connect(self.on_minigame_end)
-        elif widget_type == Constants.HIGHSCORE:
+        elif widget_type == self.HIGHSCORE:
             widget = HighscoreWidget(
                 (500, 650), self.devices, self.end_score, parent=self.window)
         self.change_widget(widget)
@@ -100,8 +96,10 @@ class Display(QtWidgets.QMainWindow):
     def on_game_end(self, score):
         self.game_running = False
         self.end_score = score
-        self.on_widget_change(Constants.HIGHSCORE)
+        self.on_widget_change(self.HIGHSCORE)
 
+    # This was seen at 
+    # https://stackoverflow.com/questions/46656634/pyqt5-qtimer-count-until-specific-seconds
     def start_timer(self, callback, ms):
         def handler():
             callback()
@@ -116,16 +114,16 @@ class Display(QtWidgets.QMainWindow):
             self.old_score = self.current_widget.score
             self.game = self.current_widget.game
             self.current_widget.on_pause()
-            self.on_widget_change(Constants.MINIGAME)
+            self.on_widget_change(self.MINIGAME)
 
     def on_minigame_end(self, name):
         self.minigame_winner = name
-        self.on_widget_change(Constants.GAME)
+        self.on_widget_change(self.GAME)
         self.current_widget.on_continue()
 
     def connect_devices(self, devices):
         self.devices = devices
-        self.on_widget_change(Constants.MENU)
+        self.on_widget_change(self.MENU)
 
     # https://forum.qt.io/topic/40151/solved-scaled-background-image-using-stylesheet/10
     # comment by mbnoimi

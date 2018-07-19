@@ -28,6 +28,9 @@ class Device:
     BTN_ONE = 3
     BTN_TWO = 4
 
+    # Moving average length
+    MV_SIZE = 10
+
     # At the initialization wiimote.py tries to connect to a hardware address.
     def __init__(self, address):
         try:
@@ -51,6 +54,7 @@ class Device:
         self.gesture_btn_callback = None
         self.confirm_callback = None
         self.current_w_size = (500, 500)
+        self.points_arr = []
 
         # TODO: Fabian comment
         # activity recognizer
@@ -95,6 +99,7 @@ class Device:
                 # Button hold for drawing gestures and signature
                 elif btn == 'A':
                     if is_down:
+                        self.points_arr = []
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)
@@ -121,13 +126,39 @@ class Device:
             points = []
             for item in data:
                 points.append((item['x'], item['y']))
-            # P is the center point of the wiimote IR camera
-            # DEST is the destination resolution
-            # needs to have widget resolution!
-            P, DEST = (1024 / 2, 768 / 2), self.current_w_size
-            try:
-                x, y = Transform().transform(points, DEST, P)
-            except Exception as e:
-                x = y = -1
-            if self.move_callback is not None:
-                self.move_callback(x, y)
+            self.points_arr.append(points)
+            if len(self.points_arr) == self.MV_SIZE:
+                self.__project_points(self.points_arr)
+                self.points_arr = []
+
+    # This function projects a point from the source projection
+    # to the destination projection and returns the coordinate.
+    def __project_points(self, array):
+
+        points = self.__mv_calc__(array)
+
+        # P is the center point of the wiimote IR camera
+        # DEST is the destination resolution
+        P, DEST = (1024 / 2, 768 / 2), self.current_w_size
+        try:
+            x, y = Transform().transform(points, DEST, P)
+        except Exception as e:
+            x = y = -1
+        if self.move_callback is not None:
+            self.move_callback(x, y)
+
+    # This method calculates the mean over moving values.
+    def __mv_calc__(self, values):
+        result = []
+        for idx in range(3):
+            x_arr = []
+            y_arr = []
+            for points in array:
+                point = points[idx]
+                x_arr.append(point[0])
+                y_arr.append(point[1])
+
+            x = sum(x_arr) / len(x_arr)
+            y = sum(y_arr) / len(y_arr)
+            result.append((x, y))
+        return result

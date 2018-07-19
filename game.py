@@ -442,6 +442,8 @@ class GameWidget(QtWidgets.QWidget):
 
         self.start_timer(callback, 1000)
 
+    # This was seen at 
+    # https://stackoverflow.com/questions/46656634/pyqt5-qtimer-count-until-specific-seconds
     def start_timer(self, callback, ms):
         def handler():
             callback()

@@ -56,8 +56,7 @@ class Device:
         self.current_w_size = (500, 500)
         self.points_arr = []
 
-        # TODO: Fabian comment
-        # activity recognizer
+        # Instantiate the activity recognizer.
         self.ar = ActivityRecognizer(self)
 
     # If it is necessary for the projective transformation, the destination widget size can be changed.

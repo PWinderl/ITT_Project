@@ -3,7 +3,7 @@
 
 """
 The Main module takes care of the initial start.
-Additionally, it implements the DisplayController, which controls all widgets.
+Additionally, it implements the MainWidget, which controls all widgets.
 
 Author: Thomas Oswald
 """
@@ -17,10 +17,10 @@ from setup import SetupWidget
 import sys
 
 
-class DisplayController(QtWidgets.QMainWindow):
+class MainWidget(QtWidgets.QMainWindow):
 
     """
-    The DisplayController initializes each widget and switches between them.
+    The MainWidget initializes each widget and switches between them.
     """
 
     WINDOW_SIZE = (500, 500)
@@ -35,7 +35,7 @@ class DisplayController(QtWidgets.QMainWindow):
     HIGHSCORE = 4
 
     def __init__(self, res, addresses):
-        super(DisplayController, self).__init__()
+        super(MainWidget, self).__init__()
         self.current_widget = None
         self.res = res
         self.init_ui()
@@ -71,12 +71,12 @@ class DisplayController(QtWidgets.QMainWindow):
         elif widget_type == self.MENU:
             widget = MenuWidget(self.WINDOW_SIZE, self.devices,
                                 (self.GAME, self.HIGHSCORE), parent=self.window)
-            widget.on_menu.connect(self.on_widget_change)
+            widget.on_menu_end.connect(self.on_widget_change)
         elif widget_type == self.GAME:
             widget = GameWidget(
                 self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
-            
-            # Widget before was minigame. 
+
+            # Widget before was minigame.
             # The winner will be transfered to update the scores.
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
@@ -160,13 +160,14 @@ class DisplayController(QtWidgets.QMainWindow):
 
 # Entry point of the whole application.
 # The current display resolution and the two hardware addresses of the Wiimotes
-# will be given to the DisplayController.
+# will be given to the MainWidget.
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     res = app.desktop().screenGeometry()
     res = (res.width(), res.height())
     if len(sys.argv) > 1:
-        d = DisplayController(res, sys.argv[1:])
+        d = MainWidget(res, sys.argv[1:])
     else:
+        print("Not enough arguments.")
         sys.exit()
     sys.exit(app.exec_())

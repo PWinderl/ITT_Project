@@ -1,8 +1,8 @@
-from PyQt5 import QtWidgets, QtCore, QtGui, Qt
+from PyQt5 import QtWidgets, QtCore, QtGui
 from operator import itemgetter
 
 
-# To call when Game is over
+# To call when game is over or from menu
 class HighscoreWidget(QtWidgets.QWidget):
     imagePath = "out.jpg"
 
@@ -15,6 +15,7 @@ class HighscoreWidget(QtWidgets.QWidget):
         self.img = None
         self.icon_size = QtCore.QSize(100, 80)
         self.new_score = end_score
+        # Init highscore tableWidget and adjust size
         self.highscore_table = QtWidgets.QTableWidget(10, 2, parent=self)
         self.highscore_table.setHorizontalHeaderLabels(['Name', 'Score'])
         self.highscore_table.horizontalHeader().setStretchLastSection(True)
@@ -43,22 +44,11 @@ class HighscoreWidget(QtWidgets.QWidget):
     # Registers Wiimote
     # Set callbacks for Wiimote
     def init_devices(self, devices):
-        # if len(devices) == 1:
         self.wm_one = devices[0]
         self.wm_one.register_click_callback(
             lambda btn, is_down: self.dw.on_click())
+        self.wm_one.register_move_callback(self.dw.set_cursor)
         self.wm_one.register_confirm_callback(self.dw.save_highscore)
-        # elif len(devices) == 2:
-        #     self.wm_one = devices[0]
-        #     self.wm_one.register_move_callback(self.dw.set_cursor)
-        #     self.wm_one.register_click_callback(
-        #         lambda btn, is_down: self.dw.on_click())
-        #     self.wm_one.register_confirm_callback(self.dw.save_highscore)
-        #     self.wm_two = devices[1]
-        #     self.wm_two.register_move_callback(self.dw.set_cursor)
-        #     self.wm_two.register_click_callback(
-        #         lambda btn, is_down: self.dw.on_click())
-        #     self.wm_two.register_confirm_callback(self.dw.save_highscore)
 
     # Fetch signature painting and translate to QPixmap
     # Connect new score with painted signature
@@ -91,6 +81,7 @@ class HighscoreWidget(QtWidgets.QWidget):
         i = 0
         for item in new_list:
             actual_score = item[0]
+            # Creates QIcon of image due to compatibility if there is an image
             if type(item[1]) is not str:
                 sign_to_icon = QtGui.QIcon(QtGui.QPixmap(item[1]))
                 new_sign_entry = QtWidgets.QTableWidgetItem(sign_to_icon, "")
@@ -101,6 +92,7 @@ class HighscoreWidget(QtWidgets.QWidget):
                 self.highscore_table.setItem(i, 0, sign_placeholder)
 
             new_score_entry = QtWidgets.QTableWidgetItem(str(actual_score))
+            # Cell coloring
             if i % 2 == 0:
                 new_score_entry.setBackground(QtCore.Qt.green)
             else:
@@ -156,6 +148,7 @@ class DrawWidget(QtWidgets.QWidget):
     def set_callback(self, callback):
         self.save_callback = callback
 
+    # Takes painted signature and save as image
     def save_highscore(self):
         signature = QtWidgets.QWidget.grab(self)
         signature.save("out.jpg")
@@ -170,6 +163,7 @@ class DrawWidget(QtWidgets.QWidget):
         self.flag = flag
         self.t_name = name
 
+    # Sets Cursors in dependence on callback
     def set_cursor(self, x, y):
         QtGui.QCursor.setPos(self.mapToGlobal(QtCore.QPoint(x, y)))
 

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="66f292ab-8f01-4d77-b902-dda35d7f1d39" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/activity_recognizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/activity_recognizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bt_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/bt_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/act.csv" beforeDir="false" afterPath="$PROJECT_DIR$/act.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/highscore.py" beforeDir="false" afterPath="$PROJECT_DIR$/highscore.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/out.jpg" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -48,13 +48,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="highscore.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="highscore.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/highscore.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1785">
-              <caret line="119" column="61" selection-start-line="119" selection-start-column="61" selection-end-line="119" selection-end-column="61" />
+            <state relative-caret-position="165">
+              <caret line="188" column="4" lean-forward="true" selection-start-line="188" selection-start-column="4" selection-end-line="208" selection-end-column="27" />
               <folding>
-                <element signature="e#0#46#0" expanded="true" />
+                <element signature="e#0#43#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -63,17 +63,17 @@
       <file leaf-file-name="bt_input.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bt_input.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
+            <state relative-caret-position="-268">
               <caret line="33" column="43" lean-forward="true" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="setup.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+            <state relative-caret-position="186">
+              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
         </entry>
@@ -134,13 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>flag</find>
-      <find>on_pause</find>
-      <find>PAUSE</find>
-      <find>pause_flag</find>
-      <find>GameWidget</find>
-      <find>is_pause</find>
-      <find>points_conductor</find>
       <find>point</find>
       <find>on_menu</find>
       <find>finished_unistroke</find>
@@ -155,15 +148,22 @@
       <find>game_running</find>
       <find>is_down</find>
       <find>register_move_callback</find>
-      <find>save_highscore</find>
       <find>icon_size</find>
       <find>highscore_table</find>
       <find>move_callback</find>
       <find>on_minigame_start</find>
       <find>set_name</find>
       <find>BluetoothInput</find>
-      <find>DEVICE_LIMIT</find>
       <find>on_end</find>
+      <find>DEVICE_LIMIT</find>
+      <find>save_highscore</find>
+      <find>mousePressEvent</find>
+      <find>mouseMoveEvent</find>
+      <find>paintEvent</find>
+      <find>set_cursor</find>
+      <find>set_callback</find>
+      <find>Qt</find>
+      <find>actual_score</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -178,19 +178,19 @@
         <option value="$PROJECT_DIR$/transform.py" />
         <option value="$PROJECT_DIR$/game.py" />
         <option value="$PROJECT_DIR$/minigame.py" />
-        <option value="$PROJECT_DIR$/highscore.py" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/recognizer.py" />
         <option value="$PROJECT_DIR$/bt_input.py" />
         <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/highscore.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-81" />
+    <option name="x" value="479" />
     <option name="y" value="22" />
-    <option name="width" value="652" />
-    <option name="height" value="778" />
+    <option name="width" value="801" />
+    <option name="height" value="699" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -298,7 +298,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-81" y="22" width="652" height="778" extended-state="0" />
+    <frame x="479" y="22" width="801" height="699" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.17507419" />
@@ -372,7 +372,7 @@
         <state relative-caret-position="1410">
           <caret line="95" column="29" selection-start-line="95" selection-start-column="29" selection-end-line="95" selection-end-column="29" />
           <folding>
-            <element signature="e#0#46#0" expanded="true" />
+            <element signature="e#0#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -429,7 +429,7 @@
         <state relative-caret-position="1410">
           <caret line="95" column="29" lean-forward="true" selection-start-line="95" selection-start-column="29" selection-end-line="95" selection-end-column="29" />
           <folding>
-            <element signature="e#0#46#0" expanded="true" />
+            <element signature="e#0#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -470,7 +470,7 @@
         <state relative-caret-position="285">
           <caret line="20" column="13" lean-forward="true" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
           <folding>
-            <element signature="e#0#46#0" expanded="true" />
+            <element signature="e#0#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -665,16 +665,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/highscore.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1785">
-          <caret line="119" column="61" selection-start-line="119" selection-start-column="61" selection-end-line="119" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1217">
@@ -682,13 +672,6 @@
           <folding>
             <element signature="e#66#108#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bt_input.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="33" column="43" lean-forward="true" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
         </state>
       </provider>
     </entry>
@@ -711,8 +694,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+        <state relative-caret-position="186">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bt_input.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-268">
+          <caret line="33" column="43" lean-forward="true" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/highscore.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="188" column="4" lean-forward="true" selection-start-line="188" selection-start-column="4" selection-end-line="208" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

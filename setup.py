@@ -2,7 +2,13 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+The setup module displays a UI for the connecting of devices.
+Furthermore, bluetooth addresses will be used to find a device, assign its led
+that are representing the players role and returns these devices (Type: Device) for further use.
+LED 1 -> player
+LED 2 -> conductor
+
+Author: Thomas Oswald
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -12,6 +18,12 @@ from time import sleep
 
 
 class SetupThread(QtCore.QThread):
+
+    """
+    The SetupThread handles the search for the bluetooth addresses.
+    It will return a device, when one was found.
+    If this is not the case the game can't start and will output an error.
+    """
 
     device_found = QtCore.pyqtSignal(object)
 
@@ -26,9 +38,17 @@ class SetupThread(QtCore.QThread):
                     self.device_found.emit(Device(address))
         except BluetoothError as e:
             print(e)
+            print(
+                "Game is not able to start, because no bluetooth device could be found.")
 
 
 class SetupWidget(QtWidgets.QWidget):
+
+    """
+    The SetupWidget is the UI representation of the setup state.
+    It will display messages to the users and change according to
+    the devices, which are added.
+    """
 
     on_setup_end = QtCore.pyqtSignal(object)
 

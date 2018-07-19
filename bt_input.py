@@ -38,6 +38,7 @@ class Device:
 
         self.move_callback = None
         self.click_callback = None
+        self.gesture_btn_callback = None
         self.confirm_callback = None
         self.current_w_size = (500, 500)
         # activity recognizer
@@ -51,6 +52,9 @@ class Device:
 
     def register_click_callback(self, callback):
         self.click_callback = callback
+
+    def register_gesture_btn_callback(self, callback):
+        self.gesture_btn_callback = callback
 
     def register_confirm_callback(self, callback):
         self.confirm_callback = callback
@@ -86,8 +90,12 @@ class Device:
                 elif btn == 'Two':
                     found_btn = self.BTN_TWO
 
-                if found_btn is not None and self.click_callback is not None and self.is_violin():
-                    self.click_callback(self.BTN_B, is_down)
+                if found_btn is not None:
+                    if self.gesture_btn_callback is not None and self.is_violin():
+                        self.gesture_btn_callback(found_btn, is_down)
+
+                    if self.click_callback is not None:
+                        self.click_callback(found_btn, is_down)
 
     def __on_move__(self, data):
         # Only accepts data that has all 4 leds

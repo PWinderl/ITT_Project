@@ -402,7 +402,7 @@ class GameWidget(QtWidgets.QWidget):
     def init_devices(self, devices):
         if len(devices) > 0:
             self.player = devices[0]
-            self.player.register_click_callback(
+            self.player.gesture_btn_callback(
                 lambda btn, is_down: self.on_button("player", btn, is_down))
             if len(devices) > 1:
                 self.conductor = devices[1]

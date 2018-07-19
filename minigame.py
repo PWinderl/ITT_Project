@@ -18,6 +18,10 @@ from bt_input import Device
 
 class DrawWidget(QtWidgets.QFrame):
 
+    """
+    The DrawWidget is responsible for displaying an area in which the users can draw.
+    """
+
     # pyqtsignal for the recognition at the end of each drawing interaction
     finished_unistroke = QtCore.pyqtSignal(object, str, str)
 
@@ -40,7 +44,8 @@ class DrawWidget(QtWidgets.QFrame):
         self.setAutoFillBackground(True)
         self.setFrameShape(QtWidgets.QFrame.Box)
         self.setFixedSize(width, height)
-        self.setStyleSheet("background-color:white; border:1px solid rgb(0, 0, 0);")
+        self.setStyleSheet(
+            "background-color:white; border:1px solid rgb(0, 0, 0);")
         self.cursor_pos = QtCore.QPoint(width / 2, height / 2)
         self.update()
 
@@ -93,29 +98,30 @@ class DrawWidget(QtWidgets.QFrame):
 
     # mouse moves with mouse or with set_cursor
     def mouseMoveEvent(self, event):
-        if self.recognize_flag:
-            if self.click_flag:
-                self.click_flag = False
-                self.path.moveTo(event.pos())
-                self.positions.append((event.pos().x(), event.pos().y()))
-                self.update()
-                return
+        if self.click_flag:
+            self.click_flag = False
+            self.path.moveTo(event.pos())
             self.positions.append((event.pos().x(), event.pos().y()))
-            self.path.lineTo(event.pos())
             self.update()
+            return
+        self.positions.append((event.pos().x(), event.pos().y()))
+        self.path.lineTo(event.pos())
+        self.update()
 
     def mousePressEvent(self, event):
-        self.recognize_flag = True
         self.path.moveTo(event.pos())
         self.update()
 
     def mouseReleaseEvent(self, event):
-        self.recognize_flag = False
         self.finished_unistroke.emit(self.positions, self.name, self.t_name)
         self.positions = []
 
 
 class TemplateWidget(QtWidgets.QFrame):
+
+    """
+    The TemplateWidget will randomly show a unistroke painting at the start of the minigame.
+    """
 
     template_selected = QtCore.pyqtSignal(str)
 
@@ -127,10 +133,12 @@ class TemplateWidget(QtWidgets.QFrame):
         self.path = QtGui.QPainterPath()
 
     def init_ui(self, width, height):
-        self.setStyleSheet("background-color:white; border:1px solid rgb(0, 0, 0);")
+        self.setStyleSheet(
+            "background-color:white; border:1px solid rgb(0, 0, 0);")
         self.setFixedSize(width, height)
         self.setAutoFillBackground(True)
 
+    # This function draws a random template in the widget.
     def draw(self):
         template = self.get_random_template().split(":")
         t_name = template[0]
@@ -151,6 +159,7 @@ class TemplateWidget(QtWidgets.QFrame):
         qp.drawPath(self.path)
         qp.end()
 
+    # This method selects a template randomly.
     def get_random_template(self):
         lines = []
         with open("strokes.map", "r") as strokes:
@@ -161,6 +170,14 @@ class TemplateWidget(QtWidgets.QFrame):
 
 
 class MiniGameWidget(QtWidgets.QWidget):
+
+    """
+    The MiniGameWidget is the parent of the three other widgets.
+    It coordinates them and connects the bluetooth input to the DrawWidgets.
+    After the two players drew the line, each of those will be moved to a $1 recognition algorithm.
+    The unistroke, which is the closest to the template,
+    will be recognized and as such the user will win the minigame.
+    """
 
     on_end = QtCore.pyqtSignal(str)
 
@@ -212,6 +229,8 @@ class MiniGameWidget(QtWidgets.QWidget):
     def on_rec(self, rec, points, name, t_name):
         rec.recognize(points, name, t_name)
 
+    # This method gets the result of the recognition processes.
+    # After receiving two results, it will decide who won.
     def on_result(self, template, score, name):
         self.scores.append({"name": name, "score": score})
         if len(self.scores) > 1:

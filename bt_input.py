@@ -112,8 +112,9 @@ class Device:
                 self.move_callback(x, y)
 
     def check_activity(self):
-        self.ar.status = 1
-        self.ar.buffer()
-        self.ar.write_csv()
-        self.ar.status = 0
-        return self.ar.getActivity()
+        try:
+            current_act = self.ar.buffer_act()
+        except Exception as e:
+            print(e)
+        self.ar.refresh_csv()
+        return current_act

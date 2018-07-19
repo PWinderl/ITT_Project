@@ -20,7 +20,7 @@ class MenuWidget(QtWidgets.QWidget):
     When above occurs, a signal will be fired and the UI will be changed.
     """
 
-    on_menu = QtCore.pyqtSignal(int)
+    on_menu_end = QtCore.pyqtSignal(int)
 
     def __init__(self, size, devices, codes, parent=None):
         super(MenuWidget, self).__init__(parent)
@@ -29,7 +29,6 @@ class MenuWidget(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        # self.setGeometry(0, 0, self.width, self.height)
         self.setFixedSize(self.width, self.height)
         w_layout = QtWidgets.QVBoxLayout(self)
 
@@ -81,4 +80,4 @@ class MenuWidget(QtWidgets.QWidget):
         if idx == -1:
             QtWidgets.QApplication.quit()
         else:
-            self.on_menu.emit(idx)
+            self.on_menu_end.emit(idx)

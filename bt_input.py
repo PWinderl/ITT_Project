@@ -2,7 +2,11 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+The module Bluetooth Innput takes care of the connection
+between the wiimote.py of Raphael Wimmer (https://github.com/RaphaelWimmer/wiimote.py)
+and the game.
+
+Author: Thomas Oswald
 """
 
 import wiimote
@@ -11,14 +15,20 @@ from transform import Transform
 from activity_recognizer import ActivityRecognizer
 
 
-# To connect to Wiimotes
 class Device:
 
+    """
+    A Device is the representation of a Wiimote. As this is a multiplayer game,
+    two devices will be connected to the game.
+    """
+
+    # Button codes
     BTN_A = 1
     BTN_B = 2
     BTN_ONE = 3
     BTN_TWO = 4
 
+    # At the initialization wiimote.py tries to connect to a hardware address.
     def __init__(self, address):
         try:
             if address == "1":
@@ -41,30 +51,42 @@ class Device:
         self.gesture_btn_callback = None
         self.confirm_callback = None
         self.current_w_size = (500, 500)
+
+        # TODO: Fabian comment
         # activity recognizer
         self.ar = ActivityRecognizer(self)
 
+    # If it is necessary for the projective transformation, the destination widget size can be changed.
     def set_widget_size(self, size):
         self.current_w_size = size
 
+    # Registers a callback for the pointing functionality.
+    # Everytime the Wiimote moves, this will print out the projected point on the destination widget.
     def register_move_callback(self, callback):
         self.move_callback = callback
 
+    # Registers a callback for the button input.
     def register_click_callback(self, callback):
         self.click_callback = callback
 
+    # Registers a callback for the player.
+    # This is needed, because he needs to do a gesture before he is able to press a button.
     def register_gesture_btn_callback(self, callback):
         self.gesture_btn_callback = callback
 
+    # Registers a callback that does not have the same parameters as the click callback.
+    # The difference is, that the confirmation will only trigger, when a button is pressed down
+    # and not when it is released.
     def register_confirm_callback(self, callback):
         self.confirm_callback = callback
 
+    # TODO: Fabian comment
     def is_violin(self):
         if self.check_activity()[0] == 0:
             return True
         return False
 
-    # Registers button pushes
+    # on_press handles all button presses of a Wiimote and acts in a defined way.
     def __on_press__(self, objects):
         if objects is not None and len(objects) > 0:
             for btn_object in objects:
@@ -97,6 +119,8 @@ class Device:
                     if self.click_callback is not None:
                         self.click_callback(found_btn, is_down)
 
+    # This method executes a projective transformation,
+    # when all 4 infrared light diodes are in the focus of the ir camera.
     def __on_move__(self, data):
         # Only accepts data that has all 4 leds
         if len(data) == 4:
@@ -114,6 +138,7 @@ class Device:
             if self.move_callback is not None:
                 self.move_callback(x, y)
 
+    # TODO: Fabian comment
     def check_activity(self):
         self.ar.status = 1
         self.ar.buffer()

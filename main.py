@@ -46,9 +46,10 @@ class DisplayController(QtWidgets.QMainWindow):
         self.game_running = True
         self.game = None
         self.minigame_winner = None
-
         self.addresses = addresses
-        self.on_widget_change(self.SETUP)
+
+        # Starts the first widget.
+        self.init_widget(self.SETUP)
 
     def init_ui(self):
         self.showFullScreen()
@@ -60,7 +61,7 @@ class DisplayController(QtWidgets.QMainWindow):
         self.show()
         self.update()
 
-    def on_widget_change(self, widget_type):
+    def init_widget(self, widget_type):
         widget = None
         if widget_type == self.SETUP:
             widget = SetupWidget(
@@ -97,27 +98,30 @@ class DisplayController(QtWidgets.QMainWindow):
             self.current_widget.close()
         self.current_widget = widget
         self.show()
+    
+    def on_widget_change(self, widget_type):
+        self.init_widget(widget_type)
 
     def on_devices_received(self, devices):
         self.devices = devices
-        self.on_widget_change(self.MENU)
+        self.init_widget(self.MENU)
 
     # Providing score for highscore widget.
     def on_game_end(self, score):
         self.game_running = False
         self.end_score = score
-        self.on_widget_change(self.HIGHSCORE)
+        self.init_widget(self.HIGHSCORE)
 
     def on_minigame_start(self):
         if self.game_running:
             self.old_score = self.current_widget.score
             self.game = self.current_widget.game
             self.current_widget.on_pause()
-            self.on_widget_change(self.MINIGAME)
+            self.init_widget(self.MINIGAME)
 
     def on_minigame_end(self, name):
         self.minigame_winner = name
-        self.on_widget_change(self.GAME)
+        self.init_widget(self.GAME)
         self.current_widget.on_continue()
 
     # https://forum.qt.io/topic/40151/solved-scaled-background-image-using-stylesheet/10

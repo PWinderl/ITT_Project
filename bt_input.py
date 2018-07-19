@@ -13,6 +13,7 @@ import wiimote
 import sys
 from transform import Transform
 from activity_recognizer import ActivityRecognizer
+from bluetooth import BluetoothError
 
 
 class Device:
@@ -34,6 +35,7 @@ class Device:
     # At the initialization wiimote.py tries to connect to a hardware address.
     def __init__(self, address):
         try:
+            # This is for the lazy ones.
             if address == "1":
                 self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
                 # self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
@@ -41,11 +43,9 @@ class Device:
                 self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
             else:
                 self.wm = wiimote.connect(address)
-        except Exception as e:
-            print(e)
-            print("No valid bluetooth addresses.")
-            sys.exit()
-            return
+        except BluetoothError as e:
+            print("BluetoothError: " + str(e))
+            raise ValueError("No valid bluetooth address.")
 
         self.wm.buttons.register_callback(self.__on_press__)
 

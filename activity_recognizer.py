@@ -16,12 +16,12 @@ from scipy import fft, arange
 
 
 class ActivityRecognizer():
-    
+
     """
     ActivityRecognizer uses FFT as a filter, SVM for training +
     predicting samples and manages activities/gestures.
     """
-    
+
     # Initializes wiimote instance, activity recognizer and click callbacks.
     def __init__(self, device):
         self.wm = device.wm

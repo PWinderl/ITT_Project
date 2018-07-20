@@ -16,7 +16,13 @@ from scipy import fft, arange
 
 
 class ActivityRecognizer():
-
+    
+    """
+    ActivityRecognizer uses FFT as a filter, SVM for training +
+    predicting samples and manages activities/gestures.
+    """
+    
+    # Initializes wiimote instance, activity recognizer and click callbacks.
     def __init__(self, device):
         self.wm = device.wm
         self.device = device
@@ -24,12 +30,14 @@ class ActivityRecognizer():
         self.device.register_click_callback(self.on_click)
 
     def is_violin(self):
+        # Check if current activity is violin.
         self.check_activity()
         if self.check_activity()[0] == 0:
             return True
         return False
 
     def check_activity(self):
+        # Check current activity in svm; Refreshing csv file.
         try:
             current_act = self.buffer_act()
         except Exception as e:
@@ -38,6 +46,7 @@ class ActivityRecognizer():
         return current_act
 
     def on_click(self, btn, is_down):
+        # Registers callback for Buttons.
         if is_down:
             if btn == self.device.BTN_ONE:
                 self.status = 0

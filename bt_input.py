@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-The module Bluetooth Innput takes care of the connection
+The module Bluetooth Input takes care of the connection
 between the wiimote.py of Raphael Wimmer (https://github.com/RaphaelWimmer/wiimote.py)
 and the game.
 

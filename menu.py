@@ -16,7 +16,7 @@ class MenuWidget(QtWidgets.QWidget):
 
     """
     This widget displays the three options (game, highscore and exit)
-    and recognizes a mouse click or a button press.
+    and recognizes a button press.
     When above occurs, a signal will be fired and the UI will be changed.
     """
 

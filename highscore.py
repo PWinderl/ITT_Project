@@ -26,10 +26,12 @@ class HighscoreWidget(QtWidgets.QWidget):
 
         # Check if highscore.py was started from menu or after game
         # In case of game show signature screen
+        self.dw = None
         if self.new_score != 0:
             self.dw = DrawWidget()
             self.init_devices(devices)
             self.dw.set_callback(self.highscore_chart)
+            self.init_devices(devices)
         else:
             self.draw_highscores(self.highscore_list)
 

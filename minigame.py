@@ -181,11 +181,13 @@ class MiniGameWidget(QtWidgets.QWidget):
 
     on_end = QtCore.pyqtSignal(str)
 
-    def __init__(self, size, devices, b_player=None, b_conductor=None, parent=None):
+    def __init__(self, size, parent=None):
         super(MiniGameWidget, self).__init__(parent)
-
-        player, conductor, template = self.init_ui(size)
+        self.width, self.height = size
         self.scores = []
+
+    def start(self, devices):
+        player, conductor, template = self.init_ui()
 
         rec_1 = Recognizer()
         rec_2 = Recognizer()
@@ -208,18 +210,21 @@ class MiniGameWidget(QtWidgets.QWidget):
 
         template.draw()
 
-    def init_ui(self, size):
+    def hide(self):
+        self.close()
+
+    def init_ui(self):
         self.showFullScreen()
 
         layout = QtWidgets.QHBoxLayout(self)
 
-        player = DrawWidget("player", size[0], size[1], self)
+        player = DrawWidget("player", self.width, self.height, self)
         layout.addWidget(player, alignment=QtCore.Qt.AlignLeft)
 
-        template = TemplateWidget(size[0], size[1], self)
+        template = TemplateWidget(self.width, self.height, self)
         layout.addWidget(template, alignment=QtCore.Qt.AlignCenter)
 
-        conductor = DrawWidget("conductor", size[0], size[1], self)
+        conductor = DrawWidget("conductor", self.width, self.height, self)
         layout.addWidget(conductor, alignment=QtCore.Qt.AlignRight)
 
         self.setLayout(layout)

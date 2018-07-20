@@ -22,12 +22,17 @@ class MenuWidget(QtWidgets.QWidget):
 
     on_menu_end = QtCore.pyqtSignal(int)
 
-    def __init__(self, size, devices, codes, parent=None):
+    def __init__(self, size, codes, parent=None):
         super(MenuWidget, self).__init__(parent)
         self.width, self.height = size
         self.GAME, self.HIGHSCORE = codes
+
+    def start(self, devices):
         self.init_ui()
         self.connect_devices(devices)
+
+    def hide(self):
+        self.close()
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
@@ -82,3 +87,6 @@ class MenuWidget(QtWidgets.QWidget):
             QtWidgets.QApplication.quit()
         else:
             self.on_menu_end.emit(idx)
+
+    def closeEvent(self, event):
+        return super().closeEvent(event)

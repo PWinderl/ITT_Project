@@ -58,15 +58,20 @@ class SetupWidget(QtWidgets.QWidget):
 
     DEVICE_LIMIT = 1
 
-    def __init__(self, size, addresses, parent=None):
+    def __init__(self, size, parent=None):
         super(SetupWidget, self).__init__(parent)
         self.width, self.height = size
-        self.init_ui()
         self.devices = []
+
+    def start(self, addresses):
+        self.init_ui()
         self.setup = SetupThread(addresses)
         self.setup.device_found.connect(self.on_device_found)
         self.setup.exception_raised.connect(lambda: sys.exit())
         self.setup.start()
+
+    def hide(self):
+        self.close()
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
@@ -110,3 +115,6 @@ class SetupWidget(QtWidgets.QWidget):
         if len(self.devices) == self.DEVICE_LIMIT:
             sleep(2)
             self.on_setup_end.emit(self.devices)
+
+    def closeEvent(self, event):
+        return super().closeEvent(event)

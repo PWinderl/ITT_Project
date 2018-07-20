@@ -444,18 +444,21 @@ class GameWidget(QtWidgets.QWidget):
 
     game_end = QtCore.pyqtSignal(int)
 
-    def __init__(self, resolution, devices, score=0, game=None, parent=None):
+    def __init__(self, resolution, parent=None):
         super(GameWidget, self).__init__(parent)
         self.res = resolution
         self.is_pause = False
         self.player = None
         self.conductor = None
-
+    
+    def start(self, devices, game=None, score=0):
         self.score = score
-
         self.init_ui()
         self.init_devices(devices)
         self.game = self.init_game(game)
+    
+    def hide(self):
+        self.close()
 
     def init_ui(self):
         width = self.res[0] * 0.6
@@ -576,3 +579,6 @@ class GameWidget(QtWidgets.QWidget):
         self.game.on_hit.disconnect(self.on_player_success)
         self.game.on_end.disconnect(self.on_end)
         self.game_end.emit(self.score)
+    
+    def closeEvent(self, event):
+        return super().closeEvent(event)

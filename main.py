@@ -42,11 +42,18 @@ class MainWidget(QtWidgets.QMainWindow):
         self.devices = []
 
         self.old_score = 0
-        self.end_score = 0
+        self.end_score = 1
         self.game_running = True
         self.game = None
         self.minigame_winner = None
         self.addresses = addresses
+
+        self.w_setup = SetupWidget(
+            self.WINDOW_SIZE, parent=self.window)
+        self.w_menu = MenuWidget(
+            self.WINDOW_SIZE, (self.GAME, self.HIGHSCORE), parent=self.window)
+        self.w_game = GameWidget(self.res, parent=self.window)
+        self.w_minigame = MiniGameWidget(self.WINDOW_SIZE, parent=self.window)
 
         # Starts the first widget.
         self.init_widget(self.SETUP)
@@ -64,18 +71,19 @@ class MainWidget(QtWidgets.QMainWindow):
     # This function initializes the widget according to widget_type.
     def init_widget(self, widget_type):
         widget = None
+        if self.current_widget is not None:
+            self.current_widget.hide()
         if widget_type == self.SETUP:
-            widget = SetupWidget(
-                self.WINDOW_SIZE, self.addresses, parent=self.window)
+            widget = self.w_setup
+            widget.start(self.addresses)
             widget.on_setup_end.connect(lambda d: self.on_devices_received(d))
         elif widget_type == self.MENU:
-            widget = MenuWidget(self.WINDOW_SIZE, self.devices,
-                                (self.GAME, self.HIGHSCORE), parent=self.window)
+            widget = self.w_menu
+            widget.start(self.devices)
             widget.on_menu_end.connect(self.on_widget_change)
         elif widget_type == self.GAME:
-            widget = GameWidget(
-                self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
-
+            widget = self.w_game
+            widget.start(self.devices, self.game, self.old_score)
             # Widget before was minigame.
             # The winner will be transfered to update the scores.
             if self.minigame_winner is not None:
@@ -84,8 +92,8 @@ class MainWidget(QtWidgets.QMainWindow):
             widget.game_end.connect(self.on_game_end)
             self.start_timer(self.on_minigame_start, self.MINIGAME_TIMER)
         elif widget_type == self.MINIGAME:
-            widget = MiniGameWidget(
-                self.WINDOW_SIZE, self.devices, parent=self.window)
+            widget = self.w_minigame
+            widget.start(self.devices)
             widget.on_end.connect(self.on_minigame_end)
         elif widget_type == self.HIGHSCORE:
             widget = HighscoreWidget(

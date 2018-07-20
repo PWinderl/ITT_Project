@@ -154,7 +154,7 @@ class Device:
         for idx in range(3):
             x_arr = []
             y_arr = []
-            for points in array:
+            for points in values:
                 point = points[idx]
                 x_arr.append(point[0])
                 y_arr.append(point[1])

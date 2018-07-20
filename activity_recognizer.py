@@ -14,21 +14,19 @@ class ActivityRecognizer():
         self.activity_recognizer()
         self.device.register_click_callback(self.on_click)
 
-    # TODO: Fabian comment
     def is_violin(self):
+        self.check_activity()
         if self.check_activity()[0] == 0:
             return True
         return False
 
-    # TODO: getActivity gibts nicht
-    # TODO: Fabian comment
     def check_activity(self):
-        self.status = 1
-        self.buffer()
-        self.write_csv()
-        self.status = 0
-        # return self.getActivity()
-        return [1, 2]
+        try:
+            current_act = self.buffer_act()
+        except Exception as e:
+            print(e)
+        self.refresh_csv()
+        return current_act
     
     def on_click(self, btn, is_down):
         if is_down:

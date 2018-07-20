@@ -25,7 +25,7 @@ class MainWidget(QtWidgets.QMainWindow):
 
     WINDOW_SIZE = (500, 500)
     BACKGROUND = "./background.png"
-    MINIGAME_TIMER = 5000
+    MINIGAME_TIMER = 20000
 
     # Module codes.
     SETUP = 0
@@ -40,7 +40,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.res = res
         self.init_ui()
         self.devices = []
-
+        self.timer = None
         self.old_score = 0
         self.end_score = 1
         self.game_running = True
@@ -53,7 +53,6 @@ class MainWidget(QtWidgets.QMainWindow):
         self.w_menu = MenuWidget(
             self.WINDOW_SIZE, (self.GAME, self.HIGHSCORE), parent=self.window)
         self.w_game = GameWidget(self.res, parent=self.window)
-        self.w_minigame = MiniGameWidget(self.WINDOW_SIZE, parent=self.window)
 
         # Starts the first widget.
         self.init_widget(self.SETUP)
@@ -90,10 +89,11 @@ class MainWidget(QtWidgets.QMainWindow):
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
             widget.game_end.connect(self.on_game_end)
-            self.start_timer(self.on_minigame_start, self.MINIGAME_TIMER)
+            self.timer = self.start_timer(
+                self.on_minigame_start, self.MINIGAME_TIMER)
         elif widget_type == self.MINIGAME:
-            widget = self.w_minigame
-            widget.start(self.devices)
+            widget = MiniGameWidget(
+                self.WINDOW_SIZE, self.devices, parent=self.window)
             widget.on_end.connect(self.on_minigame_end)
         elif widget_type == self.HIGHSCORE:
             widget = HighscoreWidget(
@@ -120,6 +120,9 @@ class MainWidget(QtWidgets.QMainWindow):
 
     # Providing score for highscore widget.
     def on_game_end(self, score):
+        if self.timer is not None:
+            self.timer.stop()
+            self.timer.deleteLater()
         self.game_running = False
         self.end_score = score
         self.init_widget(self.HIGHSCORE)
@@ -164,6 +167,7 @@ class MainWidget(QtWidgets.QMainWindow):
         timer = QtCore.QTimer()
         timer.timeout.connect(handler)
         timer.start(ms)
+        return timer
 
 
 # Entry point of the whole application.

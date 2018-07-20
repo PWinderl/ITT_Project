@@ -38,6 +38,7 @@ class DrawWidget(QtWidgets.QFrame):
         self.path = QtGui.QPainterPath()
         self.init_ui(name, width, height)
         self.name = name
+        self.just_started = False
         self.t_name = ""
 
     def init_ui(self, name, width, height):
@@ -49,8 +50,8 @@ class DrawWidget(QtWidgets.QFrame):
         self.cursor_pos = QtCore.QPoint(width / 2, height / 2)
         self.update()
 
-    def set_cursor(self, x, y):
-        self.cursor_pos = self.mapToGlobal(QtCore.QPoint(x, y))
+    def set_cursor(self, point):
+        self.cursor_pos = point
 
     def draw_cursor(self, qp):
         if self.cursor_pos is not None:
@@ -69,32 +70,36 @@ class DrawWidget(QtWidgets.QFrame):
 
     # callback function for the button press and release event
     # Pyqtsignal emitting
-    def on_click(self):
-        self.begin = True
-        if not self.click_flag:
-            self.finished_unistroke.emit(
-                self.positions, self.name, self.t_name)
+    def on_click(self, btn, is_down):
+        if btn == Device.BTN_A:
+            self.click_flag = not self.click_flag
+            self.just_started = True
+            if not self.click_flag:
+                print("emitted")
+                self.finished_unistroke.emit(
+                    self.positions, self.name, self.t_name)
 
     # on move callback for position update of wiimote
     def on_move(self, x, y):
-        self.set_cursor(x, y)
-        pos = QtCore.QPoint(x, y)
-        if self.begin:
-            self.begin = False
-            self.path.moveTo(pos)
+        if self.click_flag:
+            pos = QtCore.QPoint(x, y)  # self.mapToGlobal(QtCore.QPoint(x, y))
+            self.set_cursor(pos)
+            if self.just_started:
+                self.just_started = False
+                self.path.moveTo(pos)
+                self.positions.append((pos.x(), pos.y()))
+                self.update()
+                return
             self.positions.append((pos.x(), pos.y()))
+            self.path.lineTo(pos)
             self.update()
-            return
-        self.positions.append((pos.x(), pos.y()))
-        self.path.lineTo(pos)
-        self.update()
 
     """
     This methods will not be needed.
     Just for testing.
 
     TODO: DELETE
-    """
+    
 
     # mouse moves with mouse or with set_cursor
     def mouseMoveEvent(self, event):
@@ -115,6 +120,7 @@ class DrawWidget(QtWidgets.QFrame):
     def mouseReleaseEvent(self, event):
         self.finished_unistroke.emit(self.positions, self.name, self.t_name)
         self.positions = []
+    """
 
 
 class TemplateWidget(QtWidgets.QFrame):
@@ -181,36 +187,45 @@ class MiniGameWidget(QtWidgets.QWidget):
 
     on_end = QtCore.pyqtSignal(str)
 
-    def __init__(self, size, parent=None):
+    def __init__(self, size, devices, parent=None):
         super(MiniGameWidget, self).__init__(parent)
         self.width, self.height = size
         self.scores = []
-
-    def start(self, devices):
-        player, conductor, template = self.init_ui()
-
+        self.player, self.conductor, self.template = self.init_ui()
         rec_1 = Recognizer()
         rec_2 = Recognizer()
         rec_1.set_callback(self.on_result)
         rec_2.set_callback(self.on_result)
 
-        template.template_selected.connect(player.on_template_selected)
-        template.template_selected.connect(conductor.on_template_selected)
-        player.finished_unistroke.connect(
+        self.template.template_selected.connect(
+            self.player.on_template_selected)
+        self.template.template_selected.connect(
+            self.conductor.on_template_selected)
+        self.player.finished_unistroke.connect(
             lambda points, name, t_name: self.on_rec(rec_1, points, name, t_name))
-        conductor.finished_unistroke.connect(
+        self.conductor.finished_unistroke.connect(
             lambda points, name, t_name: self.on_rec(rec_2, points, name, t_name))
 
+        self.devices = None
         if devices is not None and len(devices) > 0:
-            self.connect_devices(devices, player, conductor)
-        template.show()
-        player.show()
-        conductor.show()
+            self.connect_devices(devices, self.player, self.conductor)
+            self.devices = devices
+        self.template.show()
+        self.player.show()
+        self.conductor.show()
         self.show()
+        self.setHidden(False)
 
-        template.draw()
+        self.template.draw()
 
     def hide(self):
+        if self.devices is not None:
+            for device in self.devices:
+                device.unregister_callbacks()
+        self.template.setParent(None)
+        self.player.setParent(None)
+        self.conductor.setParent(None)
+        self.setHidden(True)
         self.close()
 
     def init_ui(self):
@@ -232,11 +247,13 @@ class MiniGameWidget(QtWidgets.QWidget):
         return (player, conductor, template)
 
     def on_rec(self, rec, points, name, t_name):
+        print("begin rec")
         rec.recognize(points, name, t_name)
 
     # This method gets the result of the recognition processes.
     # After receiving two results, it will decide who won.
     def on_result(self, template, score, name):
+        print("received result")
         self.scores.append({"name": name, "score": score})
         if len(self.scores) > 1:
             if abs(self.scores[0]["score"]) < abs(self.scores[1]["score"]):
@@ -246,8 +263,8 @@ class MiniGameWidget(QtWidgets.QWidget):
 
     def connect_devices(self, devices, player, conductor):
         if len(devices) > 0:
-            devices[0].register_confirm_callback(player.on_click)
+            devices[0].register_click_callback(player.on_click)
             devices[0].register_move_callback(player.on_move)
         if len(devices) > 1:
-            devices[1].register_confirm_callback(conductor.on_click)
+            devices[1].register_click_callback(conductor.on_click)
             devices[1].register_move_callback(conductor.on_move)

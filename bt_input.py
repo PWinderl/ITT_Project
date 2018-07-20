@@ -40,7 +40,8 @@ class Device:
                 self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
                 # self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
             elif address == "2":
-                self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+                # self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+                self.wm = wiimote.connect("b8:ae:6e:f1:39:81")
             else:
                 self.wm = wiimote.connect(address)
         except BluetoothError as e:
@@ -58,6 +59,11 @@ class Device:
 
         # Instantiate the activity recognizer.
         self.ar = ActivityRecognizer(self)
+
+    def setLed(self, idx):
+        if idx == 1:
+            self.wm.leds[0] = False
+        self.wm.leds[idx] = True
 
     # If it is necessary for the projective transformation, the destination widget size can be changed.
     def set_widget_size(self, size):
@@ -83,6 +89,12 @@ class Device:
     def register_confirm_callback(self, callback):
         self.confirm_callback = callback
 
+    def unregister_callbacks(self):
+        self.move_callback = None
+        self.click_callback = None
+        self.gesture_btn_callback = None
+        self.confirm_callback = None
+
     # on_press handles all button presses of a Wiimote and acts in a defined way.
     def __on_press__(self, objects):
         if objects is not None and len(objects) > 0:
@@ -90,19 +102,20 @@ class Device:
                 btn = btn_object[0]
                 is_down = btn_object[1]
                 found_btn = None
-                # Button push for signature confirm and "B-Note" playing
-                if btn == 'B':
-                    found_btn = self.BTN_B
-                    if self.confirm_callback is not None and is_down:
-                        self.confirm_callback()
                 # Button hold for drawing gestures and signature
-                elif btn == 'A':
+                if btn == 'A':
                     if is_down and self.move_callback is not None:
                         self.points_arr = []
                         self.wm.ir.register_callback(self.__on_move__)
                     else:
                         self.wm.ir.unregister_callback(self.__on_move__)
                     found_btn = self.BTN_A
+                # Button push for signature confirm and "B-Note" playing
+                elif btn == 'B':
+                    found_btn = self.BTN_B
+                    if self.confirm_callback is not None and is_down:
+                        self.confirm_callback()
+
                 # Button push for "One-Note" playing
                 elif btn == 'One':
                     found_btn = self.BTN_ONE
@@ -126,6 +139,7 @@ class Device:
             for item in data:
                 points.append((item['x'], item['y']))
             self.points_arr.append(points)
+            del points
             if len(self.points_arr) == self.MV_SIZE:
                 x, y = self.__project_points__(self.points_arr)
                 if self.move_callback is not None:
@@ -137,7 +151,6 @@ class Device:
     def __project_points__(self, array):
 
         points = self.__mv_calc__(array)
-
         # P is the center point of the wiimote IR camera
         # DEST is the destination resolution
         P, DEST = (1024 / 2, 768 / 2), self.current_w_size
@@ -149,9 +162,10 @@ class Device:
             return (x, y)
 
     # This method calculates the mean over moving values.
+    # A simple moving average is used.
     def __mv_calc__(self, values):
         result = []
-        for idx in range(3):
+        for idx in range(4):
             x_arr = []
             y_arr = []
             for points in values:

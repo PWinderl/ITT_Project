@@ -29,6 +29,7 @@ CLEAR_MUSIC = pygame.USEREVENT + 7
 # negative -> lost
 # positive -> won
 SCORE_LIMIT = 30
+NOTE_LIMIT = 20
 
 # The frame rate in which the game will run.
 FRAME_RATE = 200
@@ -175,137 +176,138 @@ class GameThread(QtCore.QThread):
     # When the game is running it will first look into the event chain.
     # After that is done, the positioning and rendering will take place.
     def run(self):
-        is_running = True
-        pause_flag = False
-        last_target = None
+        try:
+            is_running = True
+            pause_flag = False
+            last_targets = []
 
-        self.note_sprites = pygame.sprite.Group()
-        self.target_sprites = self.init_targets()
-        clock = pygame.time.Clock()
+            self.note_sprites = pygame.sprite.Group()
+            self.target_sprites = self.init_targets()
+            clock = pygame.time.Clock()
 
-        while is_running:
-            for event in pygame.event.get():
-                # Emergency exit event.
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+            while is_running:
+                for event in pygame.event.get():
+                    # Emergency exit event.
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            pause_flag = True
+                            pygame.event.post(pygame.event.Event(pygame.QUIT))
+                            print("Taking the emergency exit.")
+                    # When the conductor plays a note, this event will be fired.
+                    # As such, a note will be created and added to the "to-be-rendered" sprites.
+                    if event.type == NOTE_INCOMING:
+                        if len(self.note_sprites.sprites()) < NOTE_LIMIT:
+                            try:
+                                line = event.dict["line"]
+                                field = event.dict["field"]
+                                note = Note(line, field, self.RECT_FACTOR)
+                                note.init_rect(self.lines, self.width)
+                                self.note_sprites.add(note)
+                            except Exception as e:
+                                print(e)
+                                print("Note creating failed.")
+                    # The behavior when the game will be paused.
+                    # Used for scaling:
+                    # https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-
+                    # surface-and-keep-all-objects-within-proportionate-to-t
+                    if event.type == PAUSE:
+                        self.center_position(self.p_width, self.p_height)
+                        screen = pygame.display.set_mode(
+                            (self.p_width, self.p_height), pygame.NOFRAME)
+                        screen.blit(pygame.transform.scale(
+                            self.screen, (self.p_width, self.p_height)), (0, 0))
+                        self.redraw(screen, self.p_width, self.p_height)
+                        pygame.display.flip()
                         pause_flag = True
-                        pygame.event.post(pygame.event.Event(pygame.QUIT))
-                        print("Taking the emergency exit.")
-                # When the conductor plays a note, this event will be fired.
-                # As such, a note will be created and added to the "to-be-rendered" sprites.
-                if event.type == NOTE_INCOMING:
-                    try:
-                        line = event.dict["line"]
-                        field = event.dict["field"]
-                        note = Note(line, field, self.RECT_FACTOR)
-                        note.init_rect(self.lines, self.width)
-                        self.note_sprites.add(note)
-                    except Exception as e:
-                        print(e)
-                        print("Note creating failed.")
-                # The behavior when the game will be paused.
-                # Used for scaling:
-                # https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-
-                # surface-and-keep-all-objects-within-proportionate-to-t
-                if event.type == PAUSE:
-                    self.center_position(self.p_width, self.p_height)
-                    screen = pygame.display.set_mode(
-                        (self.p_width, self.p_height), pygame.NOFRAME)
-                    screen.blit(pygame.transform.scale(
-                        self.screen, (self.p_width, self.p_height)), (0, 0))
-                    self.redraw(screen, self.p_width, self.p_height)
-                    pygame.display.flip()
-                    pause_flag = True
 
-                # Scaling the window back to its original state
-                # and drawing all content on it again.
-                if event.type == CONTINUE:
-                    self.center_position(self.width, self.height)
-                    screen = pygame.display.set_mode(
-                        (self.width, self.height), pygame.NOFRAME)
-                    screen.blit(pygame.transform.scale(
-                        self.screen, (self.width, self.height)), (0, 0))
-                    self.screen = self.redraw(
-                        screen, self.width, self.height)
-                    pygame.display.flip()
-                    pause_flag = False
+                    # Scaling the window back to its original state
+                    # and drawing all content on it again.
+                    if event.type == CONTINUE:
+                        self.center_position(self.width, self.height)
+                        screen = pygame.display.set_mode(
+                            (self.width, self.height), pygame.NOFRAME)
+                        screen.blit(pygame.transform.scale(
+                            self.screen, (self.width, self.height)), (0, 0))
+                        self.screen = self.redraw(
+                            screen, self.width, self.height)
+                        pygame.display.flip()
+                        pause_flag = False
 
-                # This event is fired when the player is successfully
-                # executing the gesture and pressed a button.
-                # This code block will then examine whether it was the right one
-                # and if it is on point.
-                # According to the result the target state will be set and
-                # the score will be updated.
-                if event.type == ACTION:
-                    action_line = event.dict["line"]
-                    target = self.get_target_by_id(action_line)
-                    found_target = False
-                    already_failed = False
-                    if len(self.note_sprites.sprites()) == 0:
-                        target.change_state(target.fail)
-                        pygame.time.set_timer(CLEAR_TARGET, 100)
-                        self.on_fail.emit()
-                        already_failed = True
-                    for note in self.note_sprites.sprites():
-                        if note.field == 1 and note.line == action_line:
-                            if note.has_hit(target):
-                                self.on_hit.emit()
-                                found_target = True
-                                self.remove_rect(note)
-                                self.note_sprites.remove(note)
-                            else:
-                                self.on_fail.emit()
-                    if not found_target and not already_failed:
-                        target.change_state(target.fail)
-                        pygame.time.set_timer(CLEAR_TARGET, 100)
-                        self.on_fail.emit()
-                    else:
+                    # This event is fired when the player is successfully
+                    # executing the gesture and pressed a button.
+                    # This code block will then examine whether it was the right one
+                    # and if it is on point.
+                    # According to the result the target state will be set and
+                    # the score will be updated.
+                    if event.type == ACTION:
+                        action_line = event.dict["line"]
+                        target = self.get_target_by_id(action_line)
                         found_target = False
-                    last_target = target
-                if event.type == CLEAR_MUSIC:
-                    pygame.mixer.music.stop()
-                if event.type == CLEAR_TARGET:
-                    if last_target is not None:
-                        last_target.change_state(last_target.inactive)
-                if event.type == EXIT:
-                    is_running = False
-                if event.type == pygame.QUIT:
-                    try:
+                        if len(self.note_sprites.sprites()) == 0:
+                            target.change_state(target.fail)
+                            pygame.time.set_timer(CLEAR_TARGET, 100)
+                            self.on_fail.emit()
+                        else:
+                            for note in self.note_sprites.sprites():
+                                if note.field == 1 and note.line == action_line:
+                                    if note.has_hit(target):
+                                        target.change_state(target.success)
+                                        self.on_hit.emit()
+                                        pygame.time.set_timer(CLEAR_TARGET, 100)
+                                        found_target = True
+                                        self.remove_rect(note)
+                                        self.note_sprites.remove(note)
+                            if not found_target:
+                                self.on_fail.emit()
+                                target.change_state(target.fail)
+                                pygame.time.set_timer(CLEAR_TARGET, 100)
+                        last_targets.append(target)
+                    if event.type == CLEAR_MUSIC:
+                        pygame.mixer.music.stop()
+                    if event.type == CLEAR_TARGET:
+                        for target in last_targets:
+                            target.change_state(target.inactive)
+                        last_targets = []
+                    if event.type == EXIT:
+                        is_running = False
+                    if event.type == pygame.QUIT:    
                         self.on_end.emit()
                         pygame.quit()
                         sys.exit()
-                    except Exception as e:
-                        print(e)
-                        print("hello")
-                    return
+                        return
 
-            # This code block takes care of positioning and rendering.
-            if not pause_flag:
-                width, height = self.screen.get_size()
-                self.screen.blit(self.background, (0, 0))
+                # This code block takes care of positioning and rendering.
+                if not pause_flag:
+                    width, height = self.screen.get_size()
+                    self.screen.blit(self.background, (0, 0))
+                    # Checking, whether the note is out of sight.
+                    # If it is on the conducter side, it will be moved to the player.
+                    # Therefore, if it is on the players side, the player will loose points.
+                    for sprite in self.note_sprites.sprites():
+                        self.remove_rect(sprite.rect)
+                        if sprite.rect.top >= height - sprite.rect.height:
+                            if sprite.field == 2:
+                                sprite.move_to_field(1, self.lines, width)
+                        elif sprite.rect.y > height and sprite.field == 1:
+                            print("rect under height")
+                            target = self.get_target_by_id(sprite.line)
+                            self.on_fail.emit()
+                            target.change_state(target.fail)
+                            last_targets.append(target)
+                            pygame.time.set_timer(CLEAR_TARGET, 100)
+                            self.note_sprites.remove(sprite)
+                            continue
+                        self.screen.blit(
+                            self.background, sprite.rect, sprite.rect)
 
-                # Checking, whether the note is out of sight.
-                # If it is on the conducter side, it will be moved to the player.
-                # Therefore, if it is on the players side, the player will loose points.
-                for sprite in self.note_sprites.sprites():
-                    self.remove_rect(sprite.rect)
-                    if sprite.rect.top >= height - sprite.rect.height:
-                        if sprite.field == 2:
-                            sprite.move_to_field(1, self.lines, width)
-                    if sprite.rect.y >= height:
-                        self.on_fail.emit()
-                        self.note_sprites.remove(sprite)
-                        continue
-                    self.screen.blit(self.background, sprite.rect, sprite.rect)
-
-                # Rendering the game objects.
-                self.note_sprites.update()
-                self.note_sprites.draw(self.screen)
-                self.target_sprites.draw(self.screen)
-                pygame.display.flip()
-                clock.tick(FRAME_RATE)
-        pygame.quit()
-        sys.exit()
+                    # Rendering the game objects.
+                    self.note_sprites.update()
+                    self.note_sprites.draw(self.screen)
+                    self.target_sprites.draw(self.screen)
+                    pygame.display.flip()
+                    clock.tick(FRAME_RATE)
+        except Exception as e:
+            print(e)
 
     def get_target_by_id(self, id):
         for target in self.target_sprites.sprites():
@@ -450,14 +452,23 @@ class GameWidget(QtWidgets.QWidget):
         self.is_pause = False
         self.player = None
         self.conductor = None
-    
+        self.score = 0
+        self.timer = None
+        self.init_ui()
+
     def start(self, devices, game=None, score=0):
         self.score = score
-        self.init_ui()
+        self.show()
+        self.setHidden(False)
         self.init_devices(devices)
         self.game = self.init_game(game)
-    
+
     def hide(self):
+        if self.player is not None:
+            self.player.unregister_callbacks()
+        if self.conductor is not None:
+            self.conductor.unregister_callbacks()
+        self.setHidden(True)
         self.close()
 
     def init_ui(self):
@@ -475,7 +486,7 @@ class GameWidget(QtWidgets.QWidget):
         layout.setAlignment(QtCore.Qt.AlignTop)
 
         self.setLayout(layout)
-        self.show()
+        self.setHidden(True)
 
     def init_devices(self, devices):
         if len(devices) > 0:
@@ -520,13 +531,14 @@ class GameWidget(QtWidgets.QWidget):
         def callback():
             self.points_player.setText("Points: " + str(self.score))
             self.update()
-            self.chech_score()
+            self.check_score()
 
         self.start_timer(callback, 1000)
 
     def check_score(self):
+        print(self.score)
         if abs(self.score) >= SCORE_LIMIT:
-            self.game_end.emit(self.score)
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     # Starting a timer for a one time execution of an callback.
     # This was seen at
@@ -534,11 +546,11 @@ class GameWidget(QtWidgets.QWidget):
     def start_timer(self, callback, ms):
         def handler():
             callback()
-            timer.stop()
-            timer.deleteLater()
-        timer = QtCore.QTimer()
-        timer.timeout.connect(handler)
-        timer.start(ms)
+            self.timer.stop()
+            self.timer.deleteLater()
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(handler)
+        self.timer.start(ms)
 
     def on_player_fail(self):
         self.score -= 5
@@ -554,12 +566,13 @@ class GameWidget(QtWidgets.QWidget):
 
     # Depending who pressed a button, different events will be fired.
     def on_button(self, char, btn, is_down):
-        print("hello button")
         if not self.is_pause and is_down:
             if char == "player":
+                print("button pressed char")
                 pygame.event.post(pygame.event.Event(
                     ACTION, {"line": btn - 1}))
             elif char == "conductor":
+                print("button pressed conductor")
                 pygame.event.post(pygame.event.Event(
                     NOTE_INCOMING, {"line": btn - 1, "field": 2}))
 
@@ -575,10 +588,16 @@ class GameWidget(QtWidgets.QWidget):
         self.is_pause = False
 
     def on_end(self):
+        try:
+            if self.timer is not None:
+                self.timer.stop()
+                self.timer.deleteLater()
+        except RuntimeError as e:
+            print("QTimer has already been deleted")
         self.game.on_fail.disconnect(self.on_player_fail)
         self.game.on_hit.disconnect(self.on_player_success)
         self.game.on_end.disconnect(self.on_end)
         self.game_end.emit(self.score)
-    
+
     def closeEvent(self, event):
         return super().closeEvent(event)

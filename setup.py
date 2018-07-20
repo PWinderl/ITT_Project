@@ -62,15 +62,19 @@ class SetupWidget(QtWidgets.QWidget):
         super(SetupWidget, self).__init__(parent)
         self.width, self.height = size
         self.devices = []
+        self.init_ui()
+        self.setHidden(True)
 
     def start(self, addresses):
-        self.init_ui()
+        self.show()
+        self.setHidden(False)
         self.setup = SetupThread(addresses)
         self.setup.device_found.connect(self.on_device_found)
         self.setup.exception_raised.connect(lambda: sys.exit())
         self.setup.start()
 
     def hide(self):
+        self.setHidden(True)
         self.close()
 
     def init_ui(self):
@@ -90,7 +94,6 @@ class SetupWidget(QtWidgets.QWidget):
         layout.addWidget(self.conductor, alignment=QtCore.Qt.AlignCenter)
 
         self.setLayout(layout)
-        self.show()
 
     # When a device is found, it will appended to the devices list.
     # Depending whether a device connected beforehand,
@@ -103,13 +106,13 @@ class SetupWidget(QtWidgets.QWidget):
 
         # First device will be always the player.
         if length == 1:
+            device.setLed(0)
             self.player.setText("Connected player.")
             self.player.repaint()
 
         # Second device will be always the player.
         elif length == 2:
-            device.leds[1] = False
-            device.leds[2] = True
+            device.setLed(1)
             self.conductor.setText("Connected conductor.")
             self.conductor.repaint()
         if len(self.devices) == self.DEVICE_LIMIT:

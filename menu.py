@@ -26,13 +26,20 @@ class MenuWidget(QtWidgets.QWidget):
         super(MenuWidget, self).__init__(parent)
         self.width, self.height = size
         self.GAME, self.HIGHSCORE = codes
+        self.init_ui()
+        self.setHidden(True)
 
     def start(self, devices):
-        self.init_ui()
+        self.show()
+        self.devices = devices
         self.connect_devices(devices)
 
     def hide(self):
+        if self.devices is not None:
+            for device in self.devices:
+                device.unregister_callbacks()
         self.close()
+        self.setHidden(True)
 
     def init_ui(self):
         self.setFixedSize(self.width, self.height)
@@ -67,7 +74,6 @@ class MenuWidget(QtWidgets.QWidget):
         quit_game.clicked.connect(lambda: self.on_click(-1))
         w_layout.addWidget(quit_game, alignment=QtCore.Qt.AlignCenter)
         self.setLayout(w_layout)
-        self.show()
 
     def connect_devices(self, devices):
         player = devices[0]

@@ -56,7 +56,7 @@ class SetupWidget(QtWidgets.QWidget):
 
     on_setup_end = QtCore.pyqtSignal(object)
 
-    DEVICE_LIMIT = 1
+    DEVICE_LIMIT = 2
 
     def __init__(self, size, parent=None):
         super(SetupWidget, self).__init__(parent)

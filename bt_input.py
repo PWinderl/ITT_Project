@@ -40,8 +40,8 @@ class Device:
                 self.wm = wiimote.connect("b8:ae:6e:1b:5a:a6")
                 # self.wm = wiimote.connect("b8:ae:6e:1b:ad:8c")
             elif address == "2":
-                # self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
-                self.wm = wiimote.connect("b8:ae:6e:f1:39:81")
+                self.wm = wiimote.connect("b8:ae:6e:ef:ef:d6")
+                # self.wm = wiimote.connect("b8:ae:6e:f1:39:81")
             else:
                 self.wm = wiimote.connect(address)
         except BluetoothError as e:

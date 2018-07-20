@@ -30,7 +30,7 @@ class Device:
     BTN_TWO = 4
 
     # Moving average length
-    MV_SIZE = 10
+    MV_SIZE = 20
 
     # At the initialization wiimote.py tries to connect to a hardware address.
     def __init__(self, address):
@@ -124,8 +124,9 @@ class Device:
                     found_btn = self.BTN_TWO
 
                 if found_btn is not None:
-                    if self.gesture_btn_callback is not None and self.ar.is_violin():
-                        self.gesture_btn_callback(found_btn, is_down)
+                    if self.ar.is_violin():
+                        if self.gesture_btn_callback is not None:
+                            self.gesture_btn_callback(found_btn, is_down)
 
                     if self.click_callback is not None:
                         self.click_callback(found_btn, is_down)

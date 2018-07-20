@@ -12,6 +12,7 @@ Author: Thomas Oswald
 from PyQt5 import QtWidgets, QtCore, QtGui
 from recognizer import Recognizer
 from random import randint
+from bt_input import Device
 
 
 class DrawWidget(QtWidgets.QFrame):

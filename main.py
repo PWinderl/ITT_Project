@@ -25,7 +25,7 @@ class MainWidget(QtWidgets.QMainWindow):
 
     WINDOW_SIZE = (500, 500)
     BACKGROUND = "./background.png"
-    MINIGAME_TIMER = 20000
+    MINIGAME_TIMER = 100
 
     # Module codes.
     SETUP = 0
@@ -82,13 +82,14 @@ class MainWidget(QtWidgets.QMainWindow):
             widget.on_menu_end.connect(self.on_widget_change)
         elif widget_type == self.GAME:
             widget = self.w_game
+            widget.game_end.connect(self.on_game_end)
             widget.start(self.devices, self.game, self.old_score)
             # Widget before was minigame.
             # The winner will be transfered to update the scores.
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
-            widget.game_end.connect(self.on_game_end)
+
             self.timer = self.start_timer(
                 self.on_minigame_start, self.MINIGAME_TIMER)
         elif widget_type == self.MINIGAME:

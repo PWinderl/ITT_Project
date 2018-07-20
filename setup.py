@@ -15,6 +15,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from bt_input import Device
 from bluetooth import BluetoothError
 from time import sleep
+import sys
 
 
 class SetupThread(QtCore.QThread):
@@ -26,6 +27,7 @@ class SetupThread(QtCore.QThread):
     """
 
     device_found = QtCore.pyqtSignal(object)
+    exception_raised = QtCore.pyqtSignal()
 
     def __init__(self, addresses, parent=None):
         super(SetupThread, self).__init__(parent)
@@ -36,10 +38,12 @@ class SetupThread(QtCore.QThread):
             if self.addresses is not None:
                 for address in self.addresses:
                     self.device_found.emit(Device(address))
-        except BluetoothError as e:
+        except ValueError as e:
             print(e)
             print(
                 "Game is not able to start, because no bluetooth device could be found.")
+            self.exception_raised.emit()
+            return
 
 
 class SetupWidget(QtWidgets.QWidget):
@@ -52,7 +56,7 @@ class SetupWidget(QtWidgets.QWidget):
 
     on_setup_end = QtCore.pyqtSignal(object)
 
-    DEVICE_LIMIT = 2
+    DEVICE_LIMIT = 1
 
     def __init__(self, size, addresses, parent=None):
         super(SetupWidget, self).__init__(parent)
@@ -61,6 +65,7 @@ class SetupWidget(QtWidgets.QWidget):
         self.devices = []
         self.setup = SetupThread(addresses)
         self.setup.device_found.connect(self.on_device_found)
+        self.setup.exception_raised.connect(lambda: sys.exit())
         self.setup.start()
 
     def init_ui(self):
@@ -87,7 +92,8 @@ class SetupWidget(QtWidgets.QWidget):
     # the device will be declared as player or conductor.
     # At last a callback is fired, when the DEVICE_LIMIT is reached.
     def on_device_found(self, device):
-        self.devices.append(device)
+        if device is not None:
+            self.devices.append(device)
         length = len(self.devices)
 
         # First device will be always the player.

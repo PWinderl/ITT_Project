@@ -2,7 +2,10 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+The Main module takes care of the initial start.
+Additionally, it implements the MainWidget, which controls all widgets.
+
+Author: Thomas Oswald
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -14,24 +17,25 @@ from setup import SetupWidget
 import sys
 
 
-class Constants():
+class MainWidget(QtWidgets.QMainWindow):
 
-    # modules
+    """
+    The MainWidget initializes each widget and switches between them.
+    """
+
+    WINDOW_SIZE = (500, 500)
+    BACKGROUND = "./background.png"
+    MINIGAME_TIMER = 5000
+
+    # Module codes.
     SETUP = 0
     MENU = 1
     GAME = 2
     MINIGAME = 3
     HIGHSCORE = 4
 
-
-class Display(QtWidgets.QMainWindow):
-
-    WINDOW_SIZE = (500, 500)
-    BACKGROUND = "./background.png"
-    MINIGAME_TIMER = 5000
-
-    def __init__(self, res, addresses=None):
-        super(Display, self).__init__()
+    def __init__(self, res, addresses):
+        super(MainWidget, self).__init__()
         self.current_widget = None
         self.res = res
         self.init_ui()
@@ -42,11 +46,10 @@ class Display(QtWidgets.QMainWindow):
         self.game_running = True
         self.game = None
         self.minigame_winner = None
-        if addresses is not None:
-            self.addresses = addresses
-            self.on_widget_change(Constants.SETUP)
-        else:
-            self.on_widget_change(Constants.MENU)
+        self.addresses = addresses
+
+        # Starts the first widget.
+        self.init_widget(self.SETUP)
 
     def init_ui(self):
         self.showFullScreen()
@@ -58,29 +61,33 @@ class Display(QtWidgets.QMainWindow):
         self.show()
         self.update()
 
-    def on_widget_change(self, widget_type):
+    # This function initializes the widget according to widget_type.
+    def init_widget(self, widget_type):
         widget = None
-        if widget_type == Constants.SETUP:
+        if widget_type == self.SETUP:
             widget = SetupWidget(
                 self.WINDOW_SIZE, self.addresses, parent=self.window)
-            widget.on_setup_end.connect(lambda d: self.connect_devices(d))
-        elif widget_type == Constants.MENU:
+            widget.on_setup_end.connect(lambda d: self.on_devices_received(d))
+        elif widget_type == self.MENU:
             widget = MenuWidget(self.WINDOW_SIZE, self.devices,
-                                (Constants.GAME, Constants.HIGHSCORE), parent=self.window)
-            widget.on_menu.connect(self.on_widget_change)
-        elif widget_type == Constants.GAME:
+                                (self.GAME, self.HIGHSCORE), parent=self.window)
+            widget.on_menu_end.connect(self.on_widget_change)
+        elif widget_type == self.GAME:
             widget = GameWidget(
                 self.res, self.devices, score=self.old_score, game=self.game, parent=self.window)
+
+            # Widget before was minigame.
+            # The winner will be transfered to update the scores.
             if self.minigame_winner is not None:
                 widget.update_score(self.minigame_winner)
                 self.minigame_winner = None
             widget.game_end.connect(self.on_game_end)
             self.start_timer(self.on_minigame_start, self.MINIGAME_TIMER)
-        elif widget_type == Constants.MINIGAME:
+        elif widget_type == self.MINIGAME:
             widget = MiniGameWidget(
                 self.WINDOW_SIZE, self.devices, parent=self.window)
             widget.on_end.connect(self.on_minigame_end)
-        elif widget_type == Constants.HIGHSCORE:
+        elif widget_type == self.HIGHSCORE:
             widget = HighscoreWidget(
                 (500, 650), self.devices, self.end_score, parent=self.window)
         self.change_widget(widget)
@@ -96,36 +103,30 @@ class Display(QtWidgets.QMainWindow):
         self.current_widget = widget
         self.show()
 
-    # Providing score for highscore widget
+    def on_widget_change(self, widget_type):
+        self.init_widget(widget_type)
+
+    def on_devices_received(self, devices):
+        self.devices = devices
+        self.init_widget(self.MENU)
+
+    # Providing score for highscore widget.
     def on_game_end(self, score):
         self.game_running = False
         self.end_score = score
-        self.on_widget_change(Constants.HIGHSCORE)
-
-    def start_timer(self, callback, ms):
-        def handler():
-            callback()
-            timer.stop()
-            timer.deleteLater()
-        timer = QtCore.QTimer()
-        timer.timeout.connect(handler)
-        timer.start(ms)
+        self.init_widget(self.HIGHSCORE)
 
     def on_minigame_start(self):
         if self.game_running:
             self.old_score = self.current_widget.score
             self.game = self.current_widget.game
             self.current_widget.on_pause()
-            self.on_widget_change(Constants.MINIGAME)
+            self.init_widget(self.MINIGAME)
 
     def on_minigame_end(self, name):
         self.minigame_winner = name
-        self.on_widget_change(Constants.GAME)
+        self.init_widget(self.GAME)
         self.current_widget.on_continue()
-
-    def connect_devices(self, devices):
-        self.devices = devices
-        self.on_widget_change(Constants.MENU)
 
     # https://forum.qt.io/topic/40151/solved-scaled-background-image-using-stylesheet/10
     # comment by mbnoimi
@@ -139,17 +140,34 @@ class Display(QtWidgets.QMainWindow):
         qp.drawPixmap(0, 0, pixmap)
         qp.end()
 
+    # Emergency exit. This is not recommended, but useful in case of failures.
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
+            print("Executing emergency exit!")
             QtWidgets.QApplication.quit()
 
+    # This was seen at
+    # https://stackoverflow.com/questions/46656634/pyqt5-qtimer-count-until-specific-seconds
+    def start_timer(self, callback, ms):
+        def handler():
+            callback()
+            timer.stop()
+            timer.deleteLater()
+        timer = QtCore.QTimer()
+        timer.timeout.connect(handler)
+        timer.start(ms)
 
+
+# Entry point of the whole application.
+# The current display resolution and the two hardware addresses of the Wiimotes
+# will be given to the MainWidget.
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     res = app.desktop().screenGeometry()
     res = (res.width(), res.height())
     if len(sys.argv) > 1:
-        d = Display(res, sys.argv[1:])
+        d = MainWidget(res, sys.argv[1:])
     else:
-        d = Display(res)
+        print("Not enough arguments.")
+        sys.exit()
     sys.exit(app.exec_())

@@ -2,7 +2,10 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+To be able to compare the drawn unistroke and the shown template in the minigame,
+this recognizer is used.
+
+Author: Thomas Oswald
 """
 
 import math

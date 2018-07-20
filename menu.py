@@ -2,7 +2,9 @@
 # coding: utf-8
 
 """
-By Thomas Oswald
+The menu module functions as UI connection between the game, the highscore and an exit.
+
+Author: Thomas Oswald
 """
 
 
@@ -12,22 +14,29 @@ from bt_input import Device
 
 class MenuWidget(QtWidgets.QWidget):
 
-    on_menu = QtCore.pyqtSignal(int)
+    """
+    This widget displays the three options (game, highscore and exit)
+    and recognizes a mouse click or a button press.
+    When above occurs, a signal will be fired and the UI will be changed.
+    """
+
+    on_menu_end = QtCore.pyqtSignal(int)
 
     def __init__(self, size, devices, codes, parent=None):
         super(MenuWidget, self).__init__(parent)
         self.width, self.height = size
         self.GAME, self.HIGHSCORE = codes
         self.init_ui()
+        self.connect_devices(devices)
 
     def init_ui(self):
-        # self.setGeometry(0, 0, self.width, self.height)
         self.setFixedSize(self.width, self.height)
         w_layout = QtWidgets.QVBoxLayout(self)
 
         start = QtWidgets.QPushButton(self)
         style = "image-position:left;border:2px solid white;color:white;font-size:20px;"
-        style = style + "border-radius:10px;image:url(sprites/one_inactive.png)"
+        style = style + \
+            "border-radius:10px;image:url(sprites/one_inactive.png)"
         start.setStyleSheet(style)
         start.setFixedSize(200, 50)
         start.setText("Start")
@@ -36,7 +45,8 @@ class MenuWidget(QtWidgets.QWidget):
 
         highscore = QtWidgets.QPushButton(self)
         style = "image-position:left;border:2px solid white;color:white;font-size:20px;"
-        style = style + "border-radius:10px;image:url(sprites/two_inactive.png)"
+        style = style + \
+            "border-radius:10px;image:url(sprites/two_inactive.png)"
         highscore.setStyleSheet(style)
         highscore.setFixedSize(200, 50)
         highscore.setText(" Highscore")
@@ -71,4 +81,4 @@ class MenuWidget(QtWidgets.QWidget):
         if idx == -1:
             QtWidgets.QApplication.quit()
         else:
-            self.on_menu.emit(idx)
+            self.on_menu_end.emit(idx)

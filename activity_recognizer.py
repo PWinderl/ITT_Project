@@ -20,13 +20,15 @@ class ActivityRecognizer():
             return True
         return False
 
+    # TODO: getActivity gibts nicht
     # TODO: Fabian comment
     def check_activity(self):
         self.status = 1
         self.buffer()
         self.write_csv()
         self.status = 0
-        return self.getActivity()
+        # return self.getActivity()
+        return [1, 2]
     
     def on_click(self, btn, is_down):
         if is_down:

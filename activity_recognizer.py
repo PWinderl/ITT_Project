@@ -1,13 +1,28 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+The ActivityRecognizer module takes care of the activity recognition.
+
+Author: Fabian Zürcher
+"""
+
 import csv
 import numpy as np
 from sklearn import svm
-from transform import Transform
 from pyqtgraph.Qt import QtGui, QtCore
 from numpy import sin, linspace, pi
 from scipy import fft, arange
 
+
 class ActivityRecognizer():
 
+    """
+    ActivityRecognizer uses FFT as a filter, SVM for training +
+    predicting samples and manages activities/gestures.
+    """
+
+    # Initializes wiimote instance, activity recognizer and click callbacks.
     def __init__(self, device):
         self.wm = device.wm
         self.device = device
@@ -15,20 +30,23 @@ class ActivityRecognizer():
         self.device.register_click_callback(self.on_click)
 
     def is_violin(self):
+        # Check if current activity is violin.
         self.check_activity()
         if self.check_activity()[0] == 0:
             return True
         return False
 
     def check_activity(self):
+        # Check current activity in svm; Refreshing csv file.
         try:
             current_act = self.buffer_act()
         except Exception as e:
             print(e)
         self.refresh_csv()
         return current_act
-    
+
     def on_click(self, btn, is_down):
+        # Registers callback for Buttons.
         if is_down:
             if btn == self.device.BTN_ONE:
                 self.status = 0
@@ -126,7 +144,7 @@ class ActivityRecognizer():
                 x.append(_x)
                 y.append(_y)
                 z.append(_z)
-                avg.append((_x + _y +_z) / 3)
+                avg.append((_x + _y + _z) / 3)
             buffered_vals.append(avg)
         return buffered_vals
 
@@ -141,7 +159,7 @@ class ActivityRecognizer():
 
     def activity_recognizer(self):
         # This function initializes the activity recognizer.
-        self.c = svm.SVC(gamma=0.001, C = 100, degree = 3)
+        self.c = svm.SVC(gamma=0.001, C=100, degree=3)
         self.counter = 0
         self.min_len = 0
         self.write_csv()
@@ -169,7 +187,6 @@ class ActivityRecognizer():
         if self.status == 0:
             self.add_csv(self.acc_vals)
 
-
     def fft(self, data):
         # Fast Fourier Transformation.
         data_freq = []
@@ -184,6 +201,6 @@ class ActivityRecognizer():
         vio = 0
         guitar = 1
         drums = 2
-        categories = [vio] *3  + [guitar] * 3 + [drums] *3
+        categories = [vio] * 3 + [guitar] * 3 + [drums] * 3
         training_data = vio_freq[1:] + guitar_freq[1:] + drums_freq[1:]
         self.c.fit(training_data, categories)

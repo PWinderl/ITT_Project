@@ -5,7 +5,7 @@
 To be able to compare the drawn unistroke and the shown template in the minigame,
 this recognizer is used.
 
-Author: Thomas Oswald
+Authors: Thomas Oswald, Paul Winderl
 """
 
 import math
@@ -13,6 +13,7 @@ import os
 
 
 class Recognizer():
+
     """
     Implementation of the $1 recognition algorithm.
     Wobbrock, J.O., Wilson, A.D. and Li, Y. (2007).
@@ -64,15 +65,12 @@ class Recognizer():
     # Takes the points of the unistroke as input.
     # Calculates the distance distance between two points.
     # Returns the calculated points.
-    # TODO: 67 und 72 Errors
-
     def resample(self, points):
         # length of each increment
         inc_length = self.get_path_length(points) / (self.stepsize - 1)
         new_points = []
         new_points.append(points[0])
         whole_distance = 0
-
         try:
             for idx, point in enumerate(points):
                 if idx == 0:
@@ -95,9 +93,6 @@ class Recognizer():
                 return new_points[63:]
         except Exception as e:
             print(e)
-            print("new points")
-            # print(len(new_points))
-            # print(new_points)
         return new_points
 
     # Gets two points
@@ -138,8 +133,6 @@ class Recognizer():
         return new_points
 
     # Scales the points to a specified size and returns the new points
-    # TODO: y = point[1] * (size / box[1])
-    # ZeroDivisionError: float division by zero
     def scale_to_square(self, points, size):
         box = self.bounding_box(points)
         new_points = []
@@ -150,6 +143,7 @@ class Recognizer():
         return new_points
 
     # https://depts.washington.edu/madlab/proj/dollar/dollar.js
+    # reference square
     def bounding_box(self, points):
         min_x = math.inf
         max_x = -math.inf
@@ -222,8 +216,6 @@ class Recognizer():
     def path_distance(self, a, b):
         d = 0
         length = len(a)
-        # print(len(a))
-        # print(len(b))
         for idx in range(length - 1):
             d += self.distance(a[idx], b[idx])
         return d / length

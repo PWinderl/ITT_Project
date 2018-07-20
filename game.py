@@ -13,7 +13,6 @@ from PyQt5 import QtWidgets, QtCore, Qt, QtGui
 import sys
 import pygame
 import os
-import time
 
 # pygame event codes
 NOTE_INCOMING = pygame.USEREVENT + 1
@@ -34,11 +33,10 @@ NOTE_LIMIT = 20
 # The frame rate in which the game will run.
 FRAME_RATE = 200
 
+
 # Loads the image and returns an image object.
 # Out of a pygame tutorial
 # https://www.pygame.org/docs/tut/tom_games6.html
-
-
 def __load_png__(name):
     fullname = name
     try:
@@ -128,11 +126,9 @@ class GameThread(QtCore.QThread):
         line_size = width / self.lines
         step = 0
         color = self.WHITE
-
         while step <= self.lines:
             if step == self.lines / 2:
                 color = self.GREEN
-
             pygame.draw.line(background, color,  [
                 line_size * step, 0], [line_size * step, height], 5)
             if step == self.lines / 3 or step == self.lines / 2:
@@ -142,7 +138,7 @@ class GameThread(QtCore.QThread):
                 step += 1
         return background
 
-    # Adding targets to the game and positions them.
+    # Adding targets to the game and position them.
     def init_targets(self):
         line_size = self.width / self.lines
         radius = int(line_size * self.TARGET_FACTOR)
@@ -323,7 +319,7 @@ class GameThread(QtCore.QThread):
 class Note(pygame.sprite.Sprite):
 
     """
-    A Note will be casted by the conducter. After that
+    A Note will be casted by the conductor. After that
     it moves along its line until it reaches the target.
     """
 
@@ -334,6 +330,7 @@ class Note(pygame.sprite.Sprite):
         self.image = None
         self.size_factor = size_factor
 
+    # Reloads an image for preparation
     def reload(self):
         if self.image is None:
             self.image, self.rect = __load_png__("sprites/note.png")
@@ -452,9 +449,6 @@ class GameWidget(QtWidgets.QWidget):
         self.is_pause = False
         self.player = None
         self.conductor = None
-        self.score = 0
-        self.timer = None
-        self.init_ui()
 
     def start(self, devices, game=None, score=0):
         self.score = score
@@ -516,7 +510,7 @@ class GameWidget(QtWidgets.QWidget):
         os.system("wmctrl -a pygame")
         return game
 
-    # This method updates the score after the minigame ended.
+    # This method updates the score after the minigame has ended.
     # Additionally, it displays the winner for a short time.
     def update_score(self, name):
         text = name + " won"
@@ -524,7 +518,6 @@ class GameWidget(QtWidgets.QWidget):
             self.score += 10
         else:
             self.score -= 10
-
         self.points_player.setText(text)
         self.update()
 

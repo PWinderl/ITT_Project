@@ -100,6 +100,7 @@ class MainWidget(QtWidgets.QMainWindow):
                 (500, 650), self.devices, self.end_score, parent=self.window)
         self.change_widget(widget)
 
+    # Change the widget according to passed widget
     def change_widget(self, widget):
         if widget is None:
             self.window.layout().removeWidget(self.current_widget)
@@ -127,6 +128,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.end_score = score
         self.init_widget(self.HIGHSCORE)
 
+    # Saves state of game
     def on_minigame_start(self):
         if self.game_running:
             self.old_score = self.current_widget.score

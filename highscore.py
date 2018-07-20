@@ -1,9 +1,26 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+The Highscore module takes care of the highscore representation.
+Additionally, it offers a DrawWidget for signature input.
+
+Author: Paul Winderl
+"""
+
 from PyQt5 import QtWidgets, QtCore, QtGui
 from operator import itemgetter
 
 
 # To call when game is over or from menu
 class HighscoreWidget(QtWidgets.QWidget):
+
+    """
+    The HighscoreWidget is responsible for displaying the highscore.
+    If the highscore at the end of the game it will also present a drawing screen.
+    """
+
+    # Path to the saved signature
     imagePath = "out.jpg"
 
     def __init__(self, size, devices, end_score, parent=None):
@@ -83,7 +100,7 @@ class HighscoreWidget(QtWidgets.QWidget):
         i = 0
         for item in new_list:
             actual_score = item[0]
-            # Creates QIcon of image due to compatibility if there is an image
+            # Creates QIcon of image due to compatibility reasons if there is an image
             if type(item[1]) is not str:
                 sign_to_icon = QtGui.QIcon(QtGui.QPixmap(item[1]))
                 new_sign_entry = QtWidgets.QTableWidgetItem(sign_to_icon, "")
@@ -109,6 +126,11 @@ class HighscoreWidget(QtWidgets.QWidget):
 
 
 class DrawWidget(QtWidgets.QWidget):
+
+    """
+    The DrawWidget is responsible for displaying a drawing area.
+    Through Pointing with the Wiimote a signature could be drawn.
+    """
 
     # pyqtsignal for the recognition at the end of the drawing interaction
     finished_unistroke = QtCore.pyqtSignal(object, bool, str)
@@ -150,7 +172,7 @@ class DrawWidget(QtWidgets.QWidget):
     def set_callback(self, callback):
         self.save_callback = callback
 
-    # Takes painted signature and save as image
+    # Takes painted signature and saves it as image
     def save_highscore(self):
         signature = QtWidgets.QWidget.grab(self)
         signature.save("out.jpg")

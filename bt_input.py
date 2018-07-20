@@ -2,15 +2,15 @@
 # coding: utf-8
 
 """
-The module Bluetooth Innput takes care of the connection
+The module Bluetooth Input takes care of the connection
 between the wiimote.py of Raphael Wimmer (https://github.com/RaphaelWimmer/wiimote.py)
 and the game.
 
 Author: Thomas Oswald
+Adjustments by: Paul Winderl
 """
 
 import wiimote
-import sys
 from transform import Transform
 from activity_recognizer import ActivityRecognizer
 from bluetooth import BluetoothError

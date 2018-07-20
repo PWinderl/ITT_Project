@@ -1,10 +1,19 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+The ActivityRecognizer module takes care of the activity recognition.
+
+Author: Fabian Zürcher
+"""
+
 import csv
 import numpy as np
 from sklearn import svm
-from transform import Transform
 from pyqtgraph.Qt import QtGui, QtCore
 from numpy import sin, linspace, pi
 from scipy import fft, arange
+
 
 class ActivityRecognizer():
 
@@ -27,7 +36,7 @@ class ActivityRecognizer():
             print(e)
         self.refresh_csv()
         return current_act
-    
+
     def on_click(self, btn, is_down):
         if is_down:
             if btn == self.device.BTN_ONE:
@@ -126,7 +135,7 @@ class ActivityRecognizer():
                 x.append(_x)
                 y.append(_y)
                 z.append(_z)
-                avg.append((_x + _y +_z) / 3)
+                avg.append((_x + _y + _z) / 3)
             buffered_vals.append(avg)
         return buffered_vals
 
@@ -141,7 +150,7 @@ class ActivityRecognizer():
 
     def activity_recognizer(self):
         # This function initializes the activity recognizer.
-        self.c = svm.SVC(gamma=0.001, C = 100, degree = 3)
+        self.c = svm.SVC(gamma=0.001, C=100, degree=3)
         self.counter = 0
         self.min_len = 0
         self.write_csv()
@@ -169,7 +178,6 @@ class ActivityRecognizer():
         if self.status == 0:
             self.add_csv(self.acc_vals)
 
-
     def fft(self, data):
         # Fast Fourier Transformation.
         data_freq = []
@@ -184,6 +192,6 @@ class ActivityRecognizer():
         vio = 0
         guitar = 1
         drums = 2
-        categories = [vio] *3  + [guitar] * 3 + [drums] *3
+        categories = [vio] * 3 + [guitar] * 3 + [drums] * 3
         training_data = vio_freq[1:] + guitar_freq[1:] + drums_freq[1:]
         self.c.fit(training_data, categories)

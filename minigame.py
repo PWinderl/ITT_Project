@@ -3,17 +3,15 @@
 
 """
 The Minigame module consists of three widgets on a parent widget.
-Two of them are DrawWidget, which are used to let the players draw unistrokes.
+Two of them are DrawWidgets, which are used to let the players draw unistrokes.
 The third is the TemplateWidget. It will show a template, which the players need to draw.
 
 Author: Thomas Oswald
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui
-import sys
 from recognizer import Recognizer
 from random import randint
-from bt_input import Device
 
 
 class DrawWidget(QtWidgets.QFrame):
@@ -57,6 +55,7 @@ class DrawWidget(QtWidgets.QFrame):
             qp.drawEllipse(self.cursor_pos, self.cursor_radius,
                            self.cursor_radius)
 
+    # Overwritten method responsible for painting
     def paintEvent(self, event):
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -88,13 +87,6 @@ class DrawWidget(QtWidgets.QFrame):
         self.positions.append((pos.x(), pos.y()))
         self.path.lineTo(pos)
         self.update()
-
-    """
-    This methods will not be needed.
-    Just for testing.
-
-    TODO: DELETE
-    """
 
     # mouse moves with mouse or with set_cursor
     def mouseMoveEvent(self, event):
@@ -186,6 +178,7 @@ class MiniGameWidget(QtWidgets.QWidget):
         self.width, self.height = size
         self.scores = []
 
+    # sets callbacks for gesture recognition
     def start(self, devices):
         player, conductor, template = self.init_ui()
 

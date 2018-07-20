@@ -18,10 +18,10 @@ class Transform():
     """
     The Projective Transformation is the process of translating a point from one
     projection to another. In this game it is used as pointing algorithm and as such
-    it uses the center of the Wiimotes' IR camera and projects this point to an DrawWidget.
+    it uses the center of the Wiimotes' IR camera and projects this point to a DrawWidget.
     """
 
-    # Entry point to the transformation.
+    # Entry point for the transformation.
     def transform(self, points, output_res, wiimote_point):
         points = self.sort(points)
         A = points[0]

@@ -7,10 +7,10 @@ between the wiimote.py of Raphael Wimmer (https://github.com/RaphaelWimmer/wiimo
 and the game.
 
 Author: Thomas Oswald
+Adjustments by: Paul Winderl
 """
 
 import wiimote
-import sys
 from transform import Transform
 from activity_recognizer import ActivityRecognizer
 from bluetooth import BluetoothError

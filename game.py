@@ -13,7 +13,6 @@ from PyQt5 import QtWidgets, QtCore, Qt, QtGui
 import sys
 import pygame
 import os
-import time
 
 # pygame event codes
 NOTE_INCOMING = pygame.USEREVENT + 1
@@ -33,11 +32,10 @@ SCORE_LIMIT = 30
 # The frame rate in which the game will run.
 FRAME_RATE = 200
 
+
 # Loads the image and returns an image object.
 # Out of a pygame tutorial
 # https://www.pygame.org/docs/tut/tom_games6.html
-
-
 def __load_png__(name):
     fullname = name
     try:
@@ -127,11 +125,9 @@ class GameThread(QtCore.QThread):
         line_size = width / self.lines
         step = 0
         color = self.WHITE
-
         while step <= self.lines:
             if step == self.lines / 2:
                 color = self.GREEN
-
             pygame.draw.line(background, color,  [
                 line_size * step, 0], [line_size * step, height], 5)
             if step == self.lines / 3 or step == self.lines / 2:
@@ -141,7 +137,7 @@ class GameThread(QtCore.QThread):
                 step += 1
         return background
 
-    # Adding targets to the game and positions them.
+    # Adding targets to the game and position them.
     def init_targets(self):
         line_size = self.width / self.lines
         radius = int(line_size * self.TARGET_FACTOR)
@@ -218,7 +214,7 @@ class GameThread(QtCore.QThread):
                     pause_flag = True
 
                 # Scaling the window back to its original state
-                # and drawing all content on it again.
+                # and drawing all contents again.
                 if event.type == CONTINUE:
                     self.center_position(self.width, self.height)
                     screen = pygame.display.set_mode(
@@ -233,7 +229,7 @@ class GameThread(QtCore.QThread):
                 # This event is fired when the player is successfully
                 # executing the gesture and pressed a button.
                 # This code block will then examine whether it was the right one
-                # and if it is on point.
+                # and if it is the player gets points.
                 # According to the result the target state will be set and
                 # the score will be updated.
                 if event.type == ACTION:
@@ -276,7 +272,6 @@ class GameThread(QtCore.QThread):
                         sys.exit()
                     except Exception as e:
                         print(e)
-                        print("hello")
                     return
 
             # This code block takes care of positioning and rendering.
@@ -285,7 +280,7 @@ class GameThread(QtCore.QThread):
                 self.screen.blit(self.background, (0, 0))
 
                 # Checking, whether the note is out of sight.
-                # If it is on the conducter side, it will be moved to the player.
+                # If it is on the conductors side, it will be moved to the player.
                 # Therefore, if it is on the players side, the player will loose points.
                 for sprite in self.note_sprites.sprites():
                     self.remove_rect(sprite.rect)
@@ -321,7 +316,7 @@ class GameThread(QtCore.QThread):
 class Note(pygame.sprite.Sprite):
 
     """
-    A Note will be casted by the conducter. After that
+    A Note will be casted by the conductor. After that
     it moves along its line until it reaches the target.
     """
 
@@ -332,6 +327,7 @@ class Note(pygame.sprite.Sprite):
         self.image = None
         self.size_factor = size_factor
 
+    # Reloads an image for preparation
     def reload(self):
         if self.image is None:
             self.image, self.rect = __load_png__("sprites/note.png")
@@ -450,13 +446,13 @@ class GameWidget(QtWidgets.QWidget):
         self.is_pause = False
         self.player = None
         self.conductor = None
-    
+
     def start(self, devices, game=None, score=0):
         self.score = score
         self.init_ui()
         self.init_devices(devices)
         self.game = self.init_game(game)
-    
+
     def hide(self):
         self.close()
 
@@ -505,7 +501,7 @@ class GameWidget(QtWidgets.QWidget):
         os.system("wmctrl -a pygame")
         return game
 
-    # This method updates the score after the minigame ended.
+    # This method updates the score after the minigame has ended.
     # Additionally, it displays the winner for a short time.
     def update_score(self, name):
         text = name + " won"
@@ -513,7 +509,6 @@ class GameWidget(QtWidgets.QWidget):
             self.score += 10
         else:
             self.score -= 10
-
         self.points_player.setText(text)
         self.update()
 
@@ -554,7 +549,6 @@ class GameWidget(QtWidgets.QWidget):
 
     # Depending who pressed a button, different events will be fired.
     def on_button(self, char, btn, is_down):
-        print("hello button")
         if not self.is_pause and is_down:
             if char == "player":
                 pygame.event.post(pygame.event.Event(
@@ -579,6 +573,6 @@ class GameWidget(QtWidgets.QWidget):
         self.game.on_hit.disconnect(self.on_player_success)
         self.game.on_end.disconnect(self.on_end)
         self.game_end.emit(self.score)
-    
+
     def closeEvent(self, event):
         return super().closeEvent(event)
